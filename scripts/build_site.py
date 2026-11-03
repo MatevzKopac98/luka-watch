@@ -78,38 +78,86 @@ def odds_for(name, odds):
 
 # ---------- charts (inline SVG) ----------
 
-def chart_points(games, avg):
-    """Luka's points per game, with season average reference line."""
-    if not games:
-        return '<p class="muted">No games yet.</p>'
+# Stats selectable on the game-by-game chart: key, button label, season-average column, shooting split
+GAME_STATS = [
+    ("pts", "Points", "pts", None), ("reb", "Rebounds", "reb", None), ("ast", "Assists", "ast", None),
+    ("fg_pct", "FG%", "fg_pct", ("fgm", "fga")), ("fg3_pct", "3PT%", "fg3_pct", ("fg3m", "fg3a")),
+    ("ft_pct", "FT%", "ft_pct", ("ftm", "fta")), ("stl", "Steals", "stl", None),
+    ("blk", "Blocks", "blk", None), ("tov", "Turnovers", "tov", None), ("min", "Minutes", "min", None),
+]
+
+
+def game_value(g, key, split):
+    if split:
+        made, att = g[split[0]], g[split[1]]
+        return 100 * made / att if att else None
+    return g[key]
+
+
+def nice_max(v):
+    """Axis top and gridline step for a count stat."""
+    for step in (1, 2, 5, 10):
+        if v / step <= 6:
+            return step * (int(v / step) + 1), step
+    return 10 * (int(v / 10) + 1), 10
+
+
+def chart_game_stat(games, key, label, avg, split):
+    """One stat game by game (last 20), with season average reference line."""
     games = games[-20:]
     W, H, L, R, T, B = 640, 260, 40, 12, 20, 32
-    pts = [g["pts"] or 0 for g in games]
-    ymax = max(50, max(pts) + 5)
+    vals = [game_value(g, key, split) for g in games]
+    present = [v for v in vals if v is not None]
+    if not present:
+        return '<p class="muted">No games yet.</p>'
+    pct = split is not None
+    ymax, step = (100, 20) if pct else nice_max(max(present + [avg or 0]) * 1.1)
     x = lambda i: L + (W - L - R) * (i / max(1, len(games) - 1) if len(games) > 1 else 0.5)
     y = lambda v: T + (H - T - B) * (1 - v / ymax)
+    unit = "%" if pct else ""
     grid = "".join(
         f'<line x1="{L}" x2="{W - R}" y1="{y(v):.1f}" y2="{y(v):.1f}" class="grid"/>'
-        f'<text x="{L - 6}" y="{y(v) + 4:.1f}" class="tick" text-anchor="end">{v}</text>'
-        for v in range(0, int(ymax) + 1, 10))
-    path = " ".join(f"{'M' if i == 0 else 'L'}{x(i):.1f},{y(p):.1f}" for i, p in enumerate(pts))
+        f'<text x="{L - 6}" y="{y(v) + 4:.1f}" class="tick" text-anchor="end">{v}{unit}</text>'
+        for v in range(0, int(ymax) + 1, step))
+    pts = [(x(i), y(v)) for i, v in enumerate(vals) if v is not None]
+    path = " ".join(f"{'M' if j == 0 else 'L'}{a:.1f},{b:.1f}" for j, (a, b) in enumerate(pts))
     dots, labels = [], []
     for i, g in enumerate(games):
         d = local(g["game_date"])
         where = "vs" if g["home_away"] == "home" else "@"
+        v = vals[i]
+        shown = (f"{v:.1f}% ({g[split[0]]:.0f}/{g[split[1]]:.0f})" if pct else f"{v:.0f}") if v is not None \
+            else "no attempts"
         t = (f"{d:%a %d %b} {where} {g['opp_abbr']} · {g['result']} {g['score']}|"
-             f"{g['pts']:.0f} pts · {g['reb']:.0f} reb · {g['ast']:.0f} ast|"
-             f"FG {g['fgm']:.0f}/{g['fga']:.0f} · 3P {g['fg3m']:.0f}/{g['fg3a']:.0f}")
-        dots.append(f'<circle cx="{x(i):.1f}" cy="{y(pts[i]):.1f}" r="4.5" class="dot-hi pt"/>'
-                    f'<circle cx="{x(i):.1f}" cy="{y(pts[i]):.1f}" r="18" class="hit" {tip(t)}/>')
+             f"{label}: {shown}|"
+             f"{g['pts']:.0f} pts · {g['reb']:.0f} reb · {g['ast']:.0f} ast")
+        if v is not None:
+            dots.append(f'<circle cx="{x(i):.1f}" cy="{y(v):.1f}" r="4.5" class="dot-hi pt"/>'
+                        f'<circle cx="{x(i):.1f}" cy="{y(v):.1f}" r="18" class="hit" {tip(t)}/>')
         if len(games) <= 10 or (len(games) - 1 - i) % 2 == 0:
             labels.append(f'<text x="{x(i):.1f}" y="{H - 8}" class="tick" text-anchor="middle">{g["opp_abbr"]}</text>')
-    best = max(range(len(pts)), key=lambda i: pts[i])
-    ref = (f'<line x1="{L}" x2="{W - R}" y1="{y(avg):.1f}" y2="{y(avg):.1f}" class="ref"/>'
-           f'<text x="{L + 6}" y="{y(avg) - 6:.1f}" class="ref-label">Season avg {avg:.1f}</text>')
-    hi = f'<text x="{x(best):.1f}" y="{y(pts[best]) - 10:.1f}" class="val" text-anchor="middle">{pts[best]:.0f}</text>'
-    return (f'<svg viewBox="0 0 {W} {H}" class="chart" role="img" aria-label="Luka points per game">'
+    best = max((i for i in range(len(vals)) if vals[i] is not None), key=lambda i: vals[i])
+    ref = ""
+    if avg is not None:
+        ref = (f'<line x1="{L}" x2="{W - R}" y1="{y(avg):.1f}" y2="{y(avg):.1f}" class="ref"/>'
+               f'<text x="{L + 6}" y="{y(avg) - 6:.1f}" class="ref-label">Season avg {avg:.1f}{unit}</text>')
+    hi = (f'<text x="{x(best):.1f}" y="{y(vals[best]) - 10:.1f}" class="val" text-anchor="middle">'
+          f'{vals[best]:.0f}{unit}</text>')
+    return (f'<svg viewBox="0 0 {W} {H}" class="chart" role="img" aria-label="Luka {label} per game">'
             f'{grid}{ref}<path d="{path}" class="line-hi"/>{"".join(dots)}{hi}{"".join(labels)}</svg>')
+
+
+def game_stat_switcher(games, season):
+    """Buttons above the chart; each shows that stat's chart (all pre-rendered, switched in the browser)."""
+    buttons, panels = [], []
+    for n, (key, label, avg_key, split) in enumerate(GAME_STATS):
+        on = n == 0
+        buttons.append(f'<button type="button" class="chip{" on" if on else ""}" data-stat="{key}" '
+                       f'aria-pressed="{"true" if on else "false"}">{label}</button>')
+        panels.append(f'<div class="stat-panel" data-stat="{key}"{"" if on else " hidden"}>'
+                      f'{chart_game_stat(games, key, label, season[avg_key], split)}</div>')
+    return (f'<div class="chips" role="group" aria-label="Choose a stat">{"".join(buttons)}</div>'
+            f'{"".join(panels)}')
 
 
 def chart_mvp(odds, luka_name):
@@ -237,7 +285,7 @@ def section_hero(d):
   <p class="muted">Los Angeles Lakers · {l['position'] or ''} · 2026-27 regular season</p></div></div>
   <div class="tiles">{tiles_html}</div>
   {last_html}
-  <div class="card"><h3>Points per game · last 20 games</h3>{chart_points(d['luka_games'], l['pts'])}</div>
+  <div class="card"><h3>Game by game · last 20 games</h3>{game_stat_switcher(d['luka_games'], l)}</div>
 </section>"""
 
 
@@ -522,6 +570,11 @@ table.kv th,table.kv td{padding:7px 4px}.rbar{width:44px}
 .chart .lbl{font-size:12px}
 .scatter .tick{font-size:24px}.scatter .tlbl{display:none}.scatter .lbl-strong{font-size:28px}
 .scatter .quad{font-size:22px}.scatter .dot{r:9}.scatter .dot-hi,.scatter .dot-opp{r:13}}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:0 0 10px;-webkit-overflow-scrolling:touch}
+.chip{flex:none;font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;cursor:pointer;
+border:1px solid var(--border);background:var(--page);color:var(--ink2)}
+.chip:hover{color:var(--ink)}.chip.on{background:var(--hi);border-color:var(--hi);color:var(--surface);font-weight:600}
+.chip:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
 #tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--surface);padding:8px 10px;border-radius:8px;
 font-size:12px;line-height:1.45;max-width:260px;opacity:0;transition:opacity .1s;z-index:10}
 #tip b{font-weight:700}
@@ -538,6 +591,10 @@ el.addEventListener('pointermove',e=>show(el,e.clientX,e.clientY));
 el.addEventListener('pointerleave',()=>tip.style.opacity=0);
 el.addEventListener('focus',()=>{const b=el.getBoundingClientRect();show(el,b.right,b.top)});
 el.addEventListener('blur',()=>tip.style.opacity=0)});
+document.querySelectorAll('.chips').forEach(group=>{const card=group.parentElement;
+group.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;
+group.querySelectorAll('.chip').forEach(c=>{const on=c===b;c.classList.toggle('on',on);c.setAttribute('aria-pressed',on)});
+card.querySelectorAll('.stat-panel').forEach(p=>p.hidden=p.dataset.stat!==b.dataset.stat);tip.style.opacity=0})});
 """
 
 
