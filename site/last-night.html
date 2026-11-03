@@ -117,9 +117,12 @@ ul.why{margin:0 0 6px;padding-left:18px}ul.why li{margin:2px 0}
 table.box{font-size:13px}table.box th[scope=row]{text-align:left;position:sticky;left:0;background:var(--surface)}
 table.box th[scope=row] small{color:var(--muted);font-size:10px}table.box td.strong{font-weight:700}
 table.vs thead th{font-size:12px}
-.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;align-items:start}
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;align-items:stretch}
 @media (max-width:760px){.games{grid-template-columns:1fr}}
-.gc{margin-top:0}.gc.me{box-shadow:inset 0 0 0 2px var(--hi)}
+.gc{margin-top:0;display:flex;flex-direction:column}
+.gc ul.why{min-height:3.2em}.gc .keyp{min-height:3em}
+.gc .headline{min-height:4.4em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.gc .btns{margin-top:auto}.gc.me{box-shadow:inset 0 0 0 2px var(--hi)}
 .gc-tags{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-bottom:6px}
 .gc-team{display:flex;align-items:center;gap:8px;padding:5px 0;color:var(--ink2)}
 .gc-team.win{color:var(--ink);font-weight:700}.gc-name{flex:1}.gc-pts{font-size:22px;font-variant-numeric:tabular-nums}
@@ -138,7 +141,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 16px 32px;color:var(--muted);fon
 </style></head><body>
 <header class="top"><div class="bar-in"><a class="brand" href="index.html">Luka Watch</a>
 <nav><a href="index.html#next">Lakers games</a><a href="index.html#mvp">MVP race</a><a href="index.html#compare">Compare</a><a href="index.html#lakers">Lakers</a><a href="last-night.html" class="active">Last night</a></nav>
-<span class="updated">Updated Tue 03 Nov, 22:53</span></div></header>
+<span class="updated">Updated Tue 03 Nov, 22:58</span></div></header>
 <main>
 <section class="hero">
   <h1>Last night in the NBA</h1>
