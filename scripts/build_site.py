@@ -546,8 +546,10 @@ def next_game_card(d):
     <table class="vs"><thead><tr><th>LAL</th><th>Season averages</th><th>{opp['abbr']}</th></tr></thead>
     <tbody>{''.join(rows)}</tbody></table>
     <p class="muted small">Small number = league rank out of 30. The team with the edge on each stat is highlighted.</p>
-    <h3 class="sub">Injuries · Lakers</h3><ul class="inj">{inj(LAKERS_ID)}</ul>
-    <h3 class="sub">Injuries · {escape(opp['name'])}</h3><ul class="inj">{inj(opp_id)}</ul>
+    <div class="grid2 inj2">
+      <div><h3 class="sub">Injuries · Lakers</h3><ul class="inj">{inj(LAKERS_ID)}</ul></div>
+      <div><h3 class="sub">Injuries · {escape(opp['name'])}</h3><ul class="inj">{inj(opp_id)}</ul></div>
+    </div>
     <h3 class="sub">Head-to-head this season</h3><ul class="results">{h2h_html}</ul>
   </div>"""
 
@@ -708,10 +710,8 @@ def section_games(d):
     <button type="button" class="chip on" data-panel="last" aria-pressed="true">Last game</button>
     <button type="button" class="chip" data-panel="next" aria-pressed="false">Next game</button>
   </div>
-  <div class="grid2 ln">
-    <div class="ln-panel" data-panel="last">{last_game_card(d)}</div>
-    <div class="ln-panel off" data-panel="next">{next_game_card(d)}</div>
-  </div>
+  <div class="ln-panel" data-panel="last">{last_game_card(d)}</div>
+  <div class="ln-panel off" data-panel="next">{next_game_card(d)}</div>
 </section>"""
 
 
@@ -757,15 +757,15 @@ CSS = """
 :root{color-scheme:light;--page:#f6f5f2;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#898781;
 --grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);--hi:#6250d6;--hi-wash:rgba(98,80,214,.08);
 --opp:#eb6834;--base:#b9b8b0;--edge:rgba(98,80,214,.12);--good:#006300;--bad:#d03b3b;
---s1:#6250d6;--s2:#eb6834;--s3:#1baf7a;--s4:#2a78d6;--s5:#e87ba4;--east:#9db4d3;--west:#a3c4ac}
+--s1:#6250d6;--s2:#eb6834;--s3:#1baf7a;--s4:#2a78d6;--s5:#e87ba4;--east:#9db4d3;--west:#dba4a9}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--page:#0d0d0d;
 --surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;
 --border:rgba(255,255,255,.10);--hi:#9085e9;--hi-wash:rgba(144,133,233,.12);--opp:#d95926;--base:#5a5955;
---edge:rgba(144,133,233,.18);--good:#0ca30c;--s1:#9085e9;--s2:#d95926;--s3:#199e70;--s4:#3987e5;--s5:#d55181;--east:#4f6684;--west:#557260}}
+--edge:rgba(144,133,233,.18);--good:#0ca30c;--s1:#9085e9;--s2:#d95926;--s3:#199e70;--s4:#3987e5;--s5:#d55181;--east:#4f6684;--west:#7f5258}}
 :root[data-theme="dark"]{color-scheme:dark;--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;
 --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--hi:#9085e9;--hi-wash:rgba(144,133,233,.12);
 --opp:#d95926;--base:#5a5955;--edge:rgba(144,133,233,.18);--good:#0ca30c;--s1:#9085e9;--s2:#d95926;
---s3:#199e70;--s4:#3987e5;--s5:#d55181;--east:#4f6684;--west:#557260}
+--s3:#199e70;--s4:#3987e5;--s5:#d55181;--east:#4f6684;--west:#7f5258}
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
 header.top{position:sticky;top:0;z-index:5;background:var(--page);border-bottom:1px solid var(--border)}
@@ -851,8 +851,8 @@ table.kv th,table.kv td{padding:7px 4px}.rbar{width:44px}
 .chart .dot.east{fill:var(--east)}.chart .dot.west{fill:var(--west)}
 .sw.east{background:var(--east)}.sw.west{background:var(--west)}
 .scatter[data-conf="east"] .conf-west:not(.pinned),.scatter[data-conf="west"] .conf-east:not(.pinned){display:none}
-.chips.ln-chips{display:none}.ln-panel{min-width:0}
-@media (max-width:760px){.chips.ln-chips{display:flex}.ln-panel.off{display:none}}
+.ln-panel.off{display:none}.ln-panel>.card{margin-top:0}
+.inj2{gap:16px}.inj2 h3.sub{margin-top:18px}
 .card-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2);margin:0 0 8px}
 h3.sub{margin:18px 0 6px;font-size:14px}
 .score{font-size:30px;font-weight:700;letter-spacing:-.01em}.score .muted{margin:0 4px}
