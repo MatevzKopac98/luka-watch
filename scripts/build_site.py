@@ -3,6 +3,7 @@ import sys
 from datetime import datetime
 from html import escape
 from pathlib import Path
+from urllib.parse import quote_plus
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -255,6 +256,15 @@ def chart_ratings(teams, opp_id):
 
 # ---------- sections ----------
 
+def highlights_url(game, teams):
+    """YouTube search for Luka's highlights from that game (US date, opponent nickname)."""
+    names = {t["abbr"]: t["name"] for t in teams}
+    opp = names.get(game["opp_abbr"], game["opp_abbr"]).split()[-1]
+    us = datetime.fromisoformat(game["game_date"].replace("Z", "+00:00")).astimezone(ZoneInfo("America/New_York"))
+    q = f"Luka Doncic highlights vs {opp} {us:%B} {us.day}, {us.year}"
+    return "https://www.youtube.com/results?search_query=" + quote_plus(q)
+
+
 def section_hero(d):
     l = d["luka"]
     prob = odds_for(LUKA_NAME, d["odds"])
@@ -266,6 +276,7 @@ def section_hero(d):
         ("Points", fmt(l["pts"]), f"Last 5: {fmt(l5)}"),
         ("Rebounds", fmt(l["reb"]), f"{l['gp']} games played"),
         ("Assists", fmt(l["ast"]), f"{fmt(l['tov'])} turnovers"),
+        ("Field goal %", fmt(l["fg_pct"], pct=True), f"{fmt(l['fgm'])} of {fmt(l['fga'])} per game"),
         ("True shooting", fmt(l["ts_pct"], pct=True), f"3P {fmt(l['fg3_pct'], pct=True)} on {fmt(l['fg3a'])} att"),
         ("MVP chance", f"{prob:.0%}" if prob else "–", f"{ordinal(mvp_rank)} favourite" if mvp_rank else "Polymarket"),
     ]
@@ -274,10 +285,12 @@ def section_hero(d):
     last_html = ""
     if last:
         where = "vs" if last["home_away"] == "home" else "@"
-        last_html = (f'<p class="lastgame"><strong>Last game</strong> · {local(last["game_date"]):%a %d %b} {where} '
-                     f'{last["opp_abbr"]} · {last["result"]} {last["score"]} — <strong>{last["pts"]:.0f} pts, '
+        last_html = (f'<div class="lastgame"><p><strong>Last game</strong> · {local(last["game_date"]):%a %d %b} '
+                     f'{where} {last["opp_abbr"]} · {last["result"]} {last["score"]} — <strong>{last["pts"]:.0f} pts, '
                      f'{last["reb"]:.0f} reb, {last["ast"]:.0f} ast</strong> '
-                     f'({last["fgm"]:.0f}/{last["fga"]:.0f} FG, {last["fg3m"]:.0f}/{last["fg3a"]:.0f} 3P)</p>')
+                     f'({last["fgm"]:.0f}/{last["fga"]:.0f} FG, {last["fg3m"]:.0f}/{last["fg3a"]:.0f} 3P)</p>'
+                     f'<a class="btn-yt" href="{highlights_url(last, d["teams"])}" target="_blank" rel="noopener">'
+                     f'<span aria-hidden="true">▶</span> Watch highlights</a></div>')
     head = f'<img src="{l["headshot"]}" alt="" class="headshot">' if l.get("headshot") else ""
     return f"""
 <section class="hero">
@@ -307,7 +320,8 @@ def section_mvp(d):
 
 
 def section_compare(d):
-    players = d["players"]
+    # MVP favourites first; players without a market price go last, by scoring
+    players = sorted(d["players"], key=lambda p: (-(odds_for(p["name"], d["odds"]) or 0), -(p["pts"] or 0)))
     cols = [("pts", "PTS", 1, False), ("reb", "REB", 1, False), ("ast", "AST", 1, False),
             ("stl", "STL", 1, False), ("blk", "BLK", 1, False), ("tov", "TOV", 1, True),
             ("fg_pct", "FG%", 1, False), ("fg3_pct", "3P%", 1, False), ("ft_pct", "FT%", 1, False),
@@ -331,7 +345,7 @@ def section_compare(d):
     return f"""
 <section id="compare">
   <h2>Luka vs. the best</h2>
-  <p class="muted">Per-game averages. The best value in each column is highlighted. TS% = true shooting
+  <p class="muted">Per-game averages, sorted by MVP odds. The best value in each column is highlighted. TS% = true shooting
   (scoring efficiency including 3s and free throws). The group is the core five plus the current MVP top 5.</p>
   <div class="tablewrap"><table class="stats">
     <thead><tr><th scope="col">Player</th><th>MVP</th>{head}<th>DD</th><th>TD</th></tr></thead>
@@ -510,7 +524,11 @@ h1{font-size:30px;margin:0;letter-spacing:-.01em}h2{font-size:22px;margin:0 0 4p
 .tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
 .tile-k{font-size:12px;color:var(--ink2);text-transform:uppercase;letter-spacing:.04em}
 .tile-v{font-size:28px;font-weight:700;margin:2px 0}.tile-s{font-size:12px;color:var(--muted)}
-.lastgame{background:var(--hi-wash);border-radius:10px;padding:10px 14px;margin:0 0 14px}
+.lastgame{background:var(--hi-wash);border-radius:10px;padding:10px 14px;margin:0 0 14px;display:flex;
+align-items:center;gap:12px;flex-wrap:wrap}.lastgame p{margin:0;flex:1 1 300px}
+.btn-yt{flex:none;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;
+background:var(--hi);color:var(--surface);text-decoration:none;font-weight:600;font-size:14px}
+.btn-yt:hover{filter:brightness(1.1)}.btn-yt:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:12px;min-width:0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:760px){.grid2{grid-template-columns:1fr}h1{font-size:24px}.tile-v{font-size:22px}}
