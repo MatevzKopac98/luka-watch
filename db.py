@@ -53,6 +53,20 @@ CREATE TABLE IF NOT EXISTS mvp_odds (                -- implied probability per 
     PRIMARY KEY (snapshot_date, source, player_name)
 );
 
+CREATE TABLE IF NOT EXISTS nights_done (             -- US dates whose box scores are all stored
+    us_date TEXT PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS luka_news (                -- record/history headlines, kept as they appear
+    url TEXT PRIMARY KEY, published TEXT, headline TEXT
+);
+
+CREATE TABLE IF NOT EXISTS player_career (            -- career regular-season totals (milestones)
+    snapshot_date TEXT, espn_id TEXT,
+    gp REAL, pts REAL, reb REAL, ast REAL, fg3m REAL, stl REAL, blk REAL, dd2 REAL, td3 REAL,
+    PRIMARY KEY (snapshot_date, espn_id)
+);
+
 CREATE TABLE IF NOT EXISTS league_players (          -- every qualified player, for league ranks
     snapshot_date TEXT, espn_id TEXT, name TEXT, team_abbr TEXT,
     gp REAL, min REAL, pts REAL, reb REAL, ast REAL, stl REAL, blk REAL, tov REAL,

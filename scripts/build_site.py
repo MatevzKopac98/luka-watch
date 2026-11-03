@@ -82,6 +82,9 @@ def load():
     lal = [g for g in data["game_info"] if LAKERS_ID in (g["home_id"], g["away_id"])]
     data["lakers_last"] = lal[-1] if lal else None
     data["last_night"] = max((g["us_date"] for g in data["game_info"]), default=None)
+    career = q("SELECT * FROM player_career WHERE espn_id=? ORDER BY snapshot_date DESC LIMIT 1", luka["espn_id"])
+    data["career"] = career[0] if career else None
+    data["news"] = q("SELECT * FROM luka_news ORDER BY published DESC LIMIT 3")
     con.close()
     return data
 
@@ -281,6 +284,111 @@ def highlights_url(game, teams):
     return "https://www.youtube.com/results?search_query=" + quote_plus(q)
 
 
+MIN_GAMES = 65          # NBA award eligibility (MVP, All-NBA)
+
+
+def eligibility_tile(d):
+    """65-game rule: a game counts with 20+ minutes; up to two games of 15-20 minutes also count."""
+    mins = [g["min"] or 0 for g in d["luka_games"]]
+    counted = sum(m >= 20 for m in mins) + min(2, sum(15 <= m < 20 for m in mins))
+    team_played = sum(1 for g in d["games"] if g["status"] == "STATUS_FINAL")
+    can_miss = (82 - MIN_GAMES) - (team_played - counted)
+    warn = " warn" if can_miss <= 5 else ""
+    return ("Award eligibility", f"{counted} / {MIN_GAMES}",
+            f'<span class="{warn.strip()}">can miss {max(can_miss, 0)} more</span>' if can_miss >= 0
+            else '<span class="warn">no longer eligible</span>')
+
+
+def luka_streaks(games):
+    pts = [g["pts"] or 0 for g in games]
+    cur = 0
+    for p in reversed(pts):
+        if p < 30:
+            break
+        cur += 1
+    best = run = 0
+    for p in pts:
+        run = run + 1 if p >= 30 else 0
+        best = max(best, run)
+    hi = lambda k: max(games, key=lambda g: g[k] or 0) if games else None
+    return pts, cur, best, hi
+
+
+def season_bests(d, luka_id):
+    """League-wide single-game bests this season, from every stored box score."""
+    rows = [p for ps in d["box_players"].values() for p in ps]
+    out = []
+    for k, lbl in (("pts", "Points"), ("ast", "Assists"), ("reb", "Rebounds"), ("fg3m", "3-pointers")):
+        if not rows:
+            break
+        top = max(rows, key=lambda p: p[k] or 0)
+        mine = [p for p in rows if p["athlete_id"] == luka_id]
+        best_mine = max(mine, key=lambda p: p[k] or 0) if mine else None
+        rank = 1 + sum(1 for p in rows if (p[k] or 0) > (best_mine[k] or 0)) if best_mine else None
+        out.append((k, lbl, top, best_mine, rank))
+    return out
+
+
+def section_milestones(d):
+    l, games, c = d["luka"], d["luka_games"], d["career"]
+    if not games:
+        return ""
+    pts, cur, best, hi = luka_streaks(games)
+    hp, ha, hr = hi("pts"), hi("ast"), hi("reb")
+    vs = lambda g: f'{"vs" if g["home_away"] == "home" else "@"} {g["opp_abbr"]}'
+    streak_items = [
+        (sum(p >= 30 for p in pts), "30-point games", f"of {len(pts)} played"),
+        (sum(p >= 40 for p in pts), "40-point games", f"{sum(p >= 50 for p in pts)} of them 50+"),
+        (cur, "Current 30+ streak", f"season best {best}"),
+        (f'{hp["pts"]:.0f}', "Season-high points", vs(hp)),
+        (f'{ha["ast"]:.0f}', "Season-high assists", vs(ha)),
+        (f'{hr["reb"]:.0f}', "Season-high rebounds", vs(hr)),
+    ]
+    streaks = "".join(f'<div class="ms-item"><div class="ms-v">{v}</div><div class="ms-k">{k}</div>'
+                      f'<div class="ms-s">{s}</div></div>' for v, k, s in streak_items)
+
+    miles = ""
+    if c:
+        defs = [("pts", "Points", 1000, l["pts"]), ("ast", "Assists", 500, l["ast"]),
+                ("reb", "Rebounds", 500, l["reb"]), ("fg3m", "3-pointers", 100, l["fg3m"]),
+                ("td3", "Triple-doubles", 10, None)]
+        for k, lbl, step, pace in defs:
+            have = c[k] or 0
+            target = (int(have // step) + 1) * step
+            left = target - have
+            prog = 100 * (have - (target - step)) / step
+            eta = f" · ~{left / pace:.0f} games at his pace" if pace else ""
+            miles += (f'<div class="mile"><div class="mile-top"><span>{lbl}</span><strong>{have:,.0f}</strong></div>'
+                      f'<span class="rbar wide"><i style="width:{prog:.0f}%"></i></span>'
+                      f'<div class="ms-s">{left:,.0f} to {target:,}{eta}</div></div>')
+
+    bests = ""
+    for k, lbl, top, mine, rank in season_bests(d, l["espn_id"]):
+        leads = bool(mine) and (mine[k] or 0) >= (top[k] or 0)
+        who = "Luka ★" if leads else escape(short_name(top["name"]))
+        luka_bit = "" if leads or not mine else f' · Luka {mine[k]:.0f} ({ordinal(rank)})'
+        bests += (f'<li class="{"lead" if leads else ""}"><span>{lbl}</span>'
+                  f'<strong>{top[k]:.0f}</strong> {who}<span class="muted small">{luka_bit}</span></li>')
+
+    news = "".join(f'<li><a href="{escape(n["url"])}" target="_blank" rel="noopener">{escape(n["headline"])}</a>'
+                   f' <span class="muted small">{n["published"][:10]}</span></li>' for n in d["news"])
+    records = f'<div class="records"><span class="lbl-k">In the news</span><ul>{news}</ul></div>' if news else ""
+    return f"""
+<section id="milestones">
+  <h2>Milestones & streaks</h2>
+  <div class="card ms">
+    <div class="ms-grid">
+      <div><h3>This season</h3><div class="ms-items">{streaks}</div></div>
+      <div><h3>Career milestones</h3>{miles or '<p class="muted">Career totals unavailable.</p>'}
+        <p class="muted small">Regular season, {c['gp']:.0f} career games.</p></div>
+      <div><h3>NBA single-game bests this season</h3><ul class="bests">{bests}</ul>
+        <p class="muted small">★ = Luka holds the league's best mark this season.</p></div>
+    </div>
+    {records}
+  </div>
+</section>"""
+
+
 def section_hero(d):
     l = d["luka"]
     prob = odds_for(LUKA_NAME, d["odds"])
@@ -295,6 +403,7 @@ def section_hero(d):
         ("Field goal %", fmt(l["fg_pct"], pct=True), f"{fmt(l['fgm'])} of {fmt(l['fga'])} per game"),
         ("True shooting", fmt(l["ts_pct"], pct=True), f"3P {fmt(l['fg3_pct'], pct=True)} on {fmt(l['fg3a'])} att"),
         ("MVP chance", f"{prob:.0%}" if prob else "–", f"{ordinal(mvp_rank)} favourite" if mvp_rank else "Polymarket"),
+        eligibility_tile(d),
     ]
     tiles_html = "".join(f'<div class="tile"><div class="tile-k">{k}</div><div class="tile-v">{v}</div>'
                          f'<div class="tile-s">{s}</div></div>' for k, v, s in tiles)
@@ -420,6 +529,85 @@ def luka_rank_table(d):
             f'players with real volume (FG% 5+ attempts a game, 3P% 3+, FT% 2+, TS% 8+ shots).</p>')
 
 
+SCHEDULE_AHEAD = 7
+
+
+def schedule_card(d):
+    """Next games with opponent strength, home/away, rest and back-to-backs."""
+    teams = {t["team_id"]: t for t in d["teams"]}
+    net_rank = rank(d["teams"], "net_rtg")
+    sched = d["games"]
+    up = [g for g in sched if g["status"] != "STATUS_FINAL"][:SCHEDULE_AHEAD]
+    if not up:
+        return '<div class="card"><h3>Coming up</h3><p class="muted">No games scheduled.</p></div>'
+    us_day = lambda g: datetime.fromisoformat(g["date_utc"].replace("Z", "+00:00")).astimezone(
+        ZoneInfo("America/New_York")).date()
+    prev = [g for g in sched if g["status"] == "STATUS_FINAL"]
+    last_day = us_day(prev[-1]) if prev else None
+    rows, nets, b2b, road = [], [], 0, 0
+    for g in up:
+        home = g["home_id"] == LAKERS_ID
+        opp = teams.get(g["away_id"] if home else g["home_id"], {})
+        day = us_day(g)
+        rest = (day - last_day).days - 1 if last_day else None
+        last_day = day
+        is_b2b = rest == 0
+        b2b += is_b2b
+        road += not home
+        net = opp.get("net_rtg")
+        if net is not None:
+            nets.append(net)
+        level = "hard" if (net or 0) >= 4 else "easy" if (net or 0) <= -4 else "mid"
+        rows.append(
+            f'<tr><td>{local(g["date_utc"]):%a %d %b}</td><td class="muted">{"vs" if home else "@"}</td>'
+            f'<th scope="row"><img src="{opp.get("logo", "")}" alt="" class="logo">{opp.get("abbr", "")}</th>'
+            f'<td>{opp.get("wins", "")}-{opp.get("losses", "")}</td>'
+            f'<td><span class="lvl {level}">{fmt(net)}</span> <small class="muted">'
+            f'{ordinal(net_rank[opp["team_id"]]) if opp.get("team_id") in net_rank else ""}</small></td>'
+            f'<td>{"<span class=\"tag b2b\">B2B</span>" if is_b2b else (f"{rest}d rest" if rest is not None else "")}'
+            f'</td></tr>')
+    avg = sum(nets) / len(nets) if nets else 0
+    verdict = "Tough stretch" if avg >= 2.5 else "Soft stretch" if avg <= -2.5 else "Average stretch"
+    return f"""
+    <div class="card"><h3>Coming up · next {len(up)} games</h3>
+      <p class="verdict"><strong>{verdict}</strong> · opponents' average net rating {avg:+.1f} ·
+      {road} on the road · {b2b} back-to-back{'s' if b2b != 1 else ''}</p>
+      <div class="tablewrap"><table class="sched"><thead><tr><th>Date</th><th></th><th>Opp</th><th>W-L</th>
+      <th>Net rtg</th><th>Rest</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
+      <p class="muted small">Net rating = points scored minus allowed per 100 possessions (rank of 30).
+      B2B = second night of a back-to-back, when stars most often rest.</p></div>"""
+
+
+IMPACT_TOP = 3
+
+
+def impact_card(d):
+    """Lakers players with the best plus/minus per game this season (regular rotation only)."""
+    games = [g["event_id"] for g in d["game_info"] if LAKERS_ID in (g["home_id"], g["away_id"])]
+    agg = {}
+    for eid in games:
+        for p in d["box_players"].get(eid, []):
+            if p["team_id"] != LAKERS_ID or not p.get("min"):
+                continue
+            a = agg.setdefault(p["athlete_id"], {"name": p["name"], "gp": 0, "min": 0, "pm": 0,
+                                                 "pts": 0, "reb": 0, "ast": 0})
+            a["gp"] += 1
+            for k, src in (("min", "min"), ("pm", "plus_minus"), ("pts", "pts"), ("reb", "reb"), ("ast", "ast")):
+                a[k] += p.get(src) or 0
+    pool = [a for a in agg.values() if a["gp"] >= max(3, 0.4 * len(games)) and a["min"] / a["gp"] >= 15]
+    top = sorted(pool, key=lambda a: -a["pm"] / a["gp"])[:IMPACT_TOP]
+    items = "".join(
+        f'<li><span class="imp-rank">{i}</span><div class="imp-main"><strong>{escape(a["name"])}</strong>'
+        f'<span class="muted small">{a["gp"]} GP · {a["min"] / a["gp"]:.0f} min · {a["pts"] / a["gp"]:.1f} pts · '
+        f'{a["reb"] / a["gp"]:.1f} reb · {a["ast"] / a["gp"]:.1f} ast</span></div>'
+        f'<span class="imp-pm">{a["pm"] / a["gp"]:+.1f}</span></li>' for i, a in enumerate(top, 1))
+    return f"""
+    <div class="card"><h3>Top {IMPACT_TOP} Lakers impact</h3>
+      <ul class="impact">{items or '<li class="muted">Not enough games yet.</li>'}</ul>
+      <p class="muted small">Ranked by plus/minus per game: how many points the Lakers outscore opponents by while
+      the player is on the court. Rotation players only (15+ minutes, 40%+ of games).</p></div>"""
+
+
 def section_lakers(d):
     teams = d["teams"]
     lal = next(t for t in teams if t["team_id"] == LAKERS_ID)
@@ -482,6 +670,10 @@ def section_lakers(d):
       <div class="tablewrap"><table class="stand"><thead><tr><th>#</th><th>Team</th><th>W-L</th><th>GB</th>
       <th>Strk</th><th>L10</th><th>Net</th></tr></thead><tbody>{stand}</tbody></table></div>
       <p class="muted small">Lines mark the playoff (1–6) and play-in (7–10) spots.</p></div>
+  </div>
+  <div class="grid2">
+    {schedule_card(d)}
+    {impact_card(d)}
   </div>
   <div class="card"><h3>Lakers vs. the league: offense and defense</h3>
     <div class="chips conf-chips" role="group" aria-label="Choose conference">
@@ -881,6 +1073,29 @@ table.vs thead th{font-size:12px}
 .gc details{margin-top:8px;border-top:1px solid var(--grid);padding-top:8px}
 .gc summary{cursor:pointer;font-weight:600;color:var(--ink2)}.gc h4{margin:14px 0 4px;font-size:13px}
 nav a.active{color:var(--ink);font-weight:600}
+.hero .tiles{grid-template-columns:repeat(7,1fr)}
+@media (max-width:1000px){.hero .tiles{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:560px){.hero .tiles{grid-template-columns:repeat(2,1fr)}}.tile-s .warn{color:var(--bad);font-weight:600}
+.ms-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:24px}
+@media (max-width:900px){.ms-grid{grid-template-columns:1fr}}
+.ms-items{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ms-item{background:var(--page);border-radius:10px;padding:8px 10px}
+.ms-v{font-size:22px;font-weight:700}.ms-k{font-size:12px;color:var(--ink2)}.ms-s{font-size:11px;color:var(--muted)}
+.mile{margin-bottom:10px}.mile-top{display:flex;justify-content:space-between;font-size:14px}
+.rbar.wide{width:100%;margin:4px 0 2px}
+ul.bests{list-style:none;margin:0;padding:0}ul.bests li{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;
+padding:6px 0;border-bottom:1px solid var(--grid)}ul.bests li>span:first-child{width:86px;color:var(--ink2);font-size:13px}
+ul.bests li.lead{font-weight:600}ul.bests li.lead strong{color:var(--hi)}
+.records{margin-top:14px;padding-top:10px;border-top:1px solid var(--grid)}
+.records ul{margin:4px 0 0;padding-left:18px;font-size:14px}.records a{color:var(--ink)}
+.verdict{margin:0 0 8px;font-size:14px}
+table.sched th[scope=row]{text-align:left;display:flex;align-items:center;gap:6px}
+.lvl{font-weight:600}.lvl.hard{color:var(--bad)}.lvl.easy{color:var(--good)}
+.tag.b2b{background:rgba(208,59,59,.12);color:var(--bad)}
+ul.impact{list-style:none;margin:0;padding:0}ul.impact li{display:flex;align-items:center;gap:12px;padding:10px 0;
+border-bottom:1px solid var(--grid)}.imp-rank{width:26px;height:26px;border-radius:50%;background:var(--hi-wash);
+display:grid;place-items:center;font-weight:700;color:var(--hi);flex:none}
+.imp-main{flex:1;display:flex;flex-direction:column}.imp-pm{font-size:22px;font-weight:700;color:var(--good)}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:0 0 10px;-webkit-overflow-scrolling:touch}
 .chip{flex:none;font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;cursor:pointer;
 border:1px solid var(--border);background:var(--page);color:var(--ink2)}
@@ -950,7 +1165,8 @@ time. Ratings are estimates from box-score totals. Snapshot {d['date']}.</footer
 
 def build():
     d = load()
-    home = section_hero(d) + section_games(d) + section_mvp(d) + section_compare(d) + section_lakers(d)
+    home = (section_hero(d) + section_milestones(d) + section_games(d) + section_mvp(d) + section_compare(d)
+            + section_lakers(d))
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(page("Luka Watch", "home", home, d), encoding="utf-8")
     (OUT.parent / "last-night.html").write_text(page("Last night · Luka Watch", "night", section_last_night(d), d),

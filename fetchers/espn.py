@@ -1,4 +1,5 @@
 """ESPN public API: standings, team stats, schedule, player stats, game logs, injuries."""
+import re
 import unicodedata
 from .http import get_json
 
@@ -176,6 +177,35 @@ def player_season(espn_id, season_year):
         "ftm": ftm, "fta": fta, "ft_pct": _num(avg["FT%"]),
         "ts_pct": ts_pct(pts, fga, fta),
         "dd2": int(_num(misc.get("DD2")) or 0), "td3": int(_num(misc.get("TD3")) or 0),
+    }
+
+
+RECORD_WORDS = re.compile(
+    r"\b(record|only (player|the|one)|first (player|ever|time since)|since (19|20)\d\d|history|historic|all-time|"
+    r"franchise|joins? (wilt|jordan|michael|kareem|oscar|lebron|kobe))", re.I)
+
+
+def luka_record_news(limit=100):
+    """ESPN NBA news items about Doncic that mention a record or historic feat."""
+    data = get_json(f"{SITE}/news", {"limit": limit})
+    out = []
+    for a in data.get("articles", []):
+        text = f"{a.get('headline', '')} {a.get('description', '')}"
+        if re.search(r"Don[cč]i[cć]", text) and RECORD_WORDS.search(text):
+            out.append({"published": a.get("published"), "headline": a.get("headline"),
+                        "url": ((a.get("links") or {}).get("web") or {}).get("href")})
+    return out
+
+
+def player_career(espn_id):
+    """Career regular-season totals (ESPN puts them in each category's 'totals')."""
+    data = get_json(f"{WEB}/sports/basketball/nba/athletes/{espn_id}/stats")
+    cats = {c["name"]: dict(zip(c["labels"], c.get("totals") or [])) for c in data.get("categories", [])}
+    avg, tot, misc = cats.get("averages", {}), cats.get("totals", {}), cats.get("miscellaneous", {})
+    return {
+        "espn_id": espn_id, "gp": _num(avg.get("GP")), "pts": _num(tot.get("PTS")), "reb": _num(tot.get("REB")),
+        "ast": _num(tot.get("AST")), "fg3m": _made_att(tot.get("3PT"))[0], "stl": _num(tot.get("STL")),
+        "blk": _num(tot.get("BLK")), "dd2": _num(misc.get("DD2")), "td3": _num(misc.get("TD3")),
     }
 
 

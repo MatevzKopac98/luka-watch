@@ -85,6 +85,8 @@ def main():
                 upsert(con, "player_season", {"snapshot_date": today, **season})
             for g in espn.player_gamelog(pid):
                 upsert(con, "player_games", g)
+            if espn._plain(name) == espn._plain(CORE_PLAYERS[0]):     # career totals for Luka's milestones
+                upsert(con, "player_career", {"snapshot_date": today, **espn.player_career(pid)})
             log(f"Player: {profile['name']} ({profile['team_abbr']})"
                 f" {season['pts'] if season else '-'} ppg")
         except Exception as e:
@@ -100,15 +102,27 @@ def main():
     except Exception as e:
         errors.append(f"league players: {e}")
 
-    # 5. Box scores: every finished game of the last few nights (US dates), plus the Lakers' last game
+    # 5. Box scores: every finished game of the season (US dates), plus the Lakers' last game.
+    #    Nights that are complete and older than GAME_NIGHTS_BACK are remembered and skipped.
     try:
         have = {r[0] for r in con.execute("SELECT event_id FROM game_info WHERE status='STATUS_FINAL'")}
+        done = {r[0] for r in con.execute("SELECT us_date FROM nights_done")}
         local_today = datetime.now(TZ).date()
-        targets = []
-        for back in range(GAME_NIGHTS_BACK, 0, -1):
-            us_date = (local_today - timedelta(days=back)).strftime("%Y%m%d")
-            targets += [(g["event_id"], us_date) for g in espn.scoreboard(us_date)
-                        if g["status"] == "STATUS_FINAL" and g["event_id"] not in have]
+        first = min((g["date_utc"] for g in games), default=None)
+        start = (datetime.fromisoformat(first.replace("Z", "+00:00")).astimezone(ZoneInfo("America/New_York")).date()
+                 if first else local_today - timedelta(days=GAME_NIGHTS_BACK))
+        targets, day = [], start
+        while day < local_today:
+            us_date = day.strftime("%Y%m%d")
+            recent = (local_today - day).days <= GAME_NIGHTS_BACK
+            if us_date not in done or recent:
+                night = espn.scoreboard(us_date)
+                targets += [(g["event_id"], us_date) for g in night
+                            if g["status"] == "STATUS_FINAL" and g["event_id"] not in have]
+                if not recent and all(g["status"] in ("STATUS_FINAL", "STATUS_POSTPONED", "STATUS_CANCELED")
+                                      for g in night):
+                    con.execute("INSERT OR IGNORE INTO nights_done (us_date) VALUES (?)", (us_date,))
+            day += timedelta(days=1)
         lal_final = [g for g in games if g["status"] == "STATUS_FINAL"]
         if lal_final and lal_final[-1]["event_id"] not in have | {t[0] for t in targets}:
             g = lal_final[-1]
@@ -125,6 +139,15 @@ def main():
         log(f"Box scores: {len(targets)} new games")
     except Exception as e:
         errors.append(f"box scores: {e}")
+
+    # 5b. Record headlines about Luka (ESPN news keeps only recent items, so we accumulate them)
+    try:
+        news = [n for n in espn.luka_record_news() if n["url"]]
+        for n in news:
+            upsert(con, "luka_news", n)
+        log(f"Luka record headlines: {len(news)} found")
+    except Exception as e:
+        errors.append(f"news: {e}")
 
     # 6. Injuries for the Lakers and their next opponent
     try:
