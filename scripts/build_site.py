@@ -375,7 +375,7 @@ def section_milestones(d):
     records = f'<div class="records"><span class="lbl-k">In the news</span><ul>{news}</ul></div>' if news else ""
     return f"""
 <section id="milestones">
-  <h2>Milestones & streaks</h2>
+  <h2>Luka's milestones & streaks</h2>
   <div class="card ms">
     <div class="ms-grid">
       <div><h3>This season</h3><div class="ms-items">{streaks}</div></div>
@@ -578,7 +578,7 @@ def schedule_card(d):
       B2B = second night of a back-to-back, when stars most often rest.</p></div>"""
 
 
-IMPACT_TOP = 3
+IMPACT_TOP = 5
 
 
 def impact_card(d):
@@ -594,15 +594,19 @@ def impact_card(d):
             a["gp"] += 1
             for k, src in (("min", "min"), ("pm", "plus_minus"), ("pts", "pts"), ("reb", "reb"), ("ast", "ast")):
                 a[k] += p.get(src) or 0
+    luka = agg.pop(d["luka"]["espn_id"], None)
     pool = [a for a in agg.values() if a["gp"] >= max(3, 0.4 * len(games)) and a["min"] / a["gp"] >= 15]
     top = sorted(pool, key=lambda a: -a["pm"] / a["gp"])[:IMPACT_TOP]
+    luka_ref = (f'<p class="verdict">For reference, Luka: <strong>{luka["pm"] / luka["gp"]:+.1f}</strong> per game</p>'
+                if luka and luka["gp"] else "")
     items = "".join(
         f'<li><span class="imp-rank">{i}</span><div class="imp-main"><strong>{escape(a["name"])}</strong>'
         f'<span class="muted small">{a["gp"]} GP · {a["min"] / a["gp"]:.0f} min · {a["pts"] / a["gp"]:.1f} pts · '
         f'{a["reb"] / a["gp"]:.1f} reb · {a["ast"] / a["gp"]:.1f} ast</span></div>'
         f'<span class="imp-pm">{a["pm"] / a["gp"]:+.1f}</span></li>' for i, a in enumerate(top, 1))
     return f"""
-    <div class="card"><h3>Top {IMPACT_TOP} Lakers impact</h3>
+    <div class="card"><h3>Top {IMPACT_TOP} teammates by impact</h3>
+      {luka_ref}
       <ul class="impact">{items or '<li class="muted">Not enough games yet.</li>'}</ul>
       <p class="muted small">Ranked by plus/minus per game: how many points the Lakers outscore opponents by while
       the player is on the court. Rotation players only (15+ minutes, 40%+ of games).</p></div>"""
@@ -1147,6 +1151,7 @@ def page(title, active, body, d):
     now = datetime.now(TZ)
     links = [("index.html#next", "Lakers games", "home"), ("index.html#mvp", "MVP race", "home"),
              ("index.html#compare", "Compare", "home"), ("index.html#lakers", "Lakers", "home"),
+             ("index.html#milestones", "Milestones", "home"),
              ("last-night.html", "Last night", "night")]
     nav = "".join(f'<a href="{h}"{" class=\"active\"" if k == active == "night" else ""}>{t}</a>'
                   for h, t, k in links)
@@ -1165,8 +1170,8 @@ time. Ratings are estimates from box-score totals. Snapshot {d['date']}.</footer
 
 def build():
     d = load()
-    home = (section_hero(d) + section_milestones(d) + section_games(d) + section_mvp(d) + section_compare(d)
-            + section_lakers(d))
+    home = (section_hero(d) + section_games(d) + section_mvp(d) + section_compare(d) + section_lakers(d)
+            + section_milestones(d))
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(page("Luka Watch", "home", home, d), encoding="utf-8")
     (OUT.parent / "last-night.html").write_text(page("Last night · Luka Watch", "night", section_last_night(d), d),
