@@ -129,6 +129,29 @@ table.vs thead th{font-size:12px}
 .gc details{margin-top:8px;border-top:1px solid var(--grid);padding-top:8px}
 .gc summary{cursor:pointer;font-weight:600;color:var(--ink2)}.gc h4{margin:14px 0 4px;font-size:13px}
 nav a.active{color:var(--ink);font-weight:600}
+.hero .tiles{grid-template-columns:repeat(7,1fr)}
+@media (max-width:1000px){.hero .tiles{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:560px){.hero .tiles{grid-template-columns:repeat(2,1fr)}}.tile-s .warn{color:var(--bad);font-weight:600}
+.ms-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:24px}
+@media (max-width:900px){.ms-grid{grid-template-columns:1fr}}
+.ms-items{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ms-item{background:var(--page);border-radius:10px;padding:8px 10px}
+.ms-v{font-size:22px;font-weight:700}.ms-k{font-size:12px;color:var(--ink2)}.ms-s{font-size:11px;color:var(--muted)}
+.mile{margin-bottom:10px}.mile-top{display:flex;justify-content:space-between;font-size:14px}
+.rbar.wide{width:100%;margin:4px 0 2px}
+ul.bests{list-style:none;margin:0;padding:0}ul.bests li{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;
+padding:6px 0;border-bottom:1px solid var(--grid)}ul.bests li>span:first-child{width:86px;color:var(--ink2);font-size:13px}
+ul.bests li.lead{font-weight:600}ul.bests li.lead strong{color:var(--hi)}
+.records{margin-top:14px;padding-top:10px;border-top:1px solid var(--grid)}
+.records ul{margin:4px 0 0;padding-left:18px;font-size:14px}.records a{color:var(--ink)}
+.verdict{margin:0 0 8px;font-size:14px}
+table.sched th[scope=row]{text-align:left;display:flex;align-items:center;gap:6px}
+.lvl{font-weight:600}.lvl.hard{color:var(--bad)}.lvl.easy{color:var(--good)}
+.tag.b2b{background:rgba(208,59,59,.12);color:var(--bad)}
+ul.impact{list-style:none;margin:0;padding:0}ul.impact li{display:flex;align-items:center;gap:12px;padding:10px 0;
+border-bottom:1px solid var(--grid)}.imp-rank{width:26px;height:26px;border-radius:50%;background:var(--hi-wash);
+display:grid;place-items:center;font-weight:700;color:var(--hi);flex:none}
+.imp-main{flex:1;display:flex;flex-direction:column}.imp-pm{font-size:22px;font-weight:700;color:var(--good)}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:0 0 10px;-webkit-overflow-scrolling:touch}
 .chip{flex:none;font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;cursor:pointer;
 border:1px solid var(--border);background:var(--page);color:var(--ink2)}
@@ -141,7 +164,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 16px 32px;color:var(--muted);fon
 </style></head><body>
 <header class="top"><div class="bar-in"><a class="brand" href="index.html">Luka Watch</a>
 <nav><a href="index.html#next">Lakers games</a><a href="index.html#mvp">MVP race</a><a href="index.html#compare">Compare</a><a href="index.html#lakers">Lakers</a><a href="last-night.html" class="active">Last night</a></nav>
-<span class="updated">Updated Tue 03 Nov, 23:01</span></div></header>
+<span class="updated">Updated Tue 03 Nov, 23:50</span></div></header>
 <main>
 <section class="hero">
   <h1>Last night in the NBA</h1>
