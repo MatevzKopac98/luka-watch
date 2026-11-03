@@ -50,7 +50,14 @@ python scripts/check_sources.py # check every data source still responds
 
 ## Daily schedule
 
-GitHub Actions (`.github/workflows/daily.yml`) runs the update at 06:40 and 07:20 Ljubljana time
-(one hour later during summer time), commits the database, and publishes `site/` to GitHub Pages.
+GitHub Actions (`.github/workflows/daily.yml`) runs the update at 07:35 (page ready by 08:00) and a
+backup pass at 08:30 Ljubljana time (one hour later during summer time), commits the database, and
+publishes `site/` to GitHub Pages. `python scripts/end_times.py` shows when games actually ended each
+night, to tune those times.
+
+## Pages
+
+- `index.html`: Luka, last & next Lakers game, MVP race, comparison table, Lakers vs. the league
+- `last-night.html`: every game of the night with "why they won" insights, key player and box scores
 Use **Actions → Daily update → Run workflow** for a manual refresh.
 To get the latest database locally: `git pull`.
