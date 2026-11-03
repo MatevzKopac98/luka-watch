@@ -207,6 +207,32 @@ def player_gamelog(espn_id):
     return rows
 
 
+def league_players(season_year):
+    """Per-game stats for every qualified player in the league (used for league ranks)."""
+    data = get_json(f"{WEB}/sports/basketball/nba/statistics/byathlete",
+                    {"region": "us", "lang": "en", "contentorigin": "espn", "isqualified": "true",
+                     "page": 1, "limit": 1000, "sort": "offensive.avgPoints:desc",
+                     "season": season_year, "seasontype": 2})
+    names = {c["name"]: c["names"] for c in data.get("categories", [])}
+    rows = []
+    for a in data.get("athletes", []):
+        s = {}
+        for c in a["categories"]:
+            s.update({k: _num(v) for k, v in zip(names.get(c["name"], []), c.get("totals", []))})
+        pts, fga, fta = s.get("avgPoints"), s.get("avgFieldGoalsAttempted"), s.get("avgFreeThrowsAttempted")
+        rows.append({
+            "espn_id": a["athlete"]["id"], "name": a["athlete"]["displayName"],
+            "team_abbr": (a["athlete"].get("teamShortName") or (a["athlete"].get("team") or {}).get("abbreviation")),
+            "gp": s.get("gamesPlayed"), "min": s.get("avgMinutes"), "pts": pts, "reb": s.get("avgRebounds"),
+            "ast": s.get("avgAssists"), "stl": s.get("avgSteals"), "blk": s.get("avgBlocks"),
+            "tov": s.get("avgTurnovers"), "fga": fga, "fg_pct": s.get("fieldGoalPct"),
+            "fg3m": s.get("avgThreePointFieldGoalsMade"), "fg3a": s.get("avgThreePointFieldGoalsAttempted"),
+            "fg3_pct": s.get("threePointFieldGoalPct"), "fta": fta, "ft_pct": s.get("freeThrowPct"),
+            "ts_pct": ts_pct(pts, fga, fta), "dd2": s.get("doubleDouble"), "td3": s.get("tripleDouble"),
+        })
+    return rows
+
+
 # ---------- games: scoreboard & box scores ----------
 
 TEAM_BOX = {   # ESPN stat name -> our column (made-attempted pairs are split below)

@@ -68,6 +68,8 @@ def load():
     }
     luka = next(p for p in data["players"] if p["name"] == LUKA_NAME)
     data["luka"] = luka
+    data["league"] = q("""SELECT * FROM league_players
+                          WHERE snapshot_date = (SELECT MAX(snapshot_date) FROM league_players)""")
     data["luka_games"] = q("SELECT * FROM player_games WHERE espn_id=? ORDER BY game_date", luka["espn_id"])
 
     # Finished games with box scores
@@ -379,6 +381,45 @@ def team_block_rows(teams):
     return defs, ranks
 
 
+def rank_bar(r, n):
+    pct = (n + 1 - r) / n * 100
+    return f'<span class="rbar"><i style="width:{pct:.0f}%"></i></span>'
+
+
+# Luka vs. every qualified player: key, label, lower-is-better, (volume column, minimum) for percentages
+LUKA_RANKS = [
+    ("pts", "Points", False, None), ("reb", "Rebounds", False, None), ("ast", "Assists", False, None),
+    ("stl", "Steals", False, None), ("blk", "Blocks", False, None), ("tov", "Turnovers", True, None),
+    ("min", "Minutes", False, None), ("fg_pct", "Field goal %", False, ("fga", 5)),
+    ("fg3m", "3-pointers made", False, None), ("fg3_pct", "3-point %", False, ("fg3a", 3)),
+    ("ft_pct", "Free throw %", False, ("fta", 2)), ("ts_pct", "True shooting %", False, ("fga", 8)),
+    ("dd2", "Double-doubles", False, None), ("td3", "Triple-doubles", False, None),
+]
+
+
+def luka_rank_table(d):
+    league = d["league"]
+    me = next((p for p in league if p["name"] == LUKA_NAME), None)
+    if not me:
+        return '<p class="muted">Luka is not in the qualified-player list yet.</p>'
+    rows = []
+    for k, lbl, low, vol in LUKA_RANKS:
+        pool = [p for p in league if p[k] is not None and (not vol or (p[vol[0]] or 0) >= vol[1])]
+        v = me[k]
+        if v is None or me not in pool or (k in ("dd2", "td3") and not v):
+            rows.append(f'<tr><th scope="row">{lbl}</th><td>{fmt(v)}</td><td>–</td><td></td></tr>')
+            continue
+        r = 1 + sum(1 for p in pool if (p[k] < v if low else p[k] > v))
+        pct = k.endswith("pct")
+        rows.append(f'<tr><th scope="row">{lbl}</th><td>{fmt(v, 0 if k in ("dd2", "td3") else 1, pct)}</td>'
+                    f'<td>{ordinal(r)} <small class="muted">/ {len(pool)}</small></td>'
+                    f'<td>{rank_bar(r, len(pool))}</td></tr>')
+    return (f'<table class="kv"><thead><tr><th></th><th>Per game</th><th>NBA rank</th><th></th></tr></thead>'
+            f'<tbody>{"".join(rows)}</tbody></table>'
+            f'<p class="muted small">Ranked against all {len(league)} qualified players. Shooting percentages only count '
+            f'players with real volume (FG% 5+ attempts a game, 3P% 3+, FT% 2+, TS% 8+ shots).</p>')
+
+
 def section_lakers(d):
     teams = d["teams"]
     lal = next(t for t in teams if t["team_id"] == LAKERS_ID)
@@ -398,14 +439,10 @@ def section_lakers(d):
     tiles_html = "".join(f'<div class="tile"><div class="tile-k">{k}</div><div class="tile-v">{v}</div>'
                          f'<div class="tile-s">{s}</div></div>' for k, v, s in tiles)
 
-    def rank_bar(r):
-        pct = (31 - r) / 30 * 100
-        return f'<span class="rbar"><i style="width:{pct:.0f}%"></i></span>'
-
     stat_rows = "".join(
         f'<tr><th scope="row">{lbl}</th><td>{fmt(lal[k])}</td>'
         f'<td>{ordinal(ranks[k][LAKERS_ID]) if k in ranks else "–"}</td>'
-        f'<td>{rank_bar(ranks[k][LAKERS_ID]) if k in ranks else ""}</td></tr>'
+        f'<td>{rank_bar(ranks[k][LAKERS_ID], 30) if k in ranks else ""}</td></tr>'
         for k, lbl, _, _ in defs)
 
     res = []
@@ -429,11 +466,17 @@ def section_lakers(d):
   <h2>Lakers</h2>
   <div class="tiles">{tiles_html}</div>
   <div class="grid2">
-    <div class="card"><h3>Team stats & league rank</h3>
+    <div class="card"><h3>Stats & league rank</h3>
+      <div class="chips" role="group" aria-label="Choose team or player">
+        <button type="button" class="chip on" data-stat="rank-lal" aria-pressed="true">Lakers</button>
+        <button type="button" class="chip" data-stat="rank-luka" aria-pressed="false">Luka</button>
+      </div>
+      <div class="stat-panel" data-stat="rank-lal">
       <table class="kv"><thead><tr><th></th><th>Per game</th><th>Rank</th><th></th></tr></thead>
       <tbody>{stat_rows}</tbody></table>
       <p class="muted small">Ratings are per 100 possessions, estimated from box-score totals.
-      Rank is out of 30 (1st = best).</p></div>
+      Rank is out of 30 teams (1st = best).</p></div>
+      <div class="stat-panel" data-stat="rank-luka" hidden>{luka_rank_table(d)}</div></div>
     <div class="card"><h3>Last 5 games</h3><ul class="results">{''.join(res)}</ul>
       <h3 style="margin-top:20px">Western Conference</h3>
       <div class="tablewrap"><table class="stand"><thead><tr><th>#</th><th>Team</th><th>W-L</th><th>GB</th>
@@ -614,7 +657,7 @@ def game_story(info, box, players, teams):
 
 
 def story_html(story, teams):
-    reasons = "".join(f"<li>{escape(r)}</li>" for r in story["reasons"])
+    reasons = "".join(f"<li>{escape(r)}</li>" for r in story["reasons"]) or "<li>No single stat stood out</li>"
     key = (f'<p class="keyp"><span class="lbl-k">Key player</span> <strong>{escape(story["key"]["name"])}</strong>'
            f' · {story["key_line"]}</p>') if story["key"] else ""
     why = (f'<p class="lbl-k">Why the {escape(nickname(story["w_abbr"], teams))} won</p>'
@@ -696,7 +739,7 @@ def game_card(info, d):
     <span class="muted small">Final{f" · ended {local(info['end_utc']):%H:%M} Ljubljana" if info.get('end_utc') else ''}</span></div>
   {team_row('away')}{team_row('home')}
   {story_html(story, d['teams'])}
-  {f'<p class="headline">{escape(info["headline"])}</p>' if info.get("headline") else ''}
+  <p class="headline">{escape(info.get("headline") or "")}</p>
   {highlight_buttons(info, d['teams'])}
   <details><summary>Box score</summary>
     {quarter_table(info)}
@@ -826,9 +869,12 @@ ul.why{margin:0 0 6px;padding-left:18px}ul.why li{margin:2px 0}
 table.box{font-size:13px}table.box th[scope=row]{text-align:left;position:sticky;left:0;background:var(--surface)}
 table.box th[scope=row] small{color:var(--muted);font-size:10px}table.box td.strong{font-weight:700}
 table.vs thead th{font-size:12px}
-.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;align-items:start}
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;align-items:stretch}
 @media (max-width:760px){.games{grid-template-columns:1fr}}
-.gc{margin-top:0}.gc.me{box-shadow:inset 0 0 0 2px var(--hi)}
+.gc{margin-top:0;display:flex;flex-direction:column}
+.gc ul.why{min-height:3.2em}.gc .keyp{min-height:3em}
+.gc .headline{min-height:4.4em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.gc .btns{margin-top:auto}.gc.me{box-shadow:inset 0 0 0 2px var(--hi)}
 .gc-tags{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-bottom:6px}
 .gc-team{display:flex;align-items:center;gap:8px;padding:5px 0;color:var(--ink2)}
 .gc-team.win{color:var(--ink);font-weight:700}.gc-name{flex:1}.gc-pts{font-size:22px;font-variant-numeric:tabular-nums}

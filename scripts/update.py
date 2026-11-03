@@ -90,6 +90,16 @@ def main():
         except Exception as e:
             errors.append(f"player {name}: {e}")
 
+    # 4b. Whole-league player stats (for Luka's league ranks)
+    try:
+        league = espn.league_players(year)
+        con.execute("DELETE FROM league_players WHERE snapshot_date = ?", (today,))
+        for r in league:
+            upsert(con, "league_players", {"snapshot_date": today, **r})
+        log(f"League players: {len(league)}")
+    except Exception as e:
+        errors.append(f"league players: {e}")
+
     # 5. Box scores: every finished game of the last few nights (US dates), plus the Lakers' last game
     try:
         have = {r[0] for r in con.execute("SELECT event_id FROM game_info WHERE status='STATUS_FINAL'")}
