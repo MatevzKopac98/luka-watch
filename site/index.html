@@ -5,15 +5,15 @@
 :root{color-scheme:light;--page:#f6f5f2;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#898781;
 --grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);--hi:#6250d6;--hi-wash:rgba(98,80,214,.08);
 --opp:#eb6834;--base:#b9b8b0;--edge:rgba(98,80,214,.12);--good:#006300;--bad:#d03b3b;
---s1:#6250d6;--s2:#eb6834;--s3:#1baf7a;--s4:#2a78d6;--s5:#e87ba4;--east:#9db4d3;--west:#a3c4ac}
+--s1:#6250d6;--s2:#eb6834;--s3:#1baf7a;--s4:#2a78d6;--s5:#e87ba4;--east:#9db4d3;--west:#dba4a9}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--page:#0d0d0d;
 --surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;
 --border:rgba(255,255,255,.10);--hi:#9085e9;--hi-wash:rgba(144,133,233,.12);--opp:#d95926;--base:#5a5955;
---edge:rgba(144,133,233,.18);--good:#0ca30c;--s1:#9085e9;--s2:#d95926;--s3:#199e70;--s4:#3987e5;--s5:#d55181;--east:#4f6684;--west:#557260}}
+--edge:rgba(144,133,233,.18);--good:#0ca30c;--s1:#9085e9;--s2:#d95926;--s3:#199e70;--s4:#3987e5;--s5:#d55181;--east:#4f6684;--west:#7f5258}}
 :root[data-theme="dark"]{color-scheme:dark;--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;
 --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--hi:#9085e9;--hi-wash:rgba(144,133,233,.12);
 --opp:#d95926;--base:#5a5955;--edge:rgba(144,133,233,.18);--good:#0ca30c;--s1:#9085e9;--s2:#d95926;
---s3:#199e70;--s4:#3987e5;--s5:#d55181;--east:#4f6684;--west:#557260}
+--s3:#199e70;--s4:#3987e5;--s5:#d55181;--east:#4f6684;--west:#7f5258}
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
 header.top{position:sticky;top:0;z-index:5;background:var(--page);border-bottom:1px solid var(--border)}
@@ -99,8 +99,8 @@ table.kv th,table.kv td{padding:7px 4px}.rbar{width:44px}
 .chart .dot.east{fill:var(--east)}.chart .dot.west{fill:var(--west)}
 .sw.east{background:var(--east)}.sw.west{background:var(--west)}
 .scatter[data-conf="east"] .conf-west:not(.pinned),.scatter[data-conf="west"] .conf-east:not(.pinned){display:none}
-.chips.ln-chips{display:none}.ln-panel{min-width:0}
-@media (max-width:760px){.chips.ln-chips{display:flex}.ln-panel.off{display:none}}
+.ln-panel.off{display:none}.ln-panel>.card{margin-top:0}
+.inj2{gap:16px}.inj2 h3.sub{margin-top:18px}
 .card-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2);margin:0 0 8px}
 h3.sub{margin:18px 0 6px;font-size:14px}
 .score{font-size:30px;font-weight:700;letter-spacing:-.01em}.score .muted{margin:0 4px}
@@ -141,7 +141,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 16px 32px;color:var(--muted);fon
 </style></head><body>
 <header class="top"><div class="bar-in"><a class="brand" href="index.html">Luka Watch</a>
 <nav><a href="index.html#next">Lakers games</a><a href="index.html#mvp">MVP race</a><a href="index.html#compare">Compare</a><a href="index.html#lakers">Lakers</a><a href="last-night.html">Last night</a></nav>
-<span class="updated">Updated Tue 03 Nov, 22:58</span></div></header>
+<span class="updated">Updated Tue 03 Nov, 23:01</span></div></header>
 <main>
 <section class="hero">
   <div class="hero-head"><img src="https://a.espncdn.com/i/headshots/nba/players/full/3945274.png" alt="" class="headshot"><div><h1>Luka Dončić</h1>
@@ -156,8 +156,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 16px 32px;color:var(--muted);fon
     <button type="button" class="chip on" data-panel="last" aria-pressed="true">Last game</button>
     <button type="button" class="chip" data-panel="next" aria-pressed="false">Next game</button>
   </div>
-  <div class="grid2 ln">
-    <div class="ln-panel" data-panel="last">
+  <div class="ln-panel" data-panel="last">
   <div class="card">
     <h3 class="card-kicker">Last game · Tuesday 03 November</h3>
     <div class="mu-head">
@@ -176,7 +175,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 16px 32px;color:var(--muted);fon
     <h3 class="sub">Lakers box score</h3>
     <div class="tablewrap"><table class="box"><thead><tr><th>Player</th><th>MIN</th><th>PTS</th><th>REB</th><th>AST</th><th>FG</th><th>3PT</th><th>FT</th><th>OREB</th><th>DREB</th><th>STL</th><th>BLK</th><th>TO</th><th>PF</th><th>+/-</th></tr></thead><tbody><tr><th scope="row">L. Doncic <small>S</small></th><td>36</td><td class="strong">42</td><td>7</td><td>13</td><td>14-24</td><td>6-15</td><td>8-10</td><td>0</td><td>7</td><td>2</td><td>0</td><td>2</td><td>2</td><td>+26</td></tr><tr><th scope="row">A. Reaves <small>S</small></th><td>34</td><td class="strong">27</td><td>2</td><td>5</td><td>10-15</td><td>4-5</td><td>3-4</td><td>0</td><td>2</td><td>0</td><td>0</td><td>5</td><td>3</td><td>+21</td></tr><tr><th scope="row">W. Kessler <small>S</small></th><td>32</td><td class="strong">15</td><td>15</td><td>2</td><td>7-13</td><td>0-0</td><td>1-3</td><td>4</td><td>11</td><td>2</td><td>0</td><td>1</td><td>3</td><td>+16</td></tr><tr><th scope="row">J. LaRavia <small>S</small></th><td>26</td><td class="strong">7</td><td>4</td><td>2</td><td>3-4</td><td>1-1</td><td>0-0</td><td>3</td><td>1</td><td>1</td><td>2</td><td>4</td><td>5</td><td>+20</td></tr><tr><th scope="row">M. Thybulle <small>S</small></th><td>19</td><td class="strong">6</td><td>1</td><td>2</td><td>2-6</td><td>2-6</td><td>0-0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>3</td><td>+13</td></tr><tr><th scope="row">S. Mamukelashvili</th><td>28</td><td class="strong">13</td><td>3</td><td>4</td><td>5-10</td><td>2-5</td><td>1-2</td><td>1</td><td>2</td><td>2</td><td>0</td><td>2</td><td>3</td><td>+10</td></tr><tr><th scope="row">Q. Grimes</th><td>23</td><td class="strong">7</td><td>4</td><td>4</td><td>2-4</td><td>1-3</td><td>2-3</td><td>1</td><td>3</td><td>0</td><td>0</td><td>0</td><td>2</td><td>+5</td></tr><tr><th scope="row">C. Sexton</th><td>16</td><td class="strong">6</td><td>1</td><td>5</td><td>3-4</td><td>0-1</td><td>0-0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>-2</td></tr><tr><th scope="row">Z. Williams</th><td>15</td><td class="strong">9</td><td>2</td><td>2</td><td>3-6</td><td>3-6</td><td>0-0</td><td>0</td><td>2</td><td>1</td><td>0</td><td>0</td><td>3</td><td>-6</td></tr><tr><th scope="row">J. Vanderbilt</th><td>6</td><td class="strong">2</td><td>1</td><td>0</td><td>1-1</td><td>0-0</td><td>0-0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>-2</td></tr><tr><th scope="row">L. Lovering</th><td>1</td><td class="strong">0</td><td>1</td><td>0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>+1</td></tr><tr><th scope="row">B. James</th><td>1</td><td class="strong">2</td><td>0</td><td>0</td><td>1-1</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>2</td><td>+1</td></tr><tr><th scope="row">J. Hardy</th><td>1</td><td class="strong">2</td><td>0</td><td>0</td><td>0-1</td><td>0-1</td><td>2-2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>+1</td></tr><tr><th scope="row">C. Carr</th><td>1</td><td class="strong">0</td><td>0</td><td>0</td><td>0-0</td><td>0-0</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>+1</td></tr></tbody></table></div>
   </div></div>
-    <div class="ln-panel off" data-panel="next">
+  <div class="ln-panel off" data-panel="next">
   <div class="card matchup">
     <h3 class="card-kicker">Next game</h3>
     <div class="mu-head">
@@ -190,11 +189,12 @@ footer{max-width:1080px;margin:0 auto;padding:0 16px 32px;color:var(--muted);fon
     <table class="vs"><thead><tr><th>LAL</th><th>Season averages</th><th>SAC</th></tr></thead>
     <tbody><tr><td class="edge">122.5 <small>2nd</small></td><th scope="row">Points scored</th><td class="">110.1 <small>22nd</small></td></tr><tr><td class="edge">115.2 <small>19th</small></td><th scope="row">Points allowed</th><td class="">124.3 <small>29th</small></td></tr><tr><td class="edge">120.3 <small>2nd</small></td><th scope="row">Offensive rating</th><td class="">106.0 <small>25th</small></td></tr><tr><td class="edge">113.2 <small>21st</small></td><th scope="row">Defensive rating</th><td class="">119.7 <small>29th</small></td></tr><tr><td class="edge">7.1 <small>8th</small></td><th scope="row">Net rating</th><td class="">-13.7 <small>29th</small></td></tr><tr><td class="">101.8 </td><th scope="row">Pace (possessions)</th><td class="">103.9 </td></tr><tr><td class="edge">52.0 <small>1st</small></td><th scope="row">Field goal %</th><td class="">46.1 <small>16th</small></td></tr><tr><td class="edge">39.7 <small>2nd</small></td><th scope="row">3-point %</th><td class="">32.7 <small>24th</small></td></tr><tr><td class="">40.1 <small>28th</small></td><th scope="row">Rebounds</th><td class="edge">40.1 <small>27th</small></td></tr><tr><td class="edge">25.4 <small>22nd</small></td><th scope="row">Assists</th><td class="">24.6 <small>26th</small></td></tr><tr><td class="">17.6 <small>28th</small></td><th scope="row">Turnovers</th><td class="edge">16.0 <small>21st</small></td></tr><tr><td class="edge">10.1 <small>5th</small></td><th scope="row">Steals</th><td class="">8.0 <small>19th</small></td></tr><tr><td class="edge">6.4 <small>4th</small></td><th scope="row">Blocks</th><td class="">2.7 <small>30th</small></td></tr></tbody></table>
     <p class="muted small">Small number = league rank out of 30. The team with the edge on each stat is highlighted.</p>
-    <h3 class="sub">Injuries · Lakers</h3><ul class="inj"><li><strong>Adou Thiero</strong> · Out — Head coach JJ Redick said Monday that Thiero (knee) has participated in live action, and the hope is that he&#x27;ll be available by the end of the week, Khobi Price of The California Post reports.</li></ul>
-    <h3 class="sub">Injuries · Sacramento Kings</h3><ul class="inj"><li><strong>Ben Simmons</strong> · Out — Simmons underwent successful surgery Tuesday to repair a torn right Achilles tendon, James Ham of ESPN 1320 Sacramento reports.</li><li><strong>Dylan Cardwell</strong> · Out — Cardwell (calf) has been ruled out for Monday&#x27;s game against the Mavericks.</li><li><strong>Keegan Murray</strong> · Out — Murray (ankle) will be re-evaluated in 10-to-14 days, NBA reporter Marc Stein reports.</li><li><strong>Maxime Raynaud</strong> · Out — Raynaud (knee) is progressing in his rehabilitation and will be re-evaluated in approximately two weeks, Brenden Nunes of KHTK Sactown Sports 1140 reports.</li></ul>
+    <div class="grid2 inj2">
+      <div><h3 class="sub">Injuries · Lakers</h3><ul class="inj"><li><strong>Adou Thiero</strong> · Out — Head coach JJ Redick said Monday that Thiero (knee) has participated in live action, and the hope is that he&#x27;ll be available by the end of the week, Khobi Price of The California Post reports.</li></ul></div>
+      <div><h3 class="sub">Injuries · Sacramento Kings</h3><ul class="inj"><li><strong>Ben Simmons</strong> · Out — Simmons underwent successful surgery Tuesday to repair a torn right Achilles tendon, James Ham of ESPN 1320 Sacramento reports.</li><li><strong>Dylan Cardwell</strong> · Out — Cardwell (calf) has been ruled out for Monday&#x27;s game against the Mavericks.</li><li><strong>Keegan Murray</strong> · Out — Murray (ankle) will be re-evaluated in 10-to-14 days, NBA reporter Marc Stein reports.</li><li><strong>Maxime Raynaud</strong> · Out — Raynaud (knee) is progressing in his rehabilitation and will be re-evaluated in approximately two weeks, Brenden Nunes of KHTK Sactown Sports 1140 reports.</li></ul></div>
+    </div>
     <h3 class="sub">Head-to-head this season</h3><ul class="results"><li class='muted'>First meeting this season</li></ul>
   </div></div>
-  </div>
 </section>
 <section id="mvp">
   <h2>MVP race</h2>
