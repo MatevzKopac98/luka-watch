@@ -1,0 +1,54 @@
+name: Daily update
+
+on:
+  schedule:
+    # GitHub cron is UTC and can start 5-20 min late.
+    # 05:40 UTC = 06:40 Ljubljana (winter) -> page ready before 07:00
+    # 06:20 UTC = 07:20 Ljubljana        -> second pass catches late West Coast games
+    - cron: "40 5 * * *"
+    - cron: "20 6 * * *"
+  workflow_dispatch:        # "Run workflow" button for a manual refresh
+
+permissions:
+  contents: write           # commit the updated database back to the repo
+  pages: write
+  id-token: write
+
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Fetch data and build site
+        run: python scripts/update.py
+        continue-on-error: true   # a single failing source shouldn't block publishing the rest
+
+      - name: Save database history
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/nba.sqlite site/index.html
+          git diff --cached --quiet || git commit -m "Daily update $(date -u +%F)"
+          git push
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4
