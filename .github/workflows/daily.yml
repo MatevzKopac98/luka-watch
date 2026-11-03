@@ -8,6 +8,9 @@ on:
     - cron: "40 5 * * *"
     - cron: "20 6 * * *"
   workflow_dispatch:        # "Run workflow" button for a manual refresh
+  push:                     # rebuild when code changes (the bot's own data commits don't re-trigger)
+    branches: [main]
+    paths-ignore: ["data/**", "site/**", "README.md"]
 
 permissions:
   contents: write           # commit the updated database back to the repo
