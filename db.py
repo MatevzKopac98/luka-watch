@@ -53,6 +53,28 @@ CREATE TABLE IF NOT EXISTS mvp_odds (                -- implied probability per 
     PRIMARY KEY (snapshot_date, source, player_name)
 );
 
+CREATE TABLE IF NOT EXISTS game_info (               -- every finished game: score, quarters, end time
+    event_id TEXT PRIMARY KEY, us_date TEXT, start_utc TEXT, end_utc TEXT, status TEXT,
+    home_id TEXT, home_abbr TEXT, home_score INTEGER, home_lines TEXT,
+    away_id TEXT, away_abbr TEXT, away_score INTEGER, away_lines TEXT,
+    headline TEXT, highlights_url TEXT
+);
+
+CREATE TABLE IF NOT EXISTS game_team_box (
+    event_id TEXT, team_id TEXT, abbr TEXT,
+    fgm REAL, fga REAL, fg3m REAL, fg3a REAL, ftm REAL, fta REAL,
+    reb REAL, oreb REAL, dreb REAL, ast REAL, stl REAL, blk REAL, tov REAL, pf REAL,
+    pts_off_tov REAL, fastbreak REAL, paint REAL, largest_lead REAL, lead_changes REAL, lead_pct REAL,
+    PRIMARY KEY (event_id, team_id)
+);
+
+CREATE TABLE IF NOT EXISTS game_players (
+    event_id TEXT, team_id TEXT, athlete_id TEXT, name TEXT, starter INTEGER,
+    min REAL, pts REAL, fgm REAL, fga REAL, fg3m REAL, fg3a REAL, ftm REAL, fta REAL,
+    reb REAL, oreb REAL, dreb REAL, ast REAL, tov REAL, stl REAL, blk REAL, pf REAL, plus_minus REAL,
+    PRIMARY KEY (event_id, athlete_id)
+);
+
 CREATE TABLE IF NOT EXISTS injuries (
     snapshot_date TEXT, team_id TEXT, player TEXT, status TEXT, detail TEXT,
     PRIMARY KEY (snapshot_date, team_id, player)

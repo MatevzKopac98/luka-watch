@@ -1,6 +1,6 @@
 """Daily update: fetch everything and store today's snapshot. Run: python scripts/update.py"""
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -15,6 +15,7 @@ TZ = ZoneInfo("Europe/Ljubljana")
 CORE_PLAYERS = ["Luka Doncic", "Nikola Jokic", "Shai Gilgeous-Alexander",
                 "Giannis Antetokounmpo", "Victor Wembanyama"]
 MVP_TOP_N = 5          # also track everyone in the top N of the MVP odds
+GAME_NIGHTS_BACK = 3   # box scores: re-check the last N nights for games not yet stored
 
 
 def log(msg):
@@ -89,7 +90,33 @@ def main():
         except Exception as e:
             errors.append(f"player {name}: {e}")
 
-    # 5. Injuries for the Lakers and their next opponent
+    # 5. Box scores: every finished game of the last few nights (US dates), plus the Lakers' last game
+    try:
+        have = {r[0] for r in con.execute("SELECT event_id FROM game_info WHERE status='STATUS_FINAL'")}
+        local_today = datetime.now(TZ).date()
+        targets = []
+        for back in range(GAME_NIGHTS_BACK, 0, -1):
+            us_date = (local_today - timedelta(days=back)).strftime("%Y%m%d")
+            targets += [(g["event_id"], us_date) for g in espn.scoreboard(us_date)
+                        if g["status"] == "STATUS_FINAL" and g["event_id"] not in have]
+        lal_final = [g for g in games if g["status"] == "STATUS_FINAL"]
+        if lal_final and lal_final[-1]["event_id"] not in have | {t[0] for t in targets}:
+            g = lal_final[-1]
+            us = datetime.fromisoformat(g["date_utc"].replace("Z", "+00:00")).astimezone(ZoneInfo("America/New_York"))
+            targets.append((g["event_id"], us.strftime("%Y%m%d")))
+        for event_id, us_date in targets:
+            info, team_rows, player_rows = espn.game_summary(event_id, us_date)
+            upsert(con, "game_info", info)
+            for r in team_rows:
+                upsert(con, "game_team_box", r)
+            con.execute("DELETE FROM game_players WHERE event_id = ?", (event_id,))
+            for r in player_rows:
+                upsert(con, "game_players", r)
+        log(f"Box scores: {len(targets)} new games")
+    except Exception as e:
+        errors.append(f"box scores: {e}")
+
+    # 6. Injuries for the Lakers and their next opponent
     try:
         upcoming = [g for g in games if g["status"] != "STATUS_FINAL"]
         ids = {espn.LAKERS_ID}
@@ -106,7 +133,7 @@ def main():
     con.commit()
     con.close()
 
-    # 6. Rebuild the website from the fresh data
+    # 7. Rebuild the website from the fresh data
     try:
         from scripts.build_site import build
         build()

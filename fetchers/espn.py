@@ -207,6 +207,83 @@ def player_gamelog(espn_id):
     return rows
 
 
+# ---------- games: scoreboard & box scores ----------
+
+TEAM_BOX = {   # ESPN stat name -> our column (made-attempted pairs are split below)
+    "fieldGoalsMade-fieldGoalsAttempted": ("fgm", "fga"),
+    "threePointFieldGoalsMade-threePointFieldGoalsAttempted": ("fg3m", "fg3a"),
+    "freeThrowsMade-freeThrowsAttempted": ("ftm", "fta"),
+    "totalRebounds": "reb", "offensiveRebounds": "oreb", "defensiveRebounds": "dreb",
+    "assists": "ast", "steals": "stl", "blocks": "blk", "totalTurnovers": "tov", "fouls": "pf",
+    "turnoverPoints": "pts_off_tov",     # points this team CONCEDED after its own turnovers "fastBreakPoints": "fastbreak", "pointsInPaint": "paint",
+    "largestLead": "largest_lead", "leadChanges": "lead_changes", "leadPercentage": "lead_pct",
+}
+PLAYER_BOX = {
+    "minutes": "min", "points": "pts", "rebounds": "reb", "assists": "ast", "turnovers": "tov",
+    "steals": "stl", "blocks": "blk", "offensiveRebounds": "oreb", "defensiveRebounds": "dreb",
+    "fouls": "pf", "plusMinus": "plus_minus",
+    "fieldGoalsMade-fieldGoalsAttempted": ("fgm", "fga"),
+    "threePointFieldGoalsMade-threePointFieldGoalsAttempted": ("fg3m", "fg3a"),
+    "freeThrowsMade-freeThrowsAttempted": ("ftm", "fta"),
+}
+
+
+def _box(mapping, name, value, out):
+    col = mapping.get(name)
+    if isinstance(col, tuple):
+        out[col[0]], out[col[1]] = _made_att(value)
+    elif col:
+        out[col] = _num(str(value).replace("+", ""))
+
+
+def scoreboard(us_date):
+    """All games on a US calendar date ('YYYYMMDD'): [{event_id, status}]."""
+    data = get_json(f"{SITE}/scoreboard", {"dates": us_date})
+    return [{"event_id": e["id"], "status": e["competitions"][0]["status"]["type"]["name"]}
+            for e in data.get("events", [])]
+
+
+def game_summary(event_id, us_date):
+    """Box score of one game: (info row, [team rows], [player rows])."""
+    s = get_json(f"{SITE}/summary", {"event": event_id})
+    comp = s["header"]["competitions"][0]
+    side = {c["homeAway"]: c for c in comp["competitors"]}
+    lines = lambda c: ",".join(str(l.get("displayValue", "")) for l in c.get("linescores", []))
+    plays = s.get("plays") or []
+    end = next((p.get("wallclock") for p in reversed(plays) if p.get("text") == "End of Game"), None)
+    video = next((v for v in s.get("videos", []) if "Game Highlights" in (v.get("headline") or "")), None)
+    article = s.get("article") or {}
+    info = {
+        "event_id": event_id, "us_date": us_date, "start_utc": comp["date"], "end_utc": end,
+        "status": comp["status"]["type"]["name"],
+        "home_id": side["home"]["team"]["id"], "home_abbr": side["home"]["team"]["abbreviation"],
+        "home_score": int(_num(side["home"].get("score")) or 0), "home_lines": lines(side["home"]),
+        "away_id": side["away"]["team"]["id"], "away_abbr": side["away"]["team"]["abbreviation"],
+        "away_score": int(_num(side["away"].get("score")) or 0), "away_lines": lines(side["away"]),
+        "headline": article.get("headline"),
+        "highlights_url": ((video or {}).get("links") or {}).get("web", {}).get("href"),
+    }
+    teams = []
+    for t in s.get("boxscore", {}).get("teams", []):
+        row = {"event_id": event_id, "team_id": t["team"]["id"], "abbr": t["team"]["abbreviation"]}
+        for x in t.get("statistics", []):
+            _box(TEAM_BOX, x["name"], x.get("displayValue"), row)
+        teams.append(row)
+    players = []
+    for p in s.get("boxscore", {}).get("players", []):
+        st = (p.get("statistics") or [{}])[0]
+        keys = st.get("keys", [])
+        for a in st.get("athletes", []):
+            if a.get("didNotPlay") or not a.get("stats"):
+                continue
+            row = {"event_id": event_id, "team_id": p["team"]["id"], "athlete_id": a["athlete"]["id"],
+                   "name": a["athlete"]["displayName"], "starter": int(bool(a.get("starter")))}
+            for k, v in zip(keys, a["stats"]):
+                _box(PLAYER_BOX, k, v, row)
+            players.append(row)
+    return info, teams, players
+
+
 def season_year():
     """ESPN labels a season by its ending year (2026-27 -> 2027)."""
     return get_json(f"{SITE}/teams/{LAKERS_ID}/schedule")["season"]["year"]

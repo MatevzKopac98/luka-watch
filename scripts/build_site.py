@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from db import connect  # noqa: E402
+from scripts import insights  # noqa: E402
 
 TZ = ZoneInfo("Europe/Ljubljana")
 LAKERS_ID = "13"
@@ -68,6 +69,17 @@ def load():
     luka = next(p for p in data["players"] if p["name"] == LUKA_NAME)
     data["luka"] = luka
     data["luka_games"] = q("SELECT * FROM player_games WHERE espn_id=? ORDER BY game_date", luka["espn_id"])
+
+    # Finished games with box scores
+    data["game_info"] = q("SELECT * FROM game_info WHERE status='STATUS_FINAL' ORDER BY start_utc")
+    data["box"], data["box_players"] = {}, {}
+    for r in q("SELECT * FROM game_team_box"):
+        data["box"].setdefault(r["event_id"], {})[r["team_id"]] = r
+    for r in q("SELECT * FROM game_players"):
+        data["box_players"].setdefault(r["event_id"], []).append(r)
+    lal = [g for g in data["game_info"] if LAKERS_ID in (g["home_id"], g["away_id"])]
+    data["lakers_last"] = lal[-1] if lal else None
+    data["last_night"] = max((g["us_date"] for g in data["game_info"]), default=None)
     con.close()
     return data
 
@@ -243,13 +255,15 @@ def chart_ratings(teams, opp_id):
         if not t["ortg"]:
             continue
         cx, cy = x(t["ortg"]), y(t["drtg"])
-        cls = "dot-hi" if t["team_id"] == LAKERS_ID else "dot-opp" if t["team_id"] == opp_id else "dot"
+        conf = "east" if t["conference"] == "East" else "west"
+        cls = "dot-hi" if t["team_id"] == LAKERS_ID else "dot-opp" if t["team_id"] == opp_id else f"dot {conf}"
         tt = (f"{t['name']} ({t['wins']}-{t['losses']})|ORtg {t['ortg']} · DRtg {t['drtg']}"
               f"|Net {t['net_rtg']:+.1f}")
-        mark = f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{6 if cls != "dot" else 4.5}" class="{cls}"/>'
-        label = f'<text x="{cx + 10:.1f}" y="{cy + 4:.1f}" class="{"lbl-strong" if cls != "dot" else "tick tlbl"}">{t["abbr"]}</text>'
+        base = cls.startswith("dot ")
+        mark = f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{4.5 if base else 6}" class="{cls}"/>'
+        label = f'<text x="{cx + 10:.1f}" y="{cy + 4:.1f}" class="{"tick tlbl" if base else "lbl-strong"}">{t["abbr"]}</text>'
         hit = f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="12" class="hit" {tip(tt)}/>'
-        (hi if cls != "dot" else out).append(mark + label + hit)
+        (out if base else hi).append(f'<g class="conf-{conf}{"" if base else " pinned"}">{mark}{label}{hit}</g>')
     return (f'<svg viewBox="0 0 {W} {H}" class="chart scatter" role="img" aria-label="Team ratings">'
             f'{"".join(out)}{"".join(hi)}</svg>')
 
@@ -285,12 +299,12 @@ def section_hero(d):
     last_html = ""
     if last:
         where = "vs" if last["home_away"] == "home" else "@"
+        info = next((g for g in d["game_info"] if g["event_id"] == last["event_id"]), {})
         last_html = (f'<div class="lastgame"><p><strong>Last game</strong> · {local(last["game_date"]):%a %d %b} '
                      f'{where} {last["opp_abbr"]} · {last["result"]} {last["score"]} — <strong>{last["pts"]:.0f} pts, '
                      f'{last["reb"]:.0f} reb, {last["ast"]:.0f} ast</strong> '
                      f'({last["fgm"]:.0f}/{last["fga"]:.0f} FG, {last["fg3m"]:.0f}/{last["fg3a"]:.0f} 3P)</p>'
-                     f'<a class="btn-yt" href="{highlights_url(last, d["teams"])}" target="_blank" rel="noopener">'
-                     f'<span aria-hidden="true">▶</span> Watch highlights</a></div>')
+                     f'{highlight_buttons(info, d["teams"], highlights_url(last, d["teams"]))}</div>')
     head = f'<img src="{l["headshot"]}" alt="" class="headshot">' if l.get("headshot") else ""
     return f"""
 <section class="hero">
@@ -427,17 +441,24 @@ def section_lakers(d):
       <p class="muted small">Lines mark the playoff (1–6) and play-in (7–10) spots.</p></div>
   </div>
   <div class="card"><h3>Lakers vs. the league: offense and defense</h3>
+    <div class="chips conf-chips" role="group" aria-label="Choose conference">
+      <button type="button" class="chip on" data-conf="all" aria-pressed="true">Both</button>
+      <button type="button" class="chip" data-conf="east" aria-pressed="false">East</button>
+      <button type="button" class="chip" data-conf="west" aria-pressed="false">West</button>
+    </div>
     <div class="legend"><span><i class="sw hi"></i>Lakers</span><span><i class="sw opp"></i>Next opponent</span>
-    <span><i class="sw base"></i>Other teams</span></div>
-    {chart_ratings(teams, opp_id)}</div>
+    <span><i class="sw east"></i>East</span><span><i class="sw west"></i>West</span></div>
+    {chart_ratings(teams, opp_id)}
+    <p class="muted small">The Lakers and their next opponent stay visible in every view. The dashed lines are the
+    league averages.</p></div>
 </section>"""
 
 
-def section_next(d):
+def next_game_card(d):
     teams = {t["team_id"]: t for t in d["teams"]}
     upcoming = [g for g in d["games"] if g["status"] != "STATUS_FINAL"]
     if not upcoming:
-        return ""
+        return '<div class="card"><h3>Next game</h3><p class="muted">No upcoming games scheduled.</p></div>'
     g = upcoming[0]
     home = g["home_id"] == LAKERS_ID
     opp_id = g["away_id"] if home else g["home_id"]
@@ -469,9 +490,8 @@ def section_next(d):
                        f'{" — " + escape(i["detail"]) if i["detail"] else ""}</li>' for i in items)
 
     return f"""
-<section id="next">
-  <h2>Next game</h2>
   <div class="card matchup">
+    <h3 class="card-kicker">Next game</h3>
     <div class="mu-head">
       <div class="mu-team"><img src="{lal['logo']}" alt="" class="biglogo"><strong>Lakers</strong>
         <span class="muted">{lal['wins']}-{lal['losses']} · {ordinal(lal['seed'])} West</span></div>
@@ -480,15 +500,212 @@ def section_next(d):
       <div class="mu-team"><img src="{opp['logo']}" alt="" class="biglogo"><strong>{escape(opp['name'].split()[-1])}</strong>
         <span class="muted">{opp['wins']}-{opp['losses']} · {ordinal(opp['seed'])} {opp['conference']} · {opp['streak']}</span></div>
     </div>
-    <table class="vs"><tbody>{''.join(rows)}</tbody></table>
+    <table class="vs"><thead><tr><th>LAL</th><th>Season averages</th><th>{opp['abbr']}</th></tr></thead>
+    <tbody>{''.join(rows)}</tbody></table>
     <p class="muted small">Small number = league rank out of 30. The team with the edge on each stat is highlighted.</p>
+    <h3 class="sub">Injuries · Lakers</h3><ul class="inj">{inj(LAKERS_ID)}</ul>
+    <h3 class="sub">Injuries · {escape(opp['name'])}</h3><ul class="inj">{inj(opp_id)}</ul>
+    <h3 class="sub">Head-to-head this season</h3><ul class="results">{h2h_html}</ul>
+  </div>"""
+
+
+# ---------- finished games (box scores) ----------
+
+def nickname(abbr, teams):
+    names = {t["abbr"]: t["name"] for t in teams}
+    return names.get(abbr, abbr).split()[-1]
+
+
+def game_youtube(info, teams):
+    us = datetime.strptime(info["us_date"], "%Y%m%d")
+    q = (f"{nickname(info['away_abbr'], teams)} vs {nickname(info['home_abbr'], teams)} "
+         f"highlights {us:%B} {us.day}, {us.year}")
+    return "https://www.youtube.com/results?search_query=" + quote_plus(q)
+
+
+def highlight_buttons(info, teams, youtube=None):
+    out = []
+    if info.get("highlights_url"):
+        out.append(f'<a class="btn-yt" href="{escape(info["highlights_url"])}" target="_blank" rel="noopener">'
+                   f'<span aria-hidden="true">▶</span> Highlights (ESPN)</a>')
+    out.append(f'<a class="btn-yt{" ghost" if out else ""}" href="{youtube or game_youtube(info, teams)}" '
+               f'target="_blank" rel="noopener"><span aria-hidden="true">▶</span> '
+               f'{"YouTube" if out else "Highlights (YouTube)"}</a>')
+    return f'<div class="btns">{"".join(out)}</div>'
+
+
+def quarter_table(info):
+    h, a = info["home_lines"].split(","), info["away_lines"].split(",")
+    n = max(len(h), len(a))
+    head = "".join(f"<th>{q + 1 if q < 4 else 'OT' if q == 4 else f'{q - 3}OT'}</th>" for q in range(n))
+    row = lambda abbr, ls, total: (f'<tr><th scope="row">{abbr}</th>' + "".join(f"<td>{x}</td>" for x in ls)
+                                   + f'<td class="tot">{total}</td></tr>')
+    return (f'<table class="qtr"><thead><tr><th></th>{head}<th>T</th></tr></thead><tbody>'
+            f'{row(info["away_abbr"], a, info["away_score"])}{row(info["home_abbr"], h, info["home_score"])}'
+            f'</tbody></table>')
+
+
+def box_rows(a, b, a_pts, b_pts):
+    """Team-vs-team rows for one game: (label, a text, b text, which side has the edge)."""
+    pct = lambda m, t: 100 * m / t if t else None
+    g = lambda box, k: box.get(k) or 0
+    defs = [
+        ("Points", a_pts, b_pts, False, "{:.0f}"),
+        ("Field goals", f"{g(a, 'fgm'):.0f}-{g(a, 'fga'):.0f}", f"{g(b, 'fgm'):.0f}-{g(b, 'fga'):.0f}", None, None),
+        ("Field goal %", pct(g(a, "fgm"), g(a, "fga")), pct(g(b, "fgm"), g(b, "fga")), False, "{:.1f}%"),
+        ("3-pointers", f"{g(a, 'fg3m'):.0f}-{g(a, 'fg3a'):.0f}", f"{g(b, 'fg3m'):.0f}-{g(b, 'fg3a'):.0f}", None, None),
+        ("3-point %", pct(g(a, "fg3m"), g(a, "fg3a")), pct(g(b, "fg3m"), g(b, "fg3a")), False, "{:.1f}%"),
+        ("Free throws", f"{g(a, 'ftm'):.0f}-{g(a, 'fta'):.0f}", f"{g(b, 'ftm'):.0f}-{g(b, 'fta'):.0f}", None, None),
+        ("Free throw %", pct(g(a, "ftm"), g(a, "fta")), pct(g(b, "ftm"), g(b, "fta")), False, "{:.1f}%"),
+        ("Offensive rebounds", g(a, "oreb"), g(b, "oreb"), False, "{:.0f}"),
+        ("Defensive rebounds", g(a, "dreb"), g(b, "dreb"), False, "{:.0f}"),
+        ("Total rebounds", g(a, "reb"), g(b, "reb"), False, "{:.0f}"),
+        ("Assists", g(a, "ast"), g(b, "ast"), False, "{:.0f}"),
+        ("Steals", g(a, "stl"), g(b, "stl"), False, "{:.0f}"),
+        ("Blocks", g(a, "blk"), g(b, "blk"), False, "{:.0f}"),
+        ("Turnovers", g(a, "tov"), g(b, "tov"), True, "{:.0f}"),
+        ("Fouls", g(a, "pf"), g(b, "pf"), True, "{:.0f}"),
+        ("Points in the paint", g(a, "paint"), g(b, "paint"), False, "{:.0f}"),
+        ("Fast-break points", g(a, "fastbreak"), g(b, "fastbreak"), False, "{:.0f}"),
+        # pts_off_tov is what a team conceded after its own turnovers, i.e. what the other side scored
+        ("Points off turnovers", g(b, "pts_off_tov"), g(a, "pts_off_tov"), False, "{:.0f}"),
+        ("Largest lead", g(a, "largest_lead"), g(b, "largest_lead"), False, "{:.0f}"),
+        ("Time in the lead", g(a, "lead_pct"), g(b, "lead_pct"), False, "{:.0f}%"),
+    ]
+    rows = []
+    for lbl, x, y, low, f in defs:
+        edge = None
+        if low is not None and x is not None and y is not None and x != y:
+            edge = "a" if (x < y) == low else "b"
+        show = lambda v: "–" if v is None else (f.format(v) if f else v)
+        rows.append(f'<tr><td class="{"edge" if edge == "a" else ""}">{show(x)}</td><th scope="row">{lbl}</th>'
+                    f'<td class="{"edge" if edge == "b" else ""}">{show(y)}</td></tr>')
+    return "".join(rows)
+
+
+def player_table(players, team_id, limit=None):
+    rows = sorted((p for p in players if p["team_id"] == team_id and p.get("min")),
+                  key=lambda p: (-p["starter"], -(p["min"] or 0)))[:limit]
+    body = "".join(
+        f'<tr><th scope="row">{escape(short_name(p["name"]))}{" <small>S</small>" if p["starter"] else ""}</th>'
+        f'<td>{p["min"]:.0f}</td><td class="strong">{p["pts"]:.0f}</td><td>{p["reb"]:.0f}</td>'
+        f'<td>{p["ast"]:.0f}</td><td>{p["fgm"]:.0f}-{p["fga"]:.0f}</td><td>{p["fg3m"]:.0f}-{p["fg3a"]:.0f}</td>'
+        f'<td>{p["ftm"]:.0f}-{p["fta"]:.0f}</td><td>{p["oreb"]:.0f}</td><td>{p["dreb"]:.0f}</td>'
+        f'<td>{p["stl"]:.0f}</td><td>{p["blk"]:.0f}</td><td>{p["tov"]:.0f}</td><td>{p["pf"]:.0f}</td>'
+        f'<td>{(p["plus_minus"] or 0):+.0f}</td></tr>' for p in rows)
+    return (f'<div class="tablewrap"><table class="box"><thead><tr><th>Player</th><th>MIN</th><th>PTS</th>'
+            f'<th>REB</th><th>AST</th><th>FG</th><th>3PT</th><th>FT</th><th>OREB</th><th>DREB</th><th>STL</th>'
+            f'<th>BLK</th><th>TO</th><th>PF</th><th>+/-</th></tr></thead><tbody>{body}</tbody></table></div>')
+
+
+def game_story(info, box, players, teams):
+    """Winner/loser, reasons, key player and tags for one game."""
+    home_won = info["home_score"] > info["away_score"]
+    w_id, l_id = (info["home_id"], info["away_id"]) if home_won else (info["away_id"], info["home_id"])
+    w_abbr, l_abbr = (info["home_abbr"], info["away_abbr"]) if home_won else (info["away_abbr"], info["home_abbr"])
+    w_box, l_box = box.get(w_id, {}), box.get(l_id, {})
+    kp = insights.key_player(players, w_id)
+    return {
+        "w_id": w_id, "l_id": l_id, "w_abbr": w_abbr,
+        "reasons": insights.reasons(info, w_box, l_box, nickname(w_abbr, teams), nickname(l_abbr, teams)),
+        "key": kp, "key_line": insights.stat_line(kp) if kp else "",
+        "tags": insights.tags(info, l_box),
+    }
+
+
+def story_html(story, teams):
+    reasons = "".join(f"<li>{escape(r)}</li>" for r in story["reasons"])
+    key = (f'<p class="keyp"><span class="lbl-k">Key player</span> <strong>{escape(story["key"]["name"])}</strong>'
+           f' · {story["key_line"]}</p>') if story["key"] else ""
+    why = (f'<p class="lbl-k">Why the {escape(nickname(story["w_abbr"], teams))} won</p>'
+           f'<ul class="why">{reasons}</ul>') if reasons else ""
+    return why + key
+
+
+def last_game_card(d):
+    g = d["lakers_last"]
+    if not g:
+        return '<div class="card"><h3>Last game</h3><p class="muted">No finished games yet.</p></div>'
+    teams = {t["team_id"]: t for t in d["teams"]}
+    box, players = d["box"].get(g["event_id"], {}), d["box_players"].get(g["event_id"], [])
+    home = g["home_id"] == LAKERS_ID
+    opp_id = g["away_id"] if home else g["home_id"]
+    lal_pts, opp_pts = (g["home_score"], g["away_score"]) if home else (g["away_score"], g["home_score"])
+    won = lal_pts > opp_pts
+    opp = teams[opp_id]
+    story = game_story(g, box, players, d["teams"])
+    luka = next((x for x in d["luka_games"] if x["event_id"] == g["event_id"]), None)
+    youtube = highlights_url(luka, d["teams"]) if luka else None
+    return f"""
+  <div class="card">
+    <h3 class="card-kicker">Last game · {local(g['start_utc']):%A %d %B}</h3>
+    <div class="mu-head">
+      <div class="mu-team"><img src="{teams[LAKERS_ID]['logo']}" alt="" class="biglogo"><strong>Lakers</strong></div>
+      <div class="mu-mid"><div class="mu-at">{'vs' if home else '@'} · <span class="wl {'W' if won else 'L'}">{'W' if won else 'L'}</span></div>
+        <div class="score">{lal_pts}<span class="muted">–</span>{opp_pts}</div>
+        {''.join(f'<span class="tag">{t}</span>' for t in story['tags'])}</div>
+      <div class="mu-team"><img src="{opp['logo']}" alt="" class="biglogo"><strong>{escape(opp['name'].split()[-1])}</strong></div>
+    </div>
+    {quarter_table(g)}
+    {f'<p class="headline">{escape(g["headline"])}</p>' if g.get("headline") else ''}
+    {story_html(story, d['teams'])}
+    {highlight_buttons(g, d['teams'], youtube)}
+    <table class="vs"><thead><tr><th>LAL</th><th>Game stats</th><th>{opp['abbr']}</th></tr></thead>
+    <tbody>{box_rows(box.get(LAKERS_ID, {}), box.get(opp_id, {}), lal_pts, opp_pts)}</tbody></table>
+    <h3 class="sub">Lakers box score</h3>
+    {player_table(players, LAKERS_ID)}
+  </div>"""
+
+
+def section_games(d):
+    return f"""
+<section id="next">
+  <h2>Lakers games</h2>
+  <div class="chips ln-chips" role="group" aria-label="Choose game">
+    <button type="button" class="chip on" data-panel="last" aria-pressed="true">Last game</button>
+    <button type="button" class="chip" data-panel="next" aria-pressed="false">Next game</button>
   </div>
-  <div class="grid2">
-    <div class="card"><h3>Injuries · Lakers</h3><ul class="inj">{inj(LAKERS_ID)}</ul></div>
-    <div class="card"><h3>Injuries · {escape(opp['name'])}</h3><ul class="inj">{inj(opp_id)}</ul></div>
+  <div class="grid2 ln">
+    <div class="ln-panel" data-panel="last">{last_game_card(d)}</div>
+    <div class="ln-panel off" data-panel="next">{next_game_card(d)}</div>
   </div>
-  <div class="card"><h3>Head-to-head this season</h3><ul class="results">{h2h_html}</ul></div>
 </section>"""
+
+
+def game_card(info, d):
+    teams = {t["team_id"]: t for t in d["teams"]}
+    box, players = d["box"].get(info["event_id"], {}), d["box_players"].get(info["event_id"], [])
+    story = game_story(info, box, players, d["teams"])
+
+    def team_row(side):
+        tid, abbr, pts = info[f"{side}_id"], info[f"{side}_abbr"], info[f"{side}_score"]
+        t = teams.get(tid, {})
+        win = tid == story["w_id"]
+        return (f'<div class="gc-team{" win" if win else ""}"><img src="{t.get("logo", "")}" alt="" class="logo">'
+                f'<span class="gc-name">{escape(t.get("name", abbr))}</span>'
+                f'<span class="muted small">{t.get("wins", "")}-{t.get("losses", "")}</span>'
+                f'<span class="gc-pts">{pts}</span></div>')
+
+    lakers = LAKERS_ID in (info["home_id"], info["away_id"])
+    tops = "".join(
+        f'<h4>{escape(teams.get(tid, {}).get("name", ""))}</h4>{player_table(players, tid, 5)}'
+        for tid in (info["away_id"], info["home_id"]))
+    return f"""
+<article class="card gc{' me' if lakers else ''}">
+  <div class="gc-tags">{''.join(f'<span class="tag">{t}</span>' for t in story['tags'])}
+    <span class="muted small">Final{f" · ended {local(info['end_utc']):%H:%M} Ljubljana" if info.get('end_utc') else ''}</span></div>
+  {team_row('away')}{team_row('home')}
+  {story_html(story, d['teams'])}
+  {f'<p class="headline">{escape(info["headline"])}</p>' if info.get("headline") else ''}
+  {highlight_buttons(info, d['teams'])}
+  <details><summary>Box score</summary>
+    {quarter_table(info)}
+    <table class="vs"><thead><tr><th>{info['away_abbr']}</th><th></th><th>{info['home_abbr']}</th></tr></thead>
+    <tbody>{box_rows(box.get(info['away_id'], {}), box.get(info['home_id'], {}),
+                     info['away_score'], info['home_score'])}</tbody></table>
+    {tops}
+  </details>
+</article>"""
 
 
 # ---------- page ----------
@@ -497,20 +714,20 @@ CSS = """
 :root{color-scheme:light;--page:#f6f5f2;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#898781;
 --grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);--hi:#6250d6;--hi-wash:rgba(98,80,214,.08);
 --opp:#eb6834;--base:#b9b8b0;--edge:rgba(98,80,214,.12);--good:#006300;--bad:#d03b3b;
---s1:#6250d6;--s2:#eb6834;--s3:#1baf7a;--s4:#2a78d6;--s5:#e87ba4}
+--s1:#6250d6;--s2:#eb6834;--s3:#1baf7a;--s4:#2a78d6;--s5:#e87ba4;--east:#9db4d3;--west:#a3c4ac}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--page:#0d0d0d;
 --surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;
 --border:rgba(255,255,255,.10);--hi:#9085e9;--hi-wash:rgba(144,133,233,.12);--opp:#d95926;--base:#5a5955;
---edge:rgba(144,133,233,.18);--good:#0ca30c;--s1:#9085e9;--s2:#d95926;--s3:#199e70;--s4:#3987e5;--s5:#d55181}}
+--edge:rgba(144,133,233,.18);--good:#0ca30c;--s1:#9085e9;--s2:#d95926;--s3:#199e70;--s4:#3987e5;--s5:#d55181;--east:#4f6684;--west:#557260}}
 :root[data-theme="dark"]{color-scheme:dark;--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;
 --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--hi:#9085e9;--hi-wash:rgba(144,133,233,.12);
 --opp:#d95926;--base:#5a5955;--edge:rgba(144,133,233,.18);--good:#0ca30c;--s1:#9085e9;--s2:#d95926;
---s3:#199e70;--s4:#3987e5;--s5:#d55181}
+--s3:#199e70;--s4:#3987e5;--s5:#d55181;--east:#4f6684;--west:#557260}
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
 header.top{position:sticky;top:0;z-index:5;background:var(--page);border-bottom:1px solid var(--border)}
 .bar-in{max-width:1080px;margin:0 auto;padding:10px 16px;display:flex;gap:16px;align-items:center;overflow-x:auto}
-.brand{font-weight:700;white-space:nowrap}
+.brand{font-weight:700;white-space:nowrap;color:var(--ink);text-decoration:none}
 nav a{color:var(--ink2);text-decoration:none;white-space:nowrap;font-size:14px}nav a:hover{color:var(--ink)}
 nav{display:flex;gap:14px}
 .updated{margin-left:auto;color:var(--muted);font-size:12px;white-space:nowrap}
@@ -588,6 +805,36 @@ table.kv th,table.kv td{padding:7px 4px}.rbar{width:44px}
 .chart .lbl{font-size:12px}
 .scatter .tick{font-size:24px}.scatter .tlbl{display:none}.scatter .lbl-strong{font-size:28px}
 .scatter .quad{font-size:22px}.scatter .dot{r:9}.scatter .dot-hi,.scatter .dot-opp{r:13}}
+.chart .dot.east{fill:var(--east)}.chart .dot.west{fill:var(--west)}
+.sw.east{background:var(--east)}.sw.west{background:var(--west)}
+.scatter[data-conf="east"] .conf-west:not(.pinned),.scatter[data-conf="west"] .conf-east:not(.pinned){display:none}
+.chips.ln-chips{display:none}.ln-panel{min-width:0}
+@media (max-width:760px){.chips.ln-chips{display:flex}.ln-panel.off{display:none}}
+.card-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2);margin:0 0 8px}
+h3.sub{margin:18px 0 6px;font-size:14px}
+.score{font-size:30px;font-weight:700;letter-spacing:-.01em}.score .muted{margin:0 4px}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;margin:2px;
+background:var(--hi-wash);color:var(--ink2)}
+table.qtr{margin:4px auto 10px;width:auto;font-size:13px}table.qtr th,table.qtr td{padding:3px 9px;text-align:center}
+table.qtr td.tot{font-weight:700}table.qtr th[scope=row]{text-align:left}
+.headline{font-style:italic;color:var(--ink2);margin:8px 0;font-size:14px}
+.lbl-k{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);margin:10px 0 4px}
+ul.why{margin:0 0 6px;padding-left:18px}ul.why li{margin:2px 0}
+.keyp{margin:8px 0}.keyp .lbl-k{display:inline;margin-right:6px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.btn-yt.ghost{background:transparent;color:var(--ink);border:1px solid var(--border)}
+table.box{font-size:13px}table.box th[scope=row]{text-align:left;position:sticky;left:0;background:var(--surface)}
+table.box th[scope=row] small{color:var(--muted);font-size:10px}table.box td.strong{font-weight:700}
+table.vs thead th{font-size:12px}
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;align-items:start}
+@media (max-width:760px){.games{grid-template-columns:1fr}}
+.gc{margin-top:0}.gc.me{box-shadow:inset 0 0 0 2px var(--hi)}
+.gc-tags{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-bottom:6px}
+.gc-team{display:flex;align-items:center;gap:8px;padding:5px 0;color:var(--ink2)}
+.gc-team.win{color:var(--ink);font-weight:700}.gc-name{flex:1}.gc-pts{font-size:22px;font-variant-numeric:tabular-nums}
+.gc details{margin-top:8px;border-top:1px solid var(--grid);padding-top:8px}
+.gc summary{cursor:pointer;font-weight:600;color:var(--ink2)}.gc h4{margin:14px 0 4px;font-size:13px}
+nav a.active{color:var(--ink);font-weight:600}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:0 0 10px;-webkit-overflow-scrolling:touch}
 .chip{flex:none;font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;cursor:pointer;
 border:1px solid var(--border);background:var(--page);color:var(--ink2)}
@@ -612,28 +859,57 @@ el.addEventListener('blur',()=>tip.style.opacity=0)});
 document.querySelectorAll('.chips').forEach(group=>{const card=group.parentElement;
 group.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;
 group.querySelectorAll('.chip').forEach(c=>{const on=c===b;c.classList.toggle('on',on);c.setAttribute('aria-pressed',on)});
-card.querySelectorAll('.stat-panel').forEach(p=>p.hidden=p.dataset.stat!==b.dataset.stat);tip.style.opacity=0})});
+card.querySelectorAll('.stat-panel').forEach(p=>p.hidden=p.dataset.stat!==b.dataset.stat);
+if(b.dataset.panel)card.querySelectorAll('.ln-panel').forEach(p=>p.classList.toggle('off',p.dataset.panel!==b.dataset.panel));
+if(b.dataset.conf)card.querySelectorAll('.scatter').forEach(s=>s.dataset.conf=b.dataset.conf);
+tip.style.opacity=0})});
 """
+
+
+def section_last_night(d):
+    night = d["last_night"]
+    if not night:
+        return '<section class="hero"><h1>Last night</h1><p class="muted">No finished games yet.</p></section>'
+    games = [g for g in d["game_info"] if g["us_date"] == night]
+    games.sort(key=lambda g: (LAKERS_ID not in (g["home_id"], g["away_id"]), g["start_utc"]))
+    us = datetime.strptime(night, "%Y%m%d")
+    return f"""
+<section class="hero">
+  <h1>Last night in the NBA</h1>
+  <p class="muted">{us:%A} {us.day} {us:%B} (US date) · {len(games)} games · "Why they won" is worked out from
+  the box score, and the key player is the winner's top performer by Game Score.</p>
+  <div class="games">{''.join(game_card(g, d) for g in games)}</div>
+</section>"""
+
+
+def page(title, active, body, d):
+    now = datetime.now(TZ)
+    links = [("index.html#next", "Lakers games", "home"), ("index.html#mvp", "MVP race", "home"),
+             ("index.html#compare", "Compare", "home"), ("index.html#lakers", "Lakers", "home"),
+             ("last-night.html", "Last night", "night")]
+    nav = "".join(f'<a href="{h}"{" class=\"active\"" if k == active == "night" else ""}>{t}</a>'
+                  for h, t, k in links)
+    return f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{title}</title><meta name="description" content="Daily Luka Dončić, MVP race and Lakers tracker">
+<style>{CSS}</style></head><body>
+<header class="top"><div class="bar-in"><a class="brand" href="index.html">Luka Watch</a>
+<nav>{nav}</nav>
+<span class="updated">Updated {now:%a %d %b, %H:%M}</span></div></header>
+<main>{body}</main>
+<footer>Data: ESPN (stats, standings, schedule, box scores, injuries) and Polymarket (MVP odds). Times in Ljubljana
+time. Ratings are estimates from box-score totals. Snapshot {d['date']}.</footer>
+<div id="tip" role="tooltip"></div><script>{JS}</script></body></html>"""
 
 
 def build():
     d = load()
-    now = datetime.now(TZ)
-    body = section_hero(d) + section_next(d) + section_mvp(d) + section_compare(d) + section_lakers(d)
-    html = f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Luka Watch</title><meta name="description" content="Daily Luka Dončić, MVP race and Lakers tracker">
-<style>{CSS}</style></head><body>
-<header class="top"><div class="bar-in"><span class="brand">Luka Watch</span>
-<nav><a href="#next">Next game</a><a href="#mvp">MVP race</a><a href="#compare">Compare</a><a href="#lakers">Lakers</a></nav>
-<span class="updated">Updated {now:%a %d %b, %H:%M}</span></div></header>
-<main>{body}</main>
-<footer>Data: ESPN (stats, standings, schedule, injuries) and Polymarket (MVP odds). Times in Ljubljana time.
-Ratings are estimates from box-score totals. Snapshot {d['date']}.</footer>
-<div id="tip" role="tooltip"></div><script>{JS}</script></body></html>"""
+    home = section_hero(d) + section_games(d) + section_mvp(d) + section_compare(d) + section_lakers(d)
     OUT.parent.mkdir(exist_ok=True)
-    OUT.write_text(html, encoding="utf-8")
-    print(f"Wrote {OUT}")
+    OUT.write_text(page("Luka Watch", "home", home, d), encoding="utf-8")
+    (OUT.parent / "last-night.html").write_text(page("Last night · Luka Watch", "night", section_last_night(d), d),
+                                                encoding="utf-8")
+    print(f"Wrote {OUT} and last-night.html")
 
 
 if __name__ == "__main__":
