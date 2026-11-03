@@ -594,19 +594,15 @@ def impact_card(d):
             a["gp"] += 1
             for k, src in (("min", "min"), ("pm", "plus_minus"), ("pts", "pts"), ("reb", "reb"), ("ast", "ast")):
                 a[k] += p.get(src) or 0
-    luka = agg.pop(d["luka"]["espn_id"], None)
     pool = [a for a in agg.values() if a["gp"] >= max(3, 0.4 * len(games)) and a["min"] / a["gp"] >= 15]
     top = sorted(pool, key=lambda a: -a["pm"] / a["gp"])[:IMPACT_TOP]
-    luka_ref = (f'<p class="verdict">For reference, Luka: <strong>{luka["pm"] / luka["gp"]:+.1f}</strong> per game</p>'
-                if luka and luka["gp"] else "")
     items = "".join(
         f'<li><span class="imp-rank">{i}</span><div class="imp-main"><strong>{escape(a["name"])}</strong>'
         f'<span class="muted small">{a["gp"]} GP · {a["min"] / a["gp"]:.0f} min · {a["pts"] / a["gp"]:.1f} pts · '
         f'{a["reb"] / a["gp"]:.1f} reb · {a["ast"] / a["gp"]:.1f} ast</span></div>'
         f'<span class="imp-pm">{a["pm"] / a["gp"]:+.1f}</span></li>' for i, a in enumerate(top, 1))
     return f"""
-    <div class="card"><h3>Top {IMPACT_TOP} teammates by impact</h3>
-      {luka_ref}
+    <div class="card"><h3>Top {IMPACT_TOP} Lakers impact</h3>
       <ul class="impact">{items or '<li class="muted">Not enough games yet.</li>'}</ul>
       <p class="muted small">Ranked by plus/minus per game: how many points the Lakers outscore opponents by while
       the player is on the court. Rotation players only (15+ minutes, 40%+ of games).</p></div>"""
