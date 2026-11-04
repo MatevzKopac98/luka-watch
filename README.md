@@ -106,3 +106,7 @@ also appears when no run happened at all), and the footer lists any issues. Odds
 
 - `index.html`: Luka, last & next Lakers game, MVP race, comparison table, Lakers vs. the league, milestones
 - `last-night.html`: every game of the night with "why they won" insights, key player and box scores
+- `teams/<ABBR>.html`: one page per team (open from the Teams tab or the standings): record and ratings, players
+  (this/last season, per game/per 36/totals, salary), five-man lineups (most used/best), rotation chart with usage,
+  impact, value for money and contracts
+- `betting.html`: the password-protected betting pilot

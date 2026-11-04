@@ -1,12 +1,14 @@
 """Team pages: site/teams/index.html (all 30 teams) and site/teams/<ABBR>.html (one per team).
 
 Each team page: header (record, ratings with ranks, roster outlook, payroll, injuries), players (this season /
-last season x per game / per 36 / totals, with salary), impact (lineup model), value for money (salary vs
-impact) and contracts. Built from the site database plus the stored box scores; no extra requests.
+last season x per game / per 36 / totals, with salary), five-man lineups, rotation and usage, impact (lineup
+model), value for money (salary vs impact) and contracts. Built from the site database plus the stored box
+scores; no extra requests.
 """
 from html import escape
 
 from db import connect
+from model import lineups as lu
 from model.team_stats import season_lines, view
 from scripts.build_site import LAKERS_ID, OUT, fmt, ordinal, rank
 
@@ -18,6 +20,100 @@ MODES = [("game", "Per game"), ("p36", "Per 36 min"), ("total", "Totals")]
 MIN_IMPACT_POSS = 500        # possessions on court before a player's impact rating is shown
 MIN_VALUE_POSS = 1000
 PAYROLL_COMPLETE = 0.9       # share of a roster with a known salary before its payroll is ranked
+LINEUPS_SHOWN = 8
+BEST_MIN_MINUTES = {"cur": 15, "last": 60}   # minutes together before a lineup can rank as "best"
+ROTATION_PLAYERS = 10
+ROTATION_MIN_MPG = 6         # players averaging fewer minutes are left off the rotation chart
+
+
+def season_toggle():
+    return ('<button type="button" class="chip on" data-dim="season" data-val="cur" aria-pressed="true">'
+            'This season</button><button type="button" class="chip" data-dim="season" data-val="last" '
+            'aria-pressed="false">Last season</button>')
+
+
+def _short(name):
+    parts = (name or "?").split()
+    if len(parts) > 2 and parts[-1] in ("Jr.", "Sr.", "II", "III", "IV"):
+        return " ".join(parts[-2:])
+    return parts[-1]
+
+
+def lineup_table(units, names, empty):
+    if not units:
+        return f'<p class="muted small">{empty}</p>'
+    rows = []
+    for u in units:
+        five = " · ".join(escape(_short(names.get(i))) for i in u["ids"])
+        full = escape(", ".join(names.get(i, "?") for i in u["ids"]))
+        rows.append(f'<tr><th scope="row" class="five" title="{full}">{five}</th><td>{u["minutes"]:.0f}</td>'
+                    f'<td>{u["games"]}</td><td>{fmt(u["ortg"])}</td><td>{fmt(u["drtg"])}</td>'
+                    f'<td class="strong {_cls(u["net"])}">{u["net"]:+.1f}</td></tr>')
+    return ('<div class="tablewrap"><table class="stats lineups"><thead><tr><th scope="col">Lineup</th><th>MIN</th>'
+            '<th>GP</th><th>ORtg</th><th>DRtg</th><th>Net</th></tr></thead><tbody>' + "".join(rows)
+            + '</tbody></table></div>')
+
+
+def lineups_card(team_id, seasons, names):
+    panels = []
+    for key, data in seasons.items():
+        units = [u for u in data["lineups"].get(team_id, []) if u["net"] is not None]
+        best = sorted((u for u in units if u["minutes"] >= BEST_MIN_MINUTES[key]), key=lambda u: -u["net"])
+        options = (("used", units[:LINEUPS_SHOWN], "No lineup data yet."),
+                   ("best", best[:LINEUPS_SHOWN], f"No lineup has played {BEST_MIN_MINUTES[key]} minutes together yet."))
+        for mode, chosen, empty in options:
+            hidden = "" if (key, mode) == ("cur", "used") else " hidden"
+            panels.append(f'<div class="combo-panel" data-key="{key}-{mode}"{hidden}>'
+                          f'{lineup_table(chosen, names, empty)}</div>')
+    mode_chips = ('<button type="button" class="chip on" data-dim="mode" data-val="used" aria-pressed="true">'
+                  'Most used</button><button type="button" class="chip" data-dim="mode" data-val="best" '
+                  'aria-pressed="false">Best</button>')
+    return f"""
+<div class="card combo" data-season="cur" data-mode="used">
+  <h3>Five-man lineups</h3>
+  <div class="chip-rows"><div class="chips" role="group" aria-label="Season">{season_toggle()}</div>
+  <div class="chips" role="group" aria-label="Sort">{mode_chips}</div></div>
+  {''.join(panels)}
+  <p class="muted small">Every stretch with the same five on the floor, from play-by-play. ORtg/DRtg = points scored/allowed
+  per 100 possessions with that lineup; Net = the difference. "Best" ranks lineups with at least
+  {BEST_MIN_MINUTES['cur']} minutes together this season ({BEST_MIN_MINUTES['last']} last season); small samples swing a lot.</p>
+</div>"""
+
+
+def rotation_grid(team_id, data, names):
+    shares = data["rotation"].get(team_id, {})
+    players = sorted(((v, pid) for (t, pid), v in data["usage"].items()
+                      if t == team_id and v["min"] >= ROTATION_MIN_MPG and pid in shares), key=lambda x: -x[0]["min"])
+    if not players:
+        return '<p class="muted small">No games yet.</p>'
+    head = "".join(f'<span class="q">Q{q}</span>' for q in range(1, 5))
+    rows = []
+    for v, pid in players[:ROTATION_PLAYERS]:
+        name = names.get(pid) or v["name"]
+        cells = []
+        for b, x in enumerate(shares[pid]):
+            q, start = b // 4 + 1, 12 - 3 * (b % 4)
+            cls = ' class="qs"' if b and b % 4 == 0 else ""
+            cells.append(f'<i{cls} style="--v:{round(100 * x)}%" data-tip="{escape(name)}|Q{q}, {start}:00 to '
+                         f'{start - 3}:00|on court in {round(100 * x)}% of his games"></i>')
+        usg = f'{v["usg"]:.0f}%' if v["usg"] is not None else "–"
+        rows.append(f'<span class="rname">{escape(_short(name))}<small>{v["min"]:.0f} min · {v["gs"]}/{v["gp"]} '
+                    f'starts · usage {usg}</small></span>{"".join(cells)}')
+    return f'<div class="rot"><span></span>{head}{"".join(rows)}</div>'
+
+
+def rotation_card(team_id, seasons, names):
+    panels = "".join(f'<div class="combo-panel" data-key="{key}-x"{"" if key == "cur" else " hidden"}>'
+                     f'{rotation_grid(team_id, data, names)}</div>' for key, data in seasons.items())
+    return f"""
+<div class="card combo" data-season="cur" data-mode="x">
+  <h3>Rotation &amp; usage</h3>
+  <div class="chips" role="group" aria-label="Season">{season_toggle()}</div>
+  {panels}
+  <p class="muted small">Darker = on the court more often in that 3-minute stretch of regulation (share of the games he
+  played), which shows who starts, who closes and when the bench comes in. Usage = share of the team's plays he finishes
+  with a shot, free throws or a turnover while on court (about 20% is average; stars run 30% or more).</p>
+</div>"""
 
 
 def money(v):
@@ -221,6 +317,14 @@ def build_teams(d, page):
         return 0
     season = d["season"] or 0
     cur, last = season_lines(season), season_lines(season - 1)
+    seasons, names = {}, {}
+    for key, yr in (("cur", season), ("last", season - 1)):
+        stints, games = lu.load(yr)
+        rot, _ = lu.rotation(stints, games)
+        seasons[key] = {"lineups": lu.lineups(stints, games), "rotation": rot, "usage": lu.usage(yr)}
+        for (_, pid), v in seasons[key]["usage"].items():
+            names.setdefault(pid, v["name"])
+    names.update({r["athlete_id"]: r["name"] for r in roster_all if r.get("name")})
     teams = {t["team_id"]: t for t in d["teams"]}
     abbr_of = {t["team_id"]: t["abbr"] for t in d["teams"]}
     ranks = {k: rank(d["teams"], k, low) for k, low in (("ortg", False), ("drtg", True), ("net_rtg", False))}
@@ -248,6 +352,7 @@ def build_teams(d, page):
         pay = payroll_text(payroll[tid], coverage[tid], pay_rank.get(tid), len(complete))
         body = (header(team, d, ranks, d["projection"], pay, injuries)
                 + '<section>' + players_card(team, roster, cur, last, abbr_of)
+                + lineups_card(tid, seasons, names) + rotation_card(tid, seasons, names)
                 + impact_card(roster, impact)
                 + '<div class="grid2">' + value_card(roster, impact, salary_of)
                 + contracts_card(roster, salary_of, years_of, payroll[tid], pay) + '</div></section>')

@@ -1280,6 +1280,13 @@ border:1px solid var(--border);background:var(--page);color:var(--ink2)}
 #tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--surface);padding:8px 10px;border-radius:8px;
 font-size:12px;line-height:1.45;max-width:260px;opacity:0;transition:opacity .1s;z-index:10}
 #tip b{font-weight:700}
+table.lineups th.five{display:table-cell;font-weight:500;white-space:normal;min-width:180px;max-width:260px;line-height:1.35}
+.rot{display:grid;grid-template-columns:minmax(92px,150px) repeat(16,1fr);gap:2px 1px;align-items:center;margin-top:12px}
+.rot .q{grid-column:span 4;font-size:11px;color:var(--muted);text-align:center;border-left:1px solid var(--axis)}
+.rot .rname{font-size:13px;font-weight:600;line-height:1.2;padding-right:6px;overflow:hidden}
+.rot .rname small{display:block;font-weight:400;color:var(--muted);font-size:10.5px}
+.rot i{display:block;height:26px;border-radius:2px;background:color-mix(in srgb,var(--hi) var(--v),var(--grid))}
+.rot i.qs{margin-left:3px}
 .status{max-width:1080px;margin:10px auto 0;padding:0 16px}
 .status p{margin:0;padding:8px 12px;border:1px solid var(--bad);border-radius:10px;font-size:13px;color:var(--ink);
 background:color-mix(in srgb,var(--bad) 8%,var(--surface))}

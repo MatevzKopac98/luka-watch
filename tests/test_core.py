@@ -186,3 +186,27 @@ def test_status_checks_flag_missing_data(tmp_path, monkeypatch):
     assert "0 of 30 teams" in text and "MVP odds" in text and "2 of last night's 2" in text and "Odds:" in text
     out = status.write(["teams: boom"], w, tmp_path / "status.json")
     assert status.read(tmp_path / "status.json") == out
+
+
+# ------------------------------------------------------------------ lineups and rotation
+
+def _stint(start, secs, home_pts, away_pts, home="1|2|3|4|5", period=1):
+    z = {f"{s}_{k}": 10 for s in ("home", "away") for k in ("fga",)}
+    z.update({f"{s}_{k}": 0 for s in ("home", "away") for k in ("oreb", "tov", "fta")})
+    return {"event_id": "g1", "period": period, "start_sec": start, "seconds": secs, "home_ids": home,
+            "away_ids": "11|12|13|14|15", "home_pts": home_pts, "away_pts": away_pts, **z}
+
+
+def test_lineups_ratings_and_rotation_shares():
+    from model import lineups as lu
+    games = {"g1": ("H", "A")}
+    stints = [_stint(0, 360, 12, 8), _stint(360, 360, 5, 10, home="1|2|3|4|6")]
+    units = lu.lineups(stints, games)
+    first = units["H"][0]
+    assert first["ids"] == ["1", "2", "3", "4", "5"] and first["minutes"] == 6
+    assert first["ortg"] == 120 and first["drtg"] == 80 and first["net"] == 40     # 10 possessions each
+    assert units["A"][0]["minutes"] == 12
+    rot, n = lu.rotation(stints, games)
+    assert n["H"] == 1
+    assert rot["H"]["5"][:4] == [1.0, 1.0, 0.0, 0.0]          # first 6 minutes = two 3-minute stretches
+    assert rot["H"]["6"][:4] == [0.0, 0.0, 1.0, 1.0]
