@@ -7,7 +7,10 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from db import connect, upsert                      # noqa: E402
-from fetchers import espn, odds                     # noqa: E402
+from fetchers import espn, odds, odds_capture       # noqa: E402
+from fetchers.pbp import build_stints               # noqa: E402
+from model import defense                           # noqa: E402
+from scripts.backfill_history import HISTORY, append_rows  # noqa: E402
 
 TZ = ZoneInfo("Europe/Ljubljana")
 
@@ -45,6 +48,33 @@ def luka_extras(con, pid, year, today):
         if season >= year - 1 or season not in stored:     # old seasons never change; refresh the last two
             for r in espn.player_vs_opponents(pid, season):
                 upsert(con, "luka_vs_opp", r)
+
+
+def defense_update(con, year, today, rosters, out_ids):
+    """Rate every player's defense from stints, project each team's defense from its current roster."""
+    ratings, league = defense.player_ratings(year)
+    info = defense.player_info(year)
+    con.execute("DELETE FROM player_defense")
+    for pid, r in ratings.items():
+        i = info.get(pid, {})
+        upsert(con, "player_defense", {**r, "name": i.get("name"), "team_id": i.get("team_id")})
+    minutes = {}
+    for pid, i in info.items():                              # expected minutes: this season, else last season
+        for season in (year, year - 1):
+            if i["gp"].get(season, 0) >= 3:
+                minutes[pid] = i["min"][season] / i["gp"][season]
+                break
+    current = defense.team_ratings_by_season(year)            # this season so far, same method as projections
+    gp = {r["team_id"]: r["wins"] + r["losses"] for r in
+          con.execute("SELECT team_id, wins, losses FROM team_season WHERE snapshot_date=?", (today,))}
+    actual = {t: (*current[t], gp.get(t, 0)) for t in current}
+    last = defense.team_ratings_by_season(year - 1)
+    proj = defense.team_projection(ratings, league, rosters, minutes, out_ids, actual)
+    for team, p in proj.items():
+        lo, ld = last.get(team, (None, None))
+        upsert(con, "team_projection", {"snapshot_date": today, "team_id": team, "league_rtg": round(league, 1),
+                                        "last_season_ortg": lo, "last_season_drtg": ld, **p})
+    return len(ratings), len(proj)
 
 
 def main():
@@ -144,14 +174,28 @@ def main():
             g = lal_final[-1]
             us = datetime.fromisoformat(g["date_utc"].replace("Z", "+00:00")).astimezone(ZoneInfo("America/New_York"))
             targets.append((g["event_id"], us.strftime("%Y%m%d")))
+        season_dir = HISTORY / str(year)
+        season_dir.mkdir(parents=True, exist_ok=True)
+        done_file = season_dir / "_done.txt"
+        hist_done = set(done_file.read_text().split()) if done_file.exists() else set()
         for event_id, us_date in targets:
-            info, team_rows, player_rows = espn.game_summary(event_id, us_date)
+            raw = espn.raw_summary(event_id)
+            info, team_rows, player_rows = espn.game_summary(event_id, us_date, raw)
             upsert(con, "game_info", info)
             for r in team_rows:
                 upsert(con, "game_team_box", r)
             con.execute("DELETE FROM game_players WHERE event_id = ?", (event_id,))
             for r in player_rows:
                 upsert(con, "game_players", r)
+            if event_id not in hist_done:                     # season files feed the lineup/defense model
+                stints, quality = build_stints(raw)
+                append_rows(season_dir / "games.csv.gz", [{**info, "season": year, "lineup_quality": round(quality, 3)}])
+                append_rows(season_dir / "team_box.csv.gz", team_rows)
+                append_rows(season_dir / "players.csv.gz", player_rows)
+                append_rows(season_dir / "stints.csv.gz", stints)
+                with open(done_file, "a") as f:
+                    f.write(event_id + "\n")
+                hist_done.add(event_id)
         log(f"Box scores: {len(targets)} new games")
     except Exception as e:
         errors.append(f"box scores: {e}")
@@ -165,19 +209,34 @@ def main():
     except Exception as e:
         errors.append(f"news: {e}")
 
-    # 6. Injuries for the Lakers and their next opponent
+    # 6. Injuries for every team (the roster projection and the betting model need all of them)
     try:
-        upcoming = [g for g in games if g["status"] != "STATUS_FINAL"]
-        ids = {espn.LAKERS_ID}
-        if upcoming:
-            g = upcoming[0]
-            ids.add(g["away_id"] if g["home_id"] == espn.LAKERS_ID else g["home_id"])
         con.execute("DELETE FROM injuries WHERE snapshot_date = ?", (today,))
-        for inj in espn.injuries(ids):
+        injured = espn.injuries(None)
+        for inj in injured:
             upsert(con, "injuries", {"snapshot_date": today, **inj})
-        log(f"Injuries for teams {sorted(ids)}")
+        log(f"Injuries: {len(injured)} listed")
     except Exception as e:
         errors.append(f"injuries: {e}")
+
+    # 6b. Odds and props for tonight's games (more captures run through the day: capture_odds.py)
+    try:
+        now = datetime.now(TZ)
+        n, o, p, failed = odds_capture.capture(datetime.now(ZoneInfo("America/New_York")).strftime("%Y%m%d"),
+                                               now.isoformat(timespec="minutes"), now.strftime("%H%M"))
+        log(f"Odds capture: {n} games, {o} game lines, {p} props" + (f", {len(failed)} failed" if failed else ""))
+    except Exception as e:
+        errors.append(f"odds capture: {e}")
+
+    # 6c. Player defensive ratings and roster-projected team defense
+    try:
+        rosters = {t: espn.team_roster(t) for t in {r["team_id"] for r in
+                                                    con.execute("SELECT team_id FROM team_season WHERE snapshot_date=?", (today,))}}
+        out_ids = {r["athlete_id"] for r in injured if (r.get("status") or "").lower() == "out" and r.get("athlete_id")}
+        n_players, n_teams = defense_update(con, year, today, rosters, out_ids)
+        log(f"Defense model: {n_players} players rated, {n_teams} team projections")
+    except Exception as e:
+        errors.append(f"defense model: {e}")
 
     con.commit()
     con.close()

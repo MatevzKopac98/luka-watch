@@ -109,18 +109,29 @@ def schedule(team_id=LAKERS_ID):
     return games
 
 
-def injuries(team_ids):
+def injuries(team_ids=None):
+    """Injury report; team_ids=None returns every team."""
     data = get_json(f"{SITE}/injuries")
     out = []
     for team in data.get("injuries", []):
-        if team.get("id") not in team_ids:
+        if team_ids is not None and team.get("id") not in team_ids:
             continue
         for inj in team.get("injuries", []):
+            athlete = inj.get("athlete") or {}
+            link = " ".join(l.get("href", "") for l in athlete.get("links") or [])
+            found = re.search(r"/id/(\d+)", link)              # the id only appears in the player-card link
             out.append({
-                "team_id": team["id"], "player": inj.get("athlete", {}).get("displayName"),
+                "team_id": team["id"], "player": athlete.get("displayName"),
+                "athlete_id": found.group(1) if found else None,
                 "status": inj.get("status"), "detail": inj.get("shortComment"),
             })
     return out
+
+
+def team_roster(team_id):
+    """Current roster: list of athlete ids."""
+    data = get_json(f"{SITE}/teams/{team_id}/roster")
+    return [a["id"] for a in data.get("athletes", []) if a.get("id")]
 
 
 # ---------- players ----------
@@ -326,9 +337,13 @@ def scoreboard(us_date):
             for e in data.get("events", [])]
 
 
-def game_summary(event_id, us_date):
-    """Box score of one game: (info row, [team rows], [player rows])."""
-    s = get_json(f"{SITE}/summary", {"event": event_id})
+def raw_summary(event_id):
+    return get_json(f"{SITE}/summary", {"event": event_id})
+
+
+def game_summary(event_id, us_date, s=None):
+    """Box score of one game: (info row, [team rows], [player rows]). Pass s to reuse a fetched summary."""
+    s = s or raw_summary(event_id)
     comp = s["header"]["competitions"][0]
     side = {c["homeAway"]: c for c in comp["competitors"]}
     lines = lambda c: ",".join(str(l.get("displayValue", "")) for l in c.get("linescores", []))
@@ -357,7 +372,7 @@ def game_summary(event_id, us_date):
         st = (p.get("statistics") or [{}])[0]
         keys = st.get("keys", [])
         for a in st.get("athletes", []):
-            if a.get("didNotPlay") or not a.get("stats"):
+            if a.get("didNotPlay") or not a.get("stats") or not (a.get("athlete") or {}).get("id"):
                 continue
             row = {"event_id": event_id, "team_id": p["team"]["id"], "athlete_id": a["athlete"]["id"],
                    "name": a["athlete"]["displayName"], "starter": int(bool(a.get("starter")))}

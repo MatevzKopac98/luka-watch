@@ -1,0 +1,43 @@
+name: Odds capture
+
+on:
+  schedule:
+    # DraftKings posts player props on game day; these catch them through the US day up to tip-off.
+    # UTC times; New York time in brackets.
+    - cron: "23 15 * * *"   # (10:23) morning lines
+    - cron: "23 19 * * *"   # (14:23)
+    - cron: "13 23 * * *"   # (18:13) close to 7 pm tip-offs = closing lines
+    - cron: "13 2 * * *"    # (21:13) closing lines for 10 pm West Coast games
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-writer        # never write the data branch at the same time as the daily update
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: data
+          path: data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python scripts/capture_odds.py
+      - name: Save data snapshot
+        working-directory: data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan snapshot
+          git add -A
+          git commit -q -m "Data snapshot $(date -u +%FT%H%MZ)"
+          git push -q -f origin snapshot:data

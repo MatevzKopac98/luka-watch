@@ -13,15 +13,15 @@ on:
   workflow_dispatch:        # "Run workflow" button for a manual refresh
   push:                     # rebuild when code changes (the bot's own data commits don't re-trigger)
     branches: [main]
-    paths-ignore: ["data/**", "site/**", "README.md"]
+    paths-ignore: ["README.md"]
 
 permissions:
-  contents: write           # commit the updated database back to the repo
+  contents: write           # save the data snapshot to the data branch
   pages: write
   id-token: write
 
 concurrency:
-  group: daily-update
+  group: data-writer        # shared with the odds capture: one writer of the data branch at a time
   cancel-in-progress: false
 
 jobs:
@@ -32,6 +32,12 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      # The data lives on its own branch holding only the latest snapshot, so the repo never bloats
+      - uses: actions/checkout@v4
+        with:
+          ref: data
+          path: data
 
       - uses: actions/setup-python@v5
         with:
@@ -44,13 +50,15 @@ jobs:
         run: python scripts/update.py
         continue-on-error: true   # a single failing source shouldn't block publishing the rest
 
-      - name: Save database history
+      - name: Save data snapshot
+        working-directory: data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/nba.sqlite site
-          git diff --cached --quiet || git commit -m "Daily update $(date -u +%F)"
-          git push
+          git checkout -q --orphan snapshot
+          git add -A
+          git commit -q -m "Data snapshot $(date -u +%FT%H%MZ)"
+          git push -q -f origin snapshot:data
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

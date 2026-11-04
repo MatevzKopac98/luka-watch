@@ -112,10 +112,26 @@ CREATE TABLE IF NOT EXISTS game_players (
 );
 
 CREATE TABLE IF NOT EXISTS injuries (
-    snapshot_date TEXT, team_id TEXT, player TEXT, status TEXT, detail TEXT,
+    snapshot_date TEXT, team_id TEXT, player TEXT, status TEXT, detail TEXT, athlete_id TEXT,
     PRIMARY KEY (snapshot_date, team_id, player)
 );
+
+CREATE TABLE IF NOT EXISTS player_defense (           -- from play-by-play stints, last 3 seasons weighted
+    athlete_id TEXT PRIMARY KEY, name TEXT, team_id TEXT,
+    def_impact REAL, off_impact REAL, on_drtg REAL, on_ortg REAL, on_off REAL, def_poss REAL
+);
+
+CREATE TABLE IF NOT EXISTS team_projection (          -- roster-projected vs actual offense and defense
+    snapshot_date TEXT, team_id TEXT, league_rtg REAL, last_season_ortg REAL, last_season_drtg REAL,
+    roster_ortg REAL, roster_drtg REAL, actual_ortg REAL, actual_drtg REAL, gp INTEGER,
+    blend_ortg REAL, blend_drtg REAL,
+    PRIMARY KEY (snapshot_date, team_id)
+);
 """
+
+MIGRATIONS = [   # columns added after a table first shipped (CREATE IF NOT EXISTS won't add them)
+    ("injuries", "athlete_id", "TEXT"),
+]
 
 
 def connect():
@@ -123,6 +139,9 @@ def connect():
     con = sqlite3.connect(DB_PATH)
     con.row_factory = sqlite3.Row
     con.executescript(SCHEMA)
+    for table, column, kind in MIGRATIONS:
+        if column not in {r[1] for r in con.execute(f"PRAGMA table_info({table})")}:
+            con.execute(f"ALTER TABLE {table} ADD COLUMN {column} {kind}")
     return con
 
 

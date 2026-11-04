@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .claude/
 data/*.sqlite-journal
+# Data lives on the "data" branch (checked out into data/), the site is built fresh by every run
+data/
+site/

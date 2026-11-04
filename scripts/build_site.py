@@ -88,6 +88,8 @@ def load():
     data["vs_opp"] = q("SELECT * FROM luka_vs_opp")
     data["prev_games"] = q("SELECT * FROM luka_prev_games ORDER BY game_date")
     data["season"] = max((r["season"] for r in data["vs_opp"]), default=None)
+    data["projection"] = {r["team_id"]: r for r in q(
+        "SELECT * FROM team_projection WHERE snapshot_date = (SELECT MAX(snapshot_date) FROM team_projection)")}
     con.close()
     return data
 
@@ -708,6 +710,34 @@ def section_lakers(d):
 </section>"""
 
 
+def roster_outlook(d, lal, opp):
+    """Offense and defense three ways: last season, projected from today's roster, actual this season."""
+    rows = []
+    for team in (lal, opp):
+        p = d["projection"].get(team["team_id"])
+        if not p:
+            return ""
+        cells = []
+        for kind, better_high in (("ortg", True), ("drtg", False)):
+            last, roster, now = p[f"last_season_{kind}"], p[f"roster_{kind}"], p[f"actual_{kind}"]
+            delta = (roster - last) if (roster is not None and last is not None) else None
+            good = delta is not None and abs(delta) >= 1 and ((delta > 0) == better_high)
+            arrow = "" if delta is None or abs(delta) < 1 else (
+                f' <span class="lvl {"easy" if good else "hard"}">{"▲" if delta > 0 else "▼"}{abs(delta):.1f}</span>')
+            cells.append(f'<td>{fmt(last)}</td><td class="strong">{fmt(roster)}{arrow}</td><td>{fmt(now)}</td>')
+        rows.append(f'<tr><th scope="row"><img src="{team["logo"]}" alt="" class="logo">{team["abbr"]}</th>'
+                    f'{"".join(cells)}</tr>')
+    return f"""
+    <h3 class="sub">Roster outlook</h3>
+    <div class="tablewrap"><table class="outlook"><thead>
+      <tr><th></th><th colspan="3">Offensive rating</th><th colspan="3">Defensive rating</th></tr>
+      <tr><th></th><th>Last season</th><th>Roster</th><th>Now</th><th>Last season</th><th>Roster</th><th>Now</th></tr>
+    </thead><tbody>{''.join(rows)}</tbody></table></div>
+    <p class="muted small">Points per 100 possessions. "Roster" rates today's healthy roster on each player's
+    track record over the last three seasons (wherever he played), so summer moves and injuries show up before
+    the team's own results do. Arrows: change vs last season (green = better). Defense: lower is better.</p>"""
+
+
 def season_label(year):
     return f"{year - 1}-{str(year)[2:]}"
 
@@ -826,6 +856,7 @@ def next_game_card(d):
     <table class="vs"><thead><tr><th>LAL</th><th>Season averages</th><th>{opp['abbr']}</th></tr></thead>
     <tbody>{''.join(rows)}</tbody></table>
     <p class="muted small">Small number = league rank out of 30. The team with the edge on each stat is highlighted.</p>
+    {roster_outlook(d, lal, opp)}
     {luka_vs_block(d, opp)}
     <div class="grid2 inj2">
       <div><h3 class="sub">Injuries · Lakers</h3><ul class="inj">{inj(LAKERS_ID)}</ul></div>
@@ -1178,6 +1209,9 @@ ul.bests li.lead{font-weight:600}ul.bests li.lead strong{color:var(--hi)}
 .records{margin-top:14px;padding-top:10px;border-top:1px solid var(--grid)}
 .records ul{margin:4px 0 0;padding-left:18px;font-size:14px}.records a{color:var(--ink)}
 .verdict{margin:0 0 8px;font-size:14px}
+table.outlook th[scope=row]{text-align:left;display:flex;align-items:center;gap:6px}
+table.outlook thead tr:first-child th{text-align:center;border-bottom:none}
+table.outlook td.strong{font-weight:700}
 .vs-sum{margin:6px 0 4px;font-size:14px}.vs-sum .lbl-k{display:inline;margin-right:6px}
 table.sched th[scope=row]{text-align:left;display:flex;align-items:center;gap:6px}
 .lvl{font-weight:600}.lvl.hard{color:var(--bad)}.lvl.easy{color:var(--good)}
