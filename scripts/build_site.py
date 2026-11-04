@@ -1248,7 +1248,7 @@ border:1px solid var(--border);color:var(--ink);text-decoration:none}
 .team-tile:hover{border-color:var(--hi)}.team-tile.me{box-shadow:inset 0 0 0 2px var(--hi)}
 .logo-m{width:36px;height:36px}.tt-name{font-weight:700}
 .wide-bar{width:90px}.grid2.tight{gap:16px;margin-top:8px}
-.hero a{color:var(--ink2)}
+.hero a:not(.btn-yt){color:var(--ink2)}
 .unlock{display:flex;flex-direction:column;gap:10px;max-width:320px;margin-top:16px}
 .unlock input[type=password]{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--border);
 background:var(--surface);color:var(--ink)}
