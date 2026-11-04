@@ -121,6 +121,17 @@ CREATE TABLE IF NOT EXISTS player_defense (           -- from play-by-play stint
     def_impact REAL, off_impact REAL, on_drtg REAL, on_ortg REAL, on_off REAL, def_poss REAL
 );
 
+CREATE TABLE IF NOT EXISTS roster_players (           -- today's rosters with profile and salary
+    team_id TEXT, athlete_id TEXT, name TEXT, position TEXT, age INTEGER, height TEXT, weight TEXT,
+    experience INTEGER, jersey TEXT, headshot TEXT, salary REAL, salary_last REAL,
+    PRIMARY KEY (team_id, athlete_id)
+);
+
+CREATE TABLE IF NOT EXISTS contracts (                -- this season's contract per player (refreshed weekly)
+    athlete_id TEXT PRIMARY KEY, season INTEGER, salary REAL, years_remaining INTEGER, option_type INTEGER,
+    fetched TEXT
+);
+
 CREATE TABLE IF NOT EXISTS team_projection (          -- roster-projected vs actual offense and defense
     snapshot_date TEXT, team_id TEXT, league_rtg REAL, last_season_ortg REAL, last_season_drtg REAL,
     roster_ortg REAL, roster_drtg REAL, actual_ortg REAL, actual_drtg REAL, gp INTEGER,

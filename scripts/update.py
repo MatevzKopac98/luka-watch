@@ -50,6 +50,22 @@ def luka_extras(con, pid, year, today):
                 upsert(con, "luka_vs_opp", r)
 
 
+CONTRACT_REFRESH_DAYS = 7
+
+
+def refresh_contracts(con, year):
+    """Contract details (salary, years remaining) for rostered players not refreshed in the last week."""
+    cutoff = (datetime.now(TZ).date() - timedelta(days=CONTRACT_REFRESH_DAYS)).isoformat()
+    stale = [r["athlete_id"] for r in con.execute(
+        """SELECT r.athlete_id FROM roster_players r LEFT JOIN contracts c USING (athlete_id)
+           WHERE c.fetched IS NULL OR c.fetched < ? OR c.season != ?""", (cutoff, year))]
+    for pid in stale:
+        c = espn.player_contract(pid, year)
+        upsert(con, "contracts", {"athlete_id": pid, "season": year, "fetched": datetime.now(TZ).date().isoformat(),
+                                  **(c or {"salary": None, "years_remaining": None, "option_type": None})})
+    return len(stale)
+
+
 def defense_update(con, year, today, rosters, out_ids):
     """Rate every player's defense from stints, project each team's defense from its current roster."""
     ratings, league = defense.player_ratings(year)
@@ -228,10 +244,25 @@ def main():
     except Exception as e:
         errors.append(f"odds capture: {e}")
 
+    # 6b2. Full rosters with profiles and salaries (team pages), contract details refreshed weekly
+    rosters = {}
+    try:
+        team_ids = {r["team_id"] for r in con.execute("SELECT team_id FROM team_season WHERE snapshot_date=?", (today,))}
+        con.execute("DELETE FROM roster_players")
+        for t in team_ids:
+            entries = espn.team_roster_full(t, year)
+            rosters[t] = [e["athlete_id"] for e in entries]
+            for e in entries:
+                upsert(con, "roster_players", e)
+        n_contracts = refresh_contracts(con, year)
+        log(f"Rosters: {sum(len(v) for v in rosters.values())} players, {n_contracts} contracts refreshed")
+    except Exception as e:
+        errors.append(f"rosters: {e}")
+
     # 6c. Player defensive ratings and roster-projected team defense
     try:
-        rosters = {t: espn.team_roster(t) for t in {r["team_id"] for r in
-                                                    con.execute("SELECT team_id FROM team_season WHERE snapshot_date=?", (today,))}}
+        rosters = rosters or {t: espn.team_roster(t) for t in {r["team_id"] for r in
+                                                               con.execute("SELECT team_id FROM team_season WHERE snapshot_date=?", (today,))}}
         out_ids = {r["athlete_id"] for r in injured if (r.get("status") or "").lower() == "out" and r.get("athlete_id")}
         n_players, n_teams = defense_update(con, year, today, rosters, out_ids)
         log(f"Defense model: {n_players} players rated, {n_teams} team projections")

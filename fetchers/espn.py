@@ -1,7 +1,10 @@
 """ESPN public API: standings, team stats, schedule, player stats, game logs, injuries."""
 import re
 import unicodedata
-from .http import get_json
+
+import requests
+
+from .http import HEADERS, get_json
 
 SITE = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba"
 STANDINGS = "https://site.api.espn.com/apis/v2/sports/basketball/nba/standings"
@@ -130,8 +133,45 @@ def injuries(team_ids=None):
 
 def team_roster(team_id):
     """Current roster: list of athlete ids."""
+    return [p["athlete_id"] for p in team_roster_full(team_id)]
+
+
+def team_roster_full(team_id, season=None):
+    """Current roster with profile and salary (from ESPN's contract history on the roster feed)."""
     data = get_json(f"{SITE}/teams/{team_id}/roster")
-    return [a["id"] for a in data.get("athletes", []) if a.get("id")]
+    season = season or (data.get("season") or {}).get("year")
+    out = []
+    for a in data.get("athletes", []):
+        if not a.get("id"):
+            continue
+        salaries = {(c.get("season") or {}).get("year"): c.get("salary") for c in a.get("contracts") or []}
+        out.append({
+            "team_id": str(team_id), "athlete_id": a["id"], "name": a.get("displayName"),
+            "position": (a.get("position") or {}).get("abbreviation"), "age": a.get("age"),
+            "height": a.get("displayHeight"), "weight": a.get("displayWeight"),
+            "experience": (a.get("experience") or {}).get("years"), "jersey": a.get("jersey"),
+            "headshot": (a.get("headshot") or {}).get("href"),
+            "salary": salaries.get(season), "salary_last": salaries.get(season - 1) if season else None,
+        })
+    return out
+
+
+CORE = "https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba"
+
+
+def player_contract(athlete_id, season):
+    """This season's contract (salary, years remaining) from ESPN's contract records, or None.
+
+    One attempt only: many players simply have no record for the season, and retrying those is slow.
+    """
+    try:
+        r = requests.get(f"{CORE}/athletes/{athlete_id}/contracts/{season}", headers=HEADERS, timeout=15)
+        if r.status_code != 200:
+            return None
+        c = r.json()
+    except (requests.RequestException, ValueError):
+        return None
+    return {"salary": c.get("salary"), "years_remaining": c.get("yearsRemaining"), "option_type": c.get("optionType")}
 
 
 # ---------- players ----------

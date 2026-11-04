@@ -670,7 +670,8 @@ def section_lakers(d):
         rows = "".join(
             f'<tr class="{"me" if t["team_id"] == LAKERS_ID else "opp" if t["team_id"] == opp_id else ""}'
             f'{" cut" if t["seed"] in (6, 10) else ""}">'
-            f'<td>{t["seed"]}</td><th scope="row"><img src="{t["logo"]}" alt="" class="logo">{t["abbr"]}</th>'
+            f'<td>{t["seed"]}</td><th scope="row"><a href="teams/{t["abbr"]}.html" title="Open the {escape(t["name"])} page">'
+            f'<img src="{t["logo"]}" alt="" class="logo">{t["abbr"]}</a></th>'
             f'<td>{t["wins"]}-{t["losses"]}</td><td>{t["games_behind"]}</td><td>{t["streak"]}</td>'
             f'<td>{t["last10"]}</td><td>{t["net_rtg"]:+.1f}</td></tr>'
             for t in sorted((t for t in teams if t["conference"] == conf), key=lambda t: t["seed"] or 99))
@@ -707,7 +708,7 @@ def section_lakers(d):
       <h3 style="margin-top:20px">Conference standings</h3>
       <div class="chips" role="group" aria-label="Choose conference">{conf_chips}</div>
       {conf_panels}
-      <p class="muted small">Lines mark the playoff (1–6) and play-in (7–10) spots.</p></div>
+      <p class="muted small">Lines mark the playoff (1–6) and play-in (7–10) spots. Tap a team to open its page.</p></div>
   </div>
   <div class="grid2">
     {schedule_card(d)}
@@ -1237,6 +1238,17 @@ ul.impact{list-style:none;margin:0;padding:0}ul.impact li{display:flex;align-ite
 border-bottom:1px solid var(--grid)}.imp-rank{width:26px;height:26px;border-radius:50%;background:var(--hi-wash);
 display:grid;place-items:center;font-weight:700;color:var(--hi);flex:none}
 .imp-main{flex:1;display:flex;flex-direction:column}.imp-pm{font-size:22px;font-weight:700;color:var(--good)}
+.chip-rows{display:flex;flex-wrap:wrap;gap:4px 16px}
+table.roster tr.dim th,table.roster tr.dim td{opacity:.6}
+table.stand th[scope=row] a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:6px}
+table.stand th[scope=row] a:hover{text-decoration:underline}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:10px 0 24px}
+.team-tile{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:12px;background:var(--surface);
+border:1px solid var(--border);color:var(--ink);text-decoration:none}
+.team-tile:hover{border-color:var(--hi)}.team-tile.me{box-shadow:inset 0 0 0 2px var(--hi)}
+.logo-m{width:36px;height:36px}.tt-name{font-weight:700}
+.wide-bar{width:90px}.grid2.tight{gap:16px;margin-top:8px}
+.hero a{color:var(--ink2)}
 .unlock{display:flex;flex-direction:column;gap:10px;max-width:320px;margin-top:16px}
 .unlock input[type=password]{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--border);
 background:var(--surface);color:var(--ink)}
@@ -1284,6 +1296,8 @@ group.querySelectorAll('.chip').forEach(c=>{const on=c===b;c.classList.toggle('o
 card.querySelectorAll('.stat-panel').forEach(p=>p.hidden=p.dataset.stat!==b.dataset.stat);
 if(b.dataset.panel)card.querySelectorAll('.ln-panel').forEach(p=>p.classList.toggle('off',p.dataset.panel!==b.dataset.panel));
 if(b.dataset.conf)card.querySelectorAll('.scatter').forEach(s=>s.dataset.conf=b.dataset.conf);
+if(b.dataset.dim){const box=b.closest('.combo');box.dataset[b.dataset.dim]=b.dataset.val;
+box.querySelectorAll('.combo-panel').forEach(p=>p.hidden=p.dataset.key!==box.dataset.season+'-'+box.dataset.mode);}
 tip.style.opacity=0})});
 """
 
@@ -1304,19 +1318,20 @@ def section_last_night(d):
 </section>"""
 
 
-def page(title, active, body, d):
+def page(title, active, body, d, root=""):
+    """Full page around a body. root = path back to the site root ("../" for pages in a subfolder)."""
     now = datetime.now(TZ)
     links = [("index.html#next", "Lakers games", "home"), ("index.html#mvp", "MVP race", "home"),
              ("index.html#compare", "Compare", "home"), ("index.html#lakers", "Lakers", "home"),
-             ("index.html#milestones", "Milestones", "home"),
+             ("index.html#milestones", "Milestones", "home"), ("teams/index.html", "Teams", "teams"),
              ("last-night.html", "Last night", "night"), ("betting.html", "Betting 🔒", "betting")]
-    nav = "".join(f'<a href="{h}"{" class=\"active\"" if k == active and k != "home" else ""}>{t}</a>'
+    nav = "".join(f'<a href="{root}{h}"{" class=\"active\"" if k == active and k != "home" else ""}>{t}</a>'
                   for h, t, k in links)
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title><meta name="description" content="Daily Luka Dončić, MVP race and Lakers tracker">
 <style>{CSS}</style></head><body>
-<header class="top"><div class="bar-in"><a class="brand" href="index.html">Luka Watch</a>
+<header class="top"><div class="bar-in"><a class="brand" href="{root}index.html">Luka Watch</a>
 <nav>{nav}</nav>
 <span class="updated">Updated {now:%a %d %b, %H:%M}</span></div></header>
 <main>{body}</main>
@@ -1335,7 +1350,9 @@ def build():
                                                 encoding="utf-8")
     (OUT.parent / "betting.html").write_text(page("Betting · Luka Watch", "betting", section_betting(), d),
                                              encoding="utf-8")
-    print(f"Wrote {OUT}, last-night.html and betting.html")
+    from scripts.build_teams import build_teams
+    n_teams = build_teams(d, page)
+    print(f"Wrote {OUT}, last-night.html, betting.html and {n_teams} team pages")
 
 
 BETTING_PAYLOAD = ROOT / "data" / "betting_page.json"
