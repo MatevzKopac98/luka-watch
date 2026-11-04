@@ -52,6 +52,20 @@ separated from teammates and opponents. Each team's **current healthy roster**, 
 minutes, then gives a projected offensive and defensive rating, blended with the team's real results as
 games accumulate.
 
+## Betting pilot (paper trading, password protected)
+
+- `model/props.py` reads captured DraftKings props: over/under pairs (first row = over) with the margin removed,
+  and milestone ladders.
+- `model/projections.py` projects each player: minutes (recent games, recently injured teammates, back-to-backs,
+  blowout risk) x production per minute (recent > season > last season, usage boost) x matchup (opponent's
+  roster-projected defence, pace), with a skewed (gamma) distribution for over/under probabilities.
+- `model/betting.py` projects **every player with a prop in every game** (training data), picks Lakers bets
+  where our probability beats the market's fair probability by 5+ points with +3% expected value, grades picks
+  the next morning (result, closing line, why a miss happened) and recalibrates how much to trust the model
+  vs the market once 400 projections are graded (only adopted if it predicts better on held-out games).
+- The betting database and page are encrypted (AES-256-GCM, `model/crypto.py`) with the `BETTING_PASSWORD`
+  GitHub Secret; without it the betting page shows "not configured".
+
 ## Running it
 
 ```bash

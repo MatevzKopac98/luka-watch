@@ -2,3 +2,4 @@ requests
 tzdata
 numpy
 scipy
+cryptography

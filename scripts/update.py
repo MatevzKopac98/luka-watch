@@ -241,6 +241,13 @@ def main():
     con.commit()
     con.close()
 
+    # 6d. Betting pilot: grade last night's picks, learn, refresh picks (private, encrypted)
+    try:
+        from scripts.run_betting import run as run_betting
+        run_betting(log)
+    except Exception as e:
+        errors.append(f"betting: {e}")
+
     # 7. Rebuild the website from the fresh data
     try:
         from scripts.build_site import build

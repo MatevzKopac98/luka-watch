@@ -1,4 +1,5 @@
-"""Snapshot DraftKings lines and props for tonight's games. Run: python scripts/capture_odds.py
+"""Snapshot DraftKings lines and props for tonight's games, then refresh the betting picks and the site.
+Run: python scripts/capture_odds.py
 
 Runs several times a day (.github/workflows/odds.yml) so line movement and closing lines are kept.
 """
@@ -17,3 +18,7 @@ if __name__ == "__main__":
     print(f"US date {us_date}: {n} upcoming games, {o} game lines, {p} props")
     for f in failed:
         print("FAILED", f)
+    from scripts.run_betting import run as run_betting
+    run_betting()
+    from scripts.build_site import build
+    build()

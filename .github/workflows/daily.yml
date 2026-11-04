@@ -49,6 +49,8 @@ jobs:
       - name: Fetch data and build site
         run: python scripts/update.py
         continue-on-error: true   # a single failing source shouldn't block publishing the rest
+        env:
+          BETTING_PASSWORD: ${{ secrets.BETTING_PASSWORD }}   # unlocks the private betting data (GitHub Secret)
 
       - name: Save data snapshot
         working-directory: data
