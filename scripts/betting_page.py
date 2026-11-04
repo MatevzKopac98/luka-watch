@@ -53,8 +53,28 @@ def pick_card(p, bank):
   <p class="money">If it wins: pays <strong>{eur(payout)}</strong> (profit {eur(payout - stake)}) ·
     if it loses: {eur(-stake)} · expected value <strong class="{'pos' if expected > 0 else 'neg'}">{eur(expected, True)}</strong></p>
   <p class="play">{play}</p>
+  {where_to_bet(p)}
   <p class="lbl-k">Why this bet</p><ul class="why">{reasons}</ul>
 </article>"""
+
+
+def where_to_bet(p):
+    """Where this exact bet can be placed, and at what price."""
+    rows = [f'<li><strong>DraftKings</strong> (US): {p["line"]:g} at {_odds(p["odds"])} ({p["dec"]:.2f}), '
+            f'the line the model used</li>']
+    poly = json.loads(p["poly"]) if p.get("poly") else None
+    if poly and poly.get("dec"):
+        same = poly["line"] == p["line"]
+        ev = p["p_final"] * poly["dec"] - 1 if same else None
+        better = " · <span class='pos'>better price than DraftKings</span>" if same and poly["dec"] > p["dec"] else ""
+        rows.append(f'<li><strong>Polymarket</strong>: {"same line" if same else f"line {poly["line"]:g} (not the same)"}, '
+                    f'price {poly["price"]:.2f} = {poly["dec"]:.2f} odds'
+                    + (f', expected value {ev * 100:+.1f}%' if ev is not None else "")
+                    + f'{better} <span class="muted small">(${poly["liquidity"]:,} in the market)</span></li>')
+    else:
+        rows.append('<li><strong>Polymarket</strong>: no matching market with real money behind it</li>')
+    rows.append(f'<li><strong>bet365 / your bookmaker</strong>: compare their line with "still worth it up to" above</li>')
+    return f'<p class="lbl-k">Where to bet</p><ul class="where">{"".join(rows)}</ul>'
 
 
 def result_row(p, money):

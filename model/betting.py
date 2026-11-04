@@ -19,6 +19,7 @@ from pathlib import Path
 
 import numpy as np
 
+from model import polymarket
 from model import projections as pj
 from model import props as pr
 from model.defense import HISTORY, _f, _read
@@ -62,6 +63,8 @@ def connect():
     con = sqlite3.connect(DB_PATH)
     con.row_factory = sqlite3.Row
     con.executescript(SCHEMA)
+    if "poly" not in {r[1] for r in con.execute("PRAGMA table_info(picks)")}:
+        con.execute("ALTER TABLE picks ADD COLUMN poly TEXT")    # matching Polymarket market (JSON)
     return con
 
 
@@ -206,6 +209,16 @@ def predict(con, us_date, season, nba_con, injured, schedule, captured_label):
             lakers_candidates += game_candidates(con, event_id, info, gl, proj, pace, league, league_pace)
 
     picks = choose(lakers_candidates)
+    poly_events = {}
+    for c in picks:                                          # same bet on Polymarket, if it's there with real money
+        if c["event_id"] not in poly_events:
+            opp = nba_con.execute("SELECT name FROM team_season WHERE team_id=? ORDER BY snapshot_date DESC LIMIT 1",
+                                  (c["opp_id"],)).fetchone()
+            try:
+                poly_events[c["event_id"]] = polymarket.game_event(us_date, opp["name"].split()[-1]) if opp else None
+            except Exception:
+                poly_events[c["event_id"]] = None
+        c["poly"] = polymarket.find(poly_events[c["event_id"]], {**c, "player_name": c.get("player", "")})
     published = set()
     for c in picks:
         pid = refresh_pick(con, c, us_date, schedule[c["event_id"]], proj, defence, names, season)
@@ -368,13 +381,14 @@ def refresh_pick(con, c, us_date, info, proj, defence, names, season):
                   if c["kind"] == "prop" else c["game_proj"])
     con.execute("""INSERT OR REPLACE INTO picks (pick_id, us_date, event_id, tip_utc, game, kind, athlete_id, player,
                    stat, side, line, odds, dec, p_model, p_final, fair, edge, ev, units, playable_to, reasons,
-                   projection, first_published, last_seen, status)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'active')""",
+                   projection, first_published, last_seen, status, poly)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'active',?)""",
                 (pick_id, us_date, c["event_id"], info["tip_utc"], info["label"], c["kind"], c.get("athlete_id"),
                  describe(c, names), c["stat"], c["side"], c["line"], str(c["odds"]), c["dec"], c["p_model"],
                  c["p_final"], c["fair"], c["edge"], c["ev"], units_for(c), playable_to(c),
                  json.dumps(reasons_for(c, proj, defence, names, season)), json.dumps(projection),
-                 exists["first_published"] if exists else now_iso(), now_iso()))
+                 exists["first_published"] if exists else now_iso(), now_iso(),
+                 json.dumps(c["poly"]) if c.get("poly") else None))
     return pick_id
 
 

@@ -633,7 +633,6 @@ def section_lakers(d):
     teams = d["teams"]
     lal = next(t for t in teams if t["team_id"] == LAKERS_ID)
     defs, ranks = team_block_rows(teams)
-    west = sorted((t for t in teams if t["conference"] == lal["conference"]), key=lambda t: t["seed"] or 99)
     finals = [g for g in d["games"] if g["status"] == "STATUS_FINAL"][-5:]
     upcoming = [g for g in d["games"] if g["status"] != "STATUS_FINAL"]
     opp_id = None
@@ -663,12 +662,26 @@ def section_lakers(d):
         res.append(f'<li><span class="wl {wl}">{wl}</span> {local(g["date_utc"]):%d %b} '
                    f'{"vs" if home else "@"} {opp} <strong>{us}-{them}</strong></li>')
 
-    stand = "".join(
-        f'<tr class="{"me" if t["team_id"] == LAKERS_ID else "opp" if t["team_id"] == opp_id else ""}'
-        f'{" cut" if t["seed"] in (6, 10) else ""}">'
-        f'<td>{t["seed"]}</td><th scope="row"><img src="{t["logo"]}" alt="" class="logo">{t["abbr"]}</th>'
-        f'<td>{t["wins"]}-{t["losses"]}</td><td>{t["games_behind"]}</td><td>{t["streak"]}</td>'
-        f'<td>{t["last10"]}</td><td>{t["net_rtg"]:+.1f}</td></tr>' for t in west)
+    def standings(conf):
+        rows = "".join(
+            f'<tr class="{"me" if t["team_id"] == LAKERS_ID else "opp" if t["team_id"] == opp_id else ""}'
+            f'{" cut" if t["seed"] in (6, 10) else ""}">'
+            f'<td>{t["seed"]}</td><th scope="row"><img src="{t["logo"]}" alt="" class="logo">{t["abbr"]}</th>'
+            f'<td>{t["wins"]}-{t["losses"]}</td><td>{t["games_behind"]}</td><td>{t["streak"]}</td>'
+            f'<td>{t["last10"]}</td><td>{t["net_rtg"]:+.1f}</td></tr>'
+            for t in sorted((t for t in teams if t["conference"] == conf), key=lambda t: t["seed"] or 99))
+        return (f'<div class="tablewrap"><table class="stand"><thead><tr><th>#</th><th>Team</th><th>W-L</th>'
+                f'<th>GB</th><th>Strk</th><th>L10</th><th>Net</th></tr></thead><tbody>{rows}</tbody></table></div>')
+
+    own = lal["conference"]                                  # Lakers' conference first and selected
+    confs = [own] + [c for c in ("West", "East") if c != own]
+    conf_name = {"West": "Western", "East": "Eastern"}
+    conf_chips = "".join(
+        f'<button type="button" class="chip{" on" if i == 0 else ""}" data-stat="conf-{c}" '
+        f'aria-pressed="{"true" if i == 0 else "false"}">{conf_name[c]}</button>' for i, c in enumerate(confs))
+    conf_panels = "".join(
+        f'<div class="stat-panel" data-stat="conf-{c}"{"" if i == 0 else " hidden"}>{standings(c)}</div>'
+        for i, c in enumerate(confs))
 
     return f"""
 <section id="lakers">
@@ -687,9 +700,9 @@ def section_lakers(d):
       Rank is out of 30 teams (1st = best).</p></div>
       <div class="stat-panel" data-stat="rank-luka" hidden>{luka_rank_table(d)}</div></div>
     <div class="card"><h3>Last 5 games</h3><ul class="results">{''.join(res)}</ul>
-      <h3 style="margin-top:20px">Western Conference</h3>
-      <div class="tablewrap"><table class="stand"><thead><tr><th>#</th><th>Team</th><th>W-L</th><th>GB</th>
-      <th>Strk</th><th>L10</th><th>Net</th></tr></thead><tbody>{stand}</tbody></table></div>
+      <h3 style="margin-top:20px">Conference standings</h3>
+      <div class="chips" role="group" aria-label="Choose conference">{conf_chips}</div>
+      {conf_panels}
       <p class="muted small">Lines mark the playoff (1–6) and play-in (7–10) spots.</p></div>
   </div>
   <div class="grid2">
@@ -1233,6 +1246,7 @@ background:var(--surface);color:var(--ink)}
 .bet-nums strong{font-size:18px}.pos{color:var(--good)}.neg{color:var(--bad)}
 @media (max-width:420px){.bet-nums{grid-template-columns:repeat(2,1fr)}}
 .money{font-size:14px;margin:6px 0}
+ul.where{margin:0 0 6px;padding-left:18px;font-size:14px}ul.where li{margin:2px 0}
 .play{background:var(--hi-wash);border-radius:8px;padding:8px 10px;font-size:14px;margin:8px 0}
 details.list{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-top:10px}
 details.list>summary{cursor:pointer;font-weight:700}
