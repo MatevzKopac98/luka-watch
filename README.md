@@ -50,9 +50,9 @@ python scripts/check_sources.py # check every data source still responds
 
 ## Daily schedule
 
-GitHub Actions (`.github/workflows/daily.yml`) runs the update at 07:35 (page ready by 08:00) and a
-backup pass at 08:30 Ljubljana time (one hour later during summer time), commits the database, and
-publishes `site/` to GitHub Pages. `python scripts/end_times.py` shows when games actually ended each
+GitHub Actions (`.github/workflows/daily.yml`) runs the update at 06:41 (page ready by 07:00), with
+backup passes at 07:07, 07:37 and 08:13 Ljubljana time (one hour later during summer time), because
+GitHub can delay or drop scheduled runs. Each run commits the database and publishes `site/` to GitHub Pages. `python scripts/end_times.py` shows when games actually ended each
 night, to tune those times.
 
 ## Pages
