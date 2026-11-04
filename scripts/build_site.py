@@ -420,7 +420,7 @@ def section_hero(d):
                      f'{where} {last["opp_abbr"]} · {last["result"]} {last["score"]} — <strong>{last["pts"]:.0f} pts, '
                      f'{last["reb"]:.0f} reb, {last["ast"]:.0f} ast</strong> '
                      f'({last["fgm"]:.0f}/{last["fga"]:.0f} FG, {last["fg3m"]:.0f}/{last["fg3a"]:.0f} 3P)</p>'
-                     f'{highlight_buttons(info, d["teams"], highlights_url(last, d["teams"]))}</div>')
+                     f'{highlight_buttons(info, d["teams"], highlights_url(last, d["teams"]), "Luka highlights (YouTube)")}</div>')
     head = f'<img src="{l["headshot"]}" alt="" class="headshot">' if l.get("headshot") else ""
     return f"""
 <section class="hero">
@@ -898,14 +898,19 @@ def game_youtube(info, teams):
     return "https://www.youtube.com/results?search_query=" + quote_plus(q)
 
 
-def highlight_buttons(info, teams, youtube=None):
+def highlight_buttons(info, teams, youtube=None, youtube_label=None):
+    """ESPN game highlights (ESPN only has a whole-game video) plus a YouTube search.
+
+    youtube/youtube_label override the YouTube search, e.g. Luka's own highlights in his strip;
+    by default it searches the game's highlights.
+    """
     out = []
     if info.get("highlights_url"):
         out.append(f'<a class="btn-yt" href="{escape(info["highlights_url"])}" target="_blank" rel="noopener">'
-                   f'<span aria-hidden="true">▶</span> Highlights (ESPN)</a>')
+                   f'<span aria-hidden="true">▶</span> Game highlights (ESPN)</a>')
+    label = youtube_label or ("Game highlights (YouTube)" if not out else "YouTube")
     out.append(f'<a class="btn-yt{" ghost" if out else ""}" href="{youtube or game_youtube(info, teams)}" '
-               f'target="_blank" rel="noopener"><span aria-hidden="true">▶</span> '
-               f'{"YouTube" if out else "Highlights (YouTube)"}</a>')
+               f'target="_blank" rel="noopener"><span aria-hidden="true">▶</span> {label}</a>')
     return f'<div class="btns">{"".join(out)}</div>'
 
 
@@ -1009,8 +1014,6 @@ def last_game_card(d):
     won = lal_pts > opp_pts
     opp = teams[opp_id]
     story = game_story(g, box, players, d["teams"])
-    luka = next((x for x in d["luka_games"] if x["event_id"] == g["event_id"]), None)
-    youtube = highlights_url(luka, d["teams"]) if luka else None
     return f"""
   <div class="card">
     <h3 class="card-kicker">Last game · {local(g['start_utc']):%A %d %B}</h3>
@@ -1024,7 +1027,7 @@ def last_game_card(d):
     {quarter_table(g)}
     {f'<p class="headline">{escape(g["headline"])}</p>' if g.get("headline") else ''}
     {story_html(story, d['teams'])}
-    {highlight_buttons(g, d['teams'], youtube)}
+    {highlight_buttons(g, d['teams'])}
     <table class="vs"><thead><tr><th>LAL</th><th>Game stats</th><th>{opp['abbr']}</th></tr></thead>
     <tbody>{box_rows(box.get(LAKERS_ID, {}), box.get(opp_id, {}), lal_pts, opp_pts)}</tbody></table>
     <h3 class="sub">Lakers box score</h3>
