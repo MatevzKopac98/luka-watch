@@ -52,7 +52,7 @@ separated from teammates and opponents. Each team's **current healthy roster**, 
 minutes, then gives a projected offensive and defensive rating, blended with the team's real results as
 games accumulate.
 
-## Betting pilot (paper trading, password protected)
+## Betting pilot (paper trading in EUR from a simulated €100, password protected)
 
 - `model/props.py` reads captured DraftKings props: over/under pairs (first row = over) with the margin removed,
   and milestone ladders.

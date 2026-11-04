@@ -1232,6 +1232,7 @@ background:var(--surface);color:var(--ink)}
 .bet-nums>div{display:flex;flex-direction:column;background:var(--page);border-radius:8px;padding:6px 8px}
 .bet-nums strong{font-size:18px}.pos{color:var(--good)}.neg{color:var(--bad)}
 @media (max-width:420px){.bet-nums{grid-template-columns:repeat(2,1fr)}}
+.money{font-size:14px;margin:6px 0}
 .play{background:var(--hi-wash);border-radius:8px;padding:8px 10px;font-size:14px;margin:8px 0}
 details.list{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-top:10px}
 details.list>summary{cursor:pointer;font-weight:700}
@@ -1253,11 +1254,12 @@ const tip=document.getElementById('tip');
 function show(el,x,y){const p=el.dataset.tip.split('|');tip.innerHTML='<b>'+p[0]+'</b>'+(p.length>1?'<br>'+p.slice(1).join('<br>'):'');
 tip.style.opacity=1;const r=tip.getBoundingClientRect();let L=x+14,T=y+14;
 if(L+r.width>innerWidth-8)L=x-r.width-14;if(T+r.height>innerHeight-8)T=y-r.height-14;tip.style.left=Math.max(8,L)+'px';tip.style.top=Math.max(8,T)+'px'}
-document.querySelectorAll('[data-tip]').forEach(el=>{
-el.addEventListener('pointermove',e=>show(el,e.clientX,e.clientY));
-el.addEventListener('pointerleave',()=>tip.style.opacity=0);
-el.addEventListener('focus',()=>{const b=el.getBoundingClientRect();show(el,b.right,b.top)});
-el.addEventListener('blur',()=>tip.style.opacity=0)});
+// delegated, so content added later (the unlocked betting page) gets tooltips too
+document.addEventListener('pointermove',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');
+if(el)show(el,e.clientX,e.clientY);else tip.style.opacity=0});
+document.addEventListener('focusin',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');
+if(el){const b=el.getBoundingClientRect();show(el,b.right,b.top)}});
+document.addEventListener('focusout',()=>tip.style.opacity=0);
 document.querySelectorAll('.chips').forEach(group=>{const card=group.parentElement;
 group.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;
 group.querySelectorAll('.chip').forEach(c=>{const on=c===b;c.classList.toggle('on',on);c.setAttribute('aria-pressed',on)});

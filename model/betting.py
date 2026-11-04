@@ -563,6 +563,44 @@ def _fit_logistic(X, y, ridge=1.0, iters=50):
     return beta
 
 
+# ---------------------------------------------------------------- simulated bankroll (EUR)
+
+STARTING_BANKROLL = 100.0   # euros; each stake = its units as % of the bankroll at the start of that day
+
+
+def bankroll(con):
+    """Replay every settled pick in order: stakes in euros from the bankroll at the start of each day.
+
+    Returns {pick_id: {stake, profit, after}}, the day-by-day curve and the current bankroll.
+    """
+    rows = [dict(r) for r in con.execute(
+        "SELECT * FROM picks WHERE status IN ('graded', 'void') ORDER BY us_date, tip_utc, pick_id")]
+    value, per_pick, curve = STARTING_BANKROLL, {}, [("start", STARTING_BANKROLL)]
+    days = {}
+    for r in rows:
+        days.setdefault(r["us_date"], []).append(r)
+    for day, picks in days.items():
+        start = value
+        for r in picks:
+            stake = round(start * r["units"] / 100, 2)
+            if r["result"] == "W":
+                profit = round(stake * (r["dec"] - 1), 2)
+            elif r["result"] == "L":
+                profit = -stake
+            else:                                            # push or void: stake back
+                profit = 0.0
+            value = round(value + profit, 2)
+            per_pick[r["pick_id"]] = {"stake": stake, "profit": profit, "after": value}
+        curve.append((day, value))
+    return {"picks": per_pick, "curve": curve, "value": value,
+            "staked": round(sum(p["stake"] for p in per_pick.values()), 2)}
+
+
+def stake_now(con, units):
+    """Euro stake for a pick placed today, from the current simulated bankroll."""
+    return round(bankroll(con)["value"] * units / 100, 2)
+
+
 # ---------------------------------------------------------------- track record
 
 def record(con):
