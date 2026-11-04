@@ -2,12 +2,16 @@ name: Daily update
 
 on:
   schedule:
-    # GitHub cron is UTC and can start 5-20 min late.
-    # 06:35 UTC = 07:35 Ljubljana (winter) -> page ready by 08:00
-    # 07:30 UTC = 08:30 Ljubljana        -> backup pass for very late games or a failed run
-    # Review with: python scripts/end_times.py
-    - cron: "35 6 * * *"
-    - cron: "30 7 * * *"
+    # GitHub cron is UTC. Scheduled runs can start late or be dropped entirely when GitHub is busy,
+    # so several slots are spread over the morning; any one of them refreshes the page.
+    # Odd minutes avoid the :00/:30 rush. Times below are Ljubljana winter time (UTC+1).
+    - cron: "47 5 * * *"    # 06:47  early pass (most games already over)
+    - cron: "17 6 * * *"    # 07:17
+    - cron: "37 6 * * *"    # 07:37  main pass -> ready by 08:00
+    - cron: "53 6 * * *"    # 07:53
+    - cron: "13 7 * * *"    # 08:13
+    - cron: "41 7 * * *"    # 08:41  last safety net
+    # Review game end times with: python scripts/end_times.py
   workflow_dispatch:        # "Run workflow" button for a manual refresh
   push:                     # rebuild when code changes (the bot's own data commits don't re-trigger)
     branches: [main]
