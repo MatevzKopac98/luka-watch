@@ -97,14 +97,14 @@ To get the latest data locally: `git -C data pull --rebase` won't work on a forc
 ## Salaries (Basketball-Reference export, refreshed by hand)
 
 ESPN misses many new contracts, so team payrolls come from the Basketball-Reference contract tables, exported
-by hand (no scraping) every two weeks:
+by hand (no scraping) once a month:
 
 1. On [players](https://www.basketball-reference.com/contracts/players.html) and
    [teams](https://www.basketball-reference.com/contracts/) choose **Share & Export → Get table as Excel**.
 2. `python scripts/import_contracts.py` picks the newest two exports from Downloads, checks that every team's
    player salaries add up to its payroll, lists players without a contract (mostly two-way deals) and waived
    players still being paid, and writes `contracts/contracts.json` (plus `contracts/report.txt`).
-3. Commit `contracts/` and push. Team pages credit the source and ask for a new export after 14 days.
+3. Commit `contracts/` and push. Team pages credit the source and ask for a new export after a month.
 
 ## Health checks
 

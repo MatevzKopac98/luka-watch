@@ -29,7 +29,7 @@ PLAYERS_FILE, TEAMS_FILE, SUMMARY_FILE = DIR / "players.xls", DIR / "teams.xls",
 BBREF_TO_ESPN = {"BRK": "BKN", "CHO": "CHA", "GSW": "GS", "NOP": "NO", "NYK": "NY", "PHO": "PHX", "SAS": "SA",
                  "UTA": "UTAH", "WAS": "WSH"}
 TEAM_NAME_FIX = {"Los Angeles Clippers": "LA Clippers"}
-REMIND_DAYS = 14             # the site asks for fresh exports after this many days
+REMIND_DAYS = 31             # the site asks for fresh exports after this many days (monthly refresh)
 
 
 def name_key(n):
