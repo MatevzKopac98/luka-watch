@@ -454,7 +454,9 @@ def section_compare(d):
     players = sorted(d["players"], key=lambda p: (-(odds_for(p["name"], d["odds"]) or 0), -(p["pts"] or 0)))
     cols = [("pts", "PTS", 1, False), ("reb", "REB", 1, False), ("ast", "AST", 1, False),
             ("stl", "STL", 1, False), ("blk", "BLK", 1, False), ("tov", "TOV", 1, True),
-            ("fg_pct", "FG%", 1, False), ("fg3_pct", "3P%", 1, False), ("ft_pct", "FT%", 1, False),
+            ("fga", "FGA", 1, None), ("fg_pct", "FG%", 1, False),
+            ("fg3a", "3PA", 1, None), ("fg3_pct", "3P%", 1, False),
+            ("fta", "FTA", 1, None), ("ft_pct", "FT%", 1, False),
             ("ts_pct", "TS%", 1, False), ("min", "MIN", 1, None)]
     best = {}
     for k, _, _, low in cols:
@@ -475,8 +477,10 @@ def section_compare(d):
     return f"""
 <section id="compare">
   <h2>Luka vs. the best</h2>
-  <p class="muted">Per-game averages, sorted by MVP odds. The best value in each column is highlighted. TS% = true shooting
-  (scoring efficiency including 3s and free throws). The group is the core five plus the current MVP top 5.</p>
+  <p class="muted">Per-game averages, sorted by MVP odds. The best value in each column is highlighted. FGA, 3PA and
+  FTA are attempts per game (field goals, threes, free throws), not highlighted since more isn't automatically better.
+  TS% = true shooting (scoring efficiency including 3s and free throws). The group is the core five plus the current
+  MVP top 5.</p>
   <div class="tablewrap"><table class="stats">
     <thead><tr><th scope="col">Player</th><th>MVP</th>{head}<th>DD</th><th>TD</th></tr></thead>
     <tbody>{''.join(rows)}</tbody></table></div>
