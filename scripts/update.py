@@ -97,6 +97,7 @@ def main():
     today = datetime.now(TZ).date().isoformat()
     con = connect()
     errors = []
+    last_night_finals, odds_counts = None, None
     year = espn.season_year()
     log(f"Season {year - 1}-{str(year)[2:]}, snapshot {today}")
 
@@ -179,6 +180,8 @@ def main():
             recent = (local_today - day).days <= GAME_NIGHTS_BACK
             if us_date not in done or recent:
                 night = espn.scoreboard(us_date)
+                if day == local_today - timedelta(days=1):
+                    last_night_finals = [g["event_id"] for g in night if g["status"] == "STATUS_FINAL"]
                 targets += [(g["event_id"], us_date) for g in night
                             if g["status"] == "STATUS_FINAL" and g["event_id"] not in have]
                 if not recent and all(g["status"] in ("STATUS_FINAL", "STATUS_POSTPONED", "STATUS_CANCELED")
@@ -240,9 +243,17 @@ def main():
         now = datetime.now(TZ)
         n, o, p, failed = odds_capture.capture(datetime.now(ZoneInfo("America/New_York")).strftime("%Y%m%d"),
                                                now.isoformat(timespec="minutes"), now.strftime("%H%M"))
+        odds_counts = (n, o, p)
         log(f"Odds capture: {n} games, {o} game lines, {p} props" + (f", {len(failed)} failed" if failed else ""))
     except Exception as e:
         errors.append(f"odds capture: {e}")
+    try:
+        from scripts.prune import prune
+        removed, freed = prune()
+        if removed:
+            log(f"Pruned {removed} old odds snapshots ({freed / 1e6:.1f} MB)")
+    except Exception as e:
+        errors.append(f"prune: {e}")
 
     # 6b2. Full rosters with profiles and salaries (team pages), contract details refreshed weekly
     rosters = {}
@@ -278,6 +289,20 @@ def main():
         run_betting(log)
     except Exception as e:
         errors.append(f"betting: {e}")
+
+    # 6e. Sanity checks, saved for the site's status banner
+    try:
+        from model.crypto import password
+        from scripts import status
+        from scripts.build_site import BETTING_PAYLOAD
+        con = connect()
+        warnings = status.checks(con, today, last_night_finals, odds_counts, bool(password()), BETTING_PAYLOAD)
+        con.close()
+        status.write(errors, warnings)
+        for w in warnings:
+            log(f"CHECK {w}")
+    except Exception as e:
+        errors.append(f"sanity checks: {e}")
 
     # 7. Rebuild the website from the fresh data
     try:

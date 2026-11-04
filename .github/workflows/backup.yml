@@ -1,0 +1,43 @@
+name: Weekly backup
+
+# The data branch keeps only the latest snapshot, so a bad run could lose the betting history.
+# Every Monday this copies the encrypted betting database (and the site database) into a GitHub release,
+# keeping the last KEEP backups. The betting file stays encrypted with BETTING_PASSWORD.
+# Restore: download betting.sqlite.enc from a "backup-..." release into data/ on the data branch.
+
+on:
+  schedule:
+    - cron: "17 4 * * 1"    # Mondays 05:17 Ljubljana winter time, before the morning update
+  workflow_dispatch:
+
+permissions:
+  contents: write           # create releases
+
+concurrency:
+  group: data-writer        # read a consistent snapshot, not one being written
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      KEEP: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: data
+      - name: Create release with the databases
+        run: |
+          tag="backup-$(date -u +%Y-%m-%d)"
+          files=""
+          for f in betting.sqlite.enc betting_page.salt nba.sqlite; do [ -f "$f" ] && files="$files $f"; done
+          [ -n "$files" ] || { echo "Nothing to back up"; exit 1; }
+          gzip -k nba.sqlite && files="${files/nba.sqlite/nba.sqlite.gz}"
+          gh release delete "$tag" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$tag" $files --target data --title "Data backup $(date -u +%F)" \
+            --notes "Automatic weekly backup. betting.sqlite.enc is encrypted with the BETTING_PASSWORD secret." --latest=false
+      - name: Keep only the newest backups
+        run: |
+          gh release list --limit 100 --json tagName --jq '.[].tagName' | grep '^backup-' | sort -r \
+            | tail -n +$((KEEP + 1)) | while read -r t; do gh release delete "$t" --yes --cleanup-tag; done

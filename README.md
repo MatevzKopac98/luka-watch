@@ -77,6 +77,8 @@ python scripts/backfill_history.py 2025 2026     # one-time history backfill (re
 python scripts/show_data.py                      # text summary of the latest snapshot
 python scripts/end_times.py                      # when games ended, to tune the schedule
 python scripts/check_sources.py                  # check every data source still responds
+python scripts/prune.py --dry-run                # which old odds snapshots would be thinned out
+pip install -r requirements-dev.txt && python -m pytest -q   # offline tests
 ```
 
 To get the latest data locally: `git -C data pull --rebase` won't work on a force-pushed branch, so use
@@ -87,7 +89,18 @@ To get the latest data locally: `git -C data pull --rebase` won't work on a forc
 - **Daily update** (`daily.yml`): 06:41 (page ready by 07:00), with backup passes at 07:07, 07:37 and
   08:13 Ljubljana time (one hour later in summer time), because GitHub can delay or drop scheduled runs.
 - **Odds capture** (`odds.yml`): 10:23, 14:23, 18:13 and 21:13 New York time, so closing lines are kept.
+- **Weekly backup** (`backup.yml`): Mondays 05:17, saves the encrypted betting database and the site database
+  as a `backup-YYYY-MM-DD` GitHub release (last 8 kept), because the data branch keeps no history.
+- **Tests** (`tests.yml`): on every code push; they don't block the daily update.
 - Manual refresh: **Actions → Daily update → Run workflow**.
+
+## Health checks
+
+Each morning run checks every source (30 teams in the standings, MVP odds, injuries, last night's box scores,
+tonight's odds, the betting page) and saves the result in `data/status.json`. Every page shows a red notice when
+a source failed or when the last morning update is more than 26 hours old (checked in the reader's browser, so it
+also appears when no run happened at all), and the footer lists any issues. Odds snapshots are thinned out after
+3 days (first and last two kept) and after 30 days (last only).
 
 ## Pages
 

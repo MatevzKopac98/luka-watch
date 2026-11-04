@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from db import connect  # noqa: E402
 from scripts import insights  # noqa: E402
+from scripts import status as run_status  # noqa: E402
 
 TZ = ZoneInfo("Europe/Ljubljana")
 LAKERS_ID = "13"
@@ -1279,6 +1280,10 @@ border:1px solid var(--border);background:var(--page);color:var(--ink2)}
 #tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--surface);padding:8px 10px;border-radius:8px;
 font-size:12px;line-height:1.45;max-width:260px;opacity:0;transition:opacity .1s;z-index:10}
 #tip b{font-weight:700}
+.status{max-width:1080px;margin:10px auto 0;padding:0 16px}
+.status p{margin:0;padding:8px 12px;border:1px solid var(--bad);border-radius:10px;font-size:13px;color:var(--ink);
+background:color-mix(in srgb,var(--bad) 8%,var(--surface))}
+.runlog summary{cursor:pointer}.runlog ul{margin:4px 0 0;padding-left:18px}
 footer{max-width:1080px;margin:0 auto;padding:0 16px 32px;color:var(--muted);font-size:12px}
 """
 
@@ -1302,6 +1307,8 @@ if(b.dataset.conf)card.querySelectorAll('.scatter').forEach(s=>s.dataset.conf=b.
 if(b.dataset.dim){const box=b.closest('.combo');box.dataset[b.dataset.dim]=b.dataset.val;
 box.querySelectorAll('.combo-panel').forEach(p=>p.hidden=p.dataset.key!==box.dataset.season+'-'+box.dataset.mode);}
 tip.style.opacity=0})});
+(()=>{const s=document.getElementById('stale');if(!s)return;const h=(Date.now()-Date.parse(s.dataset.run))/36e5;
+if(h>+s.dataset.hours){s.querySelector('b').textContent=h<48?Math.round(h)+' hours':Math.round(h/24)+' days';s.hidden=false}})();
 """
 
 
@@ -1321,9 +1328,40 @@ def section_last_night(d):
 </section>"""
 
 
+SOURCE_NAMES = {"teams": "standings", "schedule": "Lakers schedule", "mvp odds": "MVP odds", "players": "player stats",
+                "league players": "league stats", "box scores": "box scores", "news": "Luka headlines",
+                "injuries": "injuries", "odds capture": "odds", "rosters": "rosters", "defense model": "ratings",
+                "betting": "betting picks", "prune": "odds clean-up", "sanity checks": "checks"}
+
+
+def status_banner(st):
+    """Red notice when the morning update is old (decided in the browser) or a source failed."""
+    if not st:
+        return ""
+    failed = sorted({SOURCE_NAMES.get(e.split(":")[0], e.split(":")[0]) for e in st.get("errors", [])})
+    msg = (f'<p>Some data didn’t refresh this morning: {escape(", ".join(failed))}. The rest is current.</p>'
+           if failed else "")
+    stale = (f'<p id="stale" hidden data-run="{escape(st["daily_run"])}" data-hours="{run_status.stale_after_hours()}">'
+             'Data may be out of date: the last morning update ran <b></b> ago.</p>')
+    return f'<div class="status">{msg}{stale}</div>'
+
+
+def run_log(st):
+    if not st:
+        return ""
+    run = datetime.fromisoformat(st["daily_run"])
+    issues = st.get("errors", []) + st.get("warnings", [])
+    if not issues:
+        return f" Morning update {run:%a %H:%M}: all checks passed."
+    items = "".join(f"<li>{escape(i)}</li>" for i in issues)
+    return (f'<details class="runlog"><summary>Morning update {run:%a %H:%M}: {len(issues)} '
+            f'issue{"s" if len(issues) > 1 else ""}</summary><ul>{items}</ul></details>')
+
+
 def page(title, active, body, d, root=""):
     """Full page around a body. root = path back to the site root ("../" for pages in a subfolder)."""
     now = datetime.now(TZ)
+    st = run_status.read()
     links = [("index.html#next", "Lakers games", "home"), ("index.html#mvp", "MVP race", "home"),
              ("index.html#compare", "Compare", "home"), ("index.html#lakers", "Lakers", "home"),
              ("index.html#milestones", "Milestones", "home"), ("teams/index.html", "Teams", "teams"),
@@ -1337,9 +1375,10 @@ def page(title, active, body, d, root=""):
 <header class="top"><div class="bar-in"><a class="brand" href="{root}index.html">Luka Watch</a>
 <nav>{nav}</nav>
 <span class="updated">Updated {now:%a %d %b, %H:%M}</span></div></header>
+{status_banner(st)}
 <main>{body}</main>
 <footer>Data: ESPN (stats, standings, schedule, box scores, injuries) and Polymarket (MVP odds). Times in Ljubljana
-time. Ratings are estimates from box-score totals. Snapshot {d['date']}.</footer>
+time. Ratings are estimates from box-score totals. Snapshot {d['date']}.{run_log(st)}</footer>
 <div id="tip" role="tooltip"></div><script>{JS}</script></body></html>"""
 
 
