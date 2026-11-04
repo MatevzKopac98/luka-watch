@@ -5,10 +5,13 @@ last season x per game / per 36 / totals, with salary), five-man lineups, rotati
 model), value for money (salary vs impact) and contracts. Built from the site database plus the stored box
 scores; no extra requests.
 """
+from collections import defaultdict
+from datetime import date
 from html import escape
 
 from db import connect
 from model import lineups as lu
+from scripts import import_contracts
 from model.team_stats import season_lines, view
 from scripts.build_site import LAKERS_ID, OUT, fmt, ordinal, rank
 
@@ -253,20 +256,39 @@ def value_card(roster, impact, salary_of):
 </div>"""
 
 
-def contracts_card(roster, salary_of, years_of, payroll, pay):
+def contracts_source(summary):
+    """Footnote naming where salaries come from, and asking for a fresh export when it's old."""
+    if not summary:
+        return ('Salaries and contract years from ESPN; "–" = not published by ESPN yet (often new signings and '
+                'rookies), filled in automatically once it is. Shares are of the known payroll.')
+    exported = date.fromisoformat(summary["exported"])
+    age = (date.today() - exported).days
+    due = (f' <strong>The export is {age} days old: time to download it again.</strong>'
+           if age > import_contracts.REMIND_DAYS else "")
+    return (f'Salaries, contract years and payroll from the <a href="https://www.basketball-reference.com/contracts/" '
+            f'target="_blank" rel="noopener">Basketball-Reference contract tables</a>, exported {exported:%d %b %Y}.{due} '
+            'Players without a contract there (mostly two-way deals, which don\'t count toward payroll) show ESPN\'s '
+            'figure when it has one. Players waived but still paid are listed at the bottom.')
+
+
+def contracts_card(roster, salary_of, years_of, payroll, pay, dead=(), source=""):
     rows = sorted(((salary_of(r) or 0, r) for r in roster), key=lambda t: -t[0])
+    bar = lambda s: (f'<td><span class="rbar wide-bar"><i style="width:{100 * s / payroll if payroll else 0:.0f}%"></i>'
+                     f'</span> {100 * s / payroll if payroll else 0:.0f}%</td>')
     body = "".join(
-        f'<tr>{player_cell(r)}<td class="strong">{money(s) if s else "–"}</td>'
-        f'<td><span class="rbar wide-bar"><i style="width:{100 * s / payroll if payroll else 0:.0f}%"></i></span> '
-        f'{100 * s / payroll if payroll else 0:.0f}%</td><td>{years_of(r) if years_of(r) is not None else "–"}</td></tr>'
+        f'<tr>{player_cell(r)}<td class="strong">{money(s) if s else "–"}</td>{bar(s)}'
+        f'<td>{years_of(r) if years_of(r) is not None else "–"}</td></tr>'
         for s, r in rows)
+    body += "".join(
+        f'<tr class="dim"><th scope="row"><span>{escape(c["name"])}<small>waived, still paid</small></span></th>'
+        f'<td class="strong">{money(c["cost"])}</td>{bar(c["cost"])}<td>–</td></tr>'
+        for c in sorted(dead, key=lambda c: -c["cost"]))
     return f"""
 <div class="card"><h3>Contracts</h3>
   <p class="verdict"><strong>{escape(pay[2])}</strong></p>
-  <div class="tablewrap"><table class="stats contracts"><thead><tr><th scope="col">Player</th><th>Salary</th>
+  <div class="tablewrap"><table class="stats contracts roster"><thead><tr><th scope="col">Player</th><th>Salary</th>
   <th>Share of payroll</th><th>Years left</th></tr></thead><tbody>{body}</tbody></table></div>
-  <p class="muted small">Salaries and contract years from ESPN; "–" = not published by ESPN yet (often new signings
-  and rookies), filled in automatically once it is. Shares are of the known payroll.</p>
+  <p class="muted small">{source}</p>
 </div>"""
 
 
@@ -297,9 +319,17 @@ def header(team, d, ranks, proj, pay, injuries):
 </section>"""
 
 
-def payroll_text(total, cov, rank_, n_ranked):
-    """(tile value, tile subtitle, one-line summary) with an honest note when salaries are incomplete."""
+def payroll_text(total, cov, rank_, n_ranked, dead_money=None):
+    """(tile value, tile subtitle, one-line summary) with an honest note when salaries are incomplete.
+
+    dead_money is set when the payroll comes from the Basketball-Reference team table (complete, includes
+    players the team waived but still pays).
+    """
     known, n = cov
+    if dead_money is not None:
+        sub = f"{ordinal(rank_)} highest in NBA" if rank_ else ""
+        extra = f" · incl. {money(dead_money)} for players no longer on the team" if dead_money >= 1e5 else ""
+        return money(total), sub, f"Payroll {money(total)}" + (f" · {sub}" if sub else "") + extra
     if n and known / n >= PAYROLL_COMPLETE:
         sub = f"{ordinal(rank_)} highest of {n_ranked} with full data" if rank_ else ""
         return money(total), sub, f"Payroll {money(total)}" + (f" · {sub}" if sub else "")
@@ -329,33 +359,65 @@ def build_teams(d, page):
     abbr_of = {t["team_id"]: t["abbr"] for t in d["teams"]}
     ranks = {k: rank(d["teams"], k, low) for k, low in (("ortg", False), ("drtg", True), ("net_rtg", False))}
 
+    # Basketball-Reference contract export (contracts/, refreshed by hand) wins over ESPN where it has the player
+    label = f"{season - 1}-{str(season)[2:]}"
+    summary = import_contracts.load()
+    if summary and summary.get("season") != label:
+        summary = None
+    bb_of, dead = {}, defaultdict(list)
+    if summary:
+        rows = [{**r, "abbr": abbr_of.get(r["team_id"])} for r in roster_all]
+        matched = import_contracts.match(summary, rows)
+        used = set()
+        for i, r in enumerate(rows):
+            status, c = matched[i]
+            if status == "ok":
+                bb_of[r["athlete_id"]] = c
+                used.add(id(c))
+        for c in summary["players"]:
+            if id(c) not in used:
+                dead[c["team"]].append(c)
+
     def salary_of(r):
+        if r["athlete_id"] in bb_of:
+            return bb_of[r["athlete_id"]]["cost"]
         c = contracts.get(r["athlete_id"])
         return (c or {}).get("salary") or r.get("salary")
 
     def years_of(r):
+        c = bb_of.get(r["athlete_id"])
+        if c:
+            return sum(1 for s in summary["seasons"] if c["salaries"].get(s))
         return (contracts.get(r["athlete_id"]) or {}).get("years_remaining")
 
     payroll, coverage = {}, {}
     for t in teams:
         mine = [r for r in roster_all if r["team_id"] == t]
         known = [salary_of(r) for r in mine if salary_of(r)]
-        payroll[t], coverage[t] = sum(known), (len(known), len(mine))
+        team_pay = (summary or {}).get("payroll", {}).get(abbr_of[t], {}).get(label)
+        if team_pay:
+            payroll[t], coverage[t] = team_pay, (len(mine), len(mine))
+        else:
+            payroll[t], coverage[t] = sum(known), (len(known), len(mine))
     # Rank payrolls only among teams whose salaries are (nearly) complete; ESPN lags on new deals
     complete = [t for t in teams if coverage[t][1] and coverage[t][0] / coverage[t][1] >= PAYROLL_COMPLETE]
     pay_rank = {t: i for i, t in enumerate(sorted(complete, key=lambda t: -payroll[t]), 1)}
+    source = contracts_source(summary)
     out_dir = OUT.parent / "teams"
     out_dir.mkdir(exist_ok=True)
     for tid, team in teams.items():
         roster = [{**r, "salary": salary_of(r)} for r in roster_all if r["team_id"] == tid]
         injuries = [i for i in d["injuries"] if i["team_id"] == tid]
-        pay = payroll_text(payroll[tid], coverage[tid], pay_rank.get(tid), len(complete))
+        team_dead = dead.get(team["abbr"], [])
+        pay = payroll_text(payroll[tid], coverage[tid], pay_rank.get(tid), len(complete),
+                           sum(c["cost"] for c in team_dead) if summary else None)
         body = (header(team, d, ranks, d["projection"], pay, injuries)
                 + '<section>' + players_card(team, roster, cur, last, abbr_of)
                 + lineups_card(tid, seasons, names) + rotation_card(tid, seasons, names)
                 + impact_card(roster, impact)
                 + '<div class="grid2">' + value_card(roster, impact, salary_of)
-                + contracts_card(roster, salary_of, years_of, payroll[tid], pay) + '</div></section>')
+                + contracts_card(roster, salary_of, years_of, payroll[tid], pay, team_dead, source)
+                + '</div></section>')
         (out_dir / f"{team['abbr']}.html").write_text(page(f"{team['name']} · Luka Watch", "teams", body, d, "../"),
                                                      encoding="utf-8")
     (out_dir / "index.html").write_text(page("Teams · Luka Watch", "teams", index_body(teams, payroll, coverage), d, "../"),

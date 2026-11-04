@@ -1,0 +1,6586 @@
+{
+"season": "2026-27",
+"seasons": [
+"2026-27",
+"2027-28",
+"2028-29",
+"2029-30",
+"2030-31",
+"2031-32"
+],
+"exported": "2026-11-04",
+"players": [
+{
+"name": "Stephen Curry",
+"key": "stephen curry",
+"bbref_id": "curryst01",
+"team": "GS",
+"cost": 62587158,
+"salaries": {
+"2026-27": 62587158,
+"2027-28": 55700000,
+"2028-29": 60156000
+},
+"guaranteed": 118287158,
+"waived_split": false
+},
+{
+"name": "Nikola Jokić",
+"key": "nikola jokic",
+"bbref_id": "jokicni01",
+"team": "DEN",
+"cost": 59033114,
+"salaries": {
+"2026-27": 59033114,
+"2027-28": 62841702
+},
+"guaranteed": 59033114,
+"waived_split": false
+},
+{
+"name": "Jayson Tatum",
+"key": "jayson tatum",
+"bbref_id": "tatumja01",
+"team": "BOS",
+"cost": 58456566,
+"salaries": {
+"2026-27": 58456566,
+"2027-28": 62786682,
+"2028-29": 67116798,
+"2029-30": 71446914
+},
+"guaranteed": 188360046,
+"waived_split": false
+},
+{
+"name": "Anthony Davis",
+"key": "anthony davis",
+"bbref_id": "davisan02",
+"team": "WSH",
+"cost": 58456566,
+"salaries": {
+"2026-27": 58456566,
+"2027-28": 62786682
+},
+"guaranteed": 58456566,
+"waived_split": false
+},
+{
+"name": "Giannis Antetokounmpo",
+"key": "giannis antetokounmpo",
+"bbref_id": "antetgi01",
+"team": "MIA",
+"cost": 58456566,
+"salaries": {
+"2026-27": 58456566,
+"2027-28": 62786682
+},
+"guaranteed": 58456566,
+"waived_split": false
+},
+{
+"name": "Joel Embiid",
+"key": "joel embiid",
+"bbref_id": "embiijo01",
+"team": "PHI",
+"cost": 58100000,
+"salaries": {
+"2026-27": 58100000,
+"2027-28": 62748000,
+"2028-29": 67396000
+},
+"guaranteed": 120848000,
+"waived_split": false
+},
+{
+"name": "Jaylen Brown",
+"key": "jaylen brown",
+"bbref_id": "brownja02",
+"team": "PHI",
+"cost": 57078728,
+"salaries": {
+"2026-27": 57078728,
+"2027-28": 61015192,
+"2028-29": 64951656
+},
+"guaranteed": 183045576,
+"waived_split": false
+},
+{
+"name": "Devin Booker",
+"key": "devin booker",
+"bbref_id": "bookede01",
+"team": "PHX",
+"cost": 57078728,
+"salaries": {
+"2026-27": 57078728,
+"2027-28": 61015192,
+"2028-29": 64065952,
+"2029-30": 69191228
+},
+"guaranteed": 182159872,
+"waived_split": false
+},
+{
+"name": "Karl-Anthony Towns",
+"key": "karlanthony towns",
+"bbref_id": "townska01",
+"team": "NY",
+"cost": 57078728,
+"salaries": {
+"2026-27": 57078728,
+"2027-28": 61015192
+},
+"guaranteed": 57078728,
+"waived_split": false
+},
+{
+"name": "Jimmy Butler",
+"key": "jimmy butler",
+"bbref_id": "butleji01",
+"team": "GS",
+"cost": 56832773,
+"salaries": {
+"2026-27": 56832773
+},
+"guaranteed": 56832773,
+"waived_split": false
+},
+{
+"name": "Paul George",
+"key": "paul george",
+"bbref_id": "georgpa01",
+"team": "BOS",
+"cost": 54126380,
+"salaries": {
+"2026-27": 54126380,
+"2027-28": 56586670
+},
+"guaranteed": 54126380,
+"waived_split": false
+},
+{
+"name": "Kawhi Leonard",
+"key": "kawhi leonard",
+"bbref_id": "leonaka01",
+"team": "TOR",
+"cost": 50300000,
+"salaries": {
+"2026-27": 50300000,
+"2027-28": 56097561,
+"2028-29": 58902439
+},
+"guaranteed": 106397561,
+"waived_split": false
+},
+{
+"name": "Donovan Mitchell",
+"key": "donovan mitchell",
+"bbref_id": "mitchdo01",
+"team": "CLE",
+"cost": 50105628,
+"salaries": {
+"2026-27": 50105628,
+"2027-28": 60911900,
+"2028-29": 65784852,
+"2029-30": 70657804,
+"2030-31": 75530756
+},
+"guaranteed": 247460184,
+"waived_split": false
+},
+{
+"name": "Cade Cunningham",
+"key": "cade cunningham",
+"bbref_id": "cunnica01",
+"team": "DET",
+"cost": 50105628,
+"salaries": {
+"2026-27": 50105628,
+"2027-28": 53817156,
+"2028-29": 57528684,
+"2029-30": 61240212
+},
+"guaranteed": 222691680,
+"waived_split": false
+},
+{
+"name": "Evan Mobley",
+"key": "evan mobley",
+"bbref_id": "mobleev01",
+"team": "CLE",
+"cost": 50105628,
+"salaries": {
+"2026-27": 50105628,
+"2027-28": 53817156,
+"2028-29": 57528684,
+"2029-30": 61240212
+},
+"guaranteed": 222691680,
+"waived_split": false
+},
+{
+"name": "Jamal Murray",
+"key": "jamal murray",
+"bbref_id": "murraja01",
+"team": "DEN",
+"cost": 50105628,
+"salaries": {
+"2026-27": 50105628,
+"2027-28": 53817156,
+"2028-29": 57528684
+},
+"guaranteed": 161451468,
+"waived_split": false
+},
+{
+"name": "De'Aaron Fox",
+"key": "deaaron fox",
+"bbref_id": "foxde01",
+"team": "SA",
+"cost": 49800000,
+"salaries": {
+"2026-27": 49800000,
+"2027-28": 53784000,
+"2028-29": 57768000,
+"2029-30": 61752000
+},
+"guaranteed": 223104000,
+"waived_split": false
+},
+{
+"name": "Bam Adebayo",
+"key": "bam adebayo",
+"bbref_id": "adebaba01",
+"team": "MIA",
+"cost": 49800000,
+"salaries": {
+"2026-27": 49800000,
+"2027-28": 53784000,
+"2028-29": 57768000
+},
+"guaranteed": 103584000,
+"waived_split": false
+},
+{
+"name": "Luka Dončić",
+"key": "luka doncic",
+"bbref_id": "doncilu01",
+"team": "LAL",
+"cost": 49800000,
+"salaries": {
+"2026-27": 49800000,
+"2027-28": 53784000,
+"2028-29": 57768000
+},
+"guaranteed": 103584000,
+"waived_split": false
+},
+{
+"name": "Trae Young",
+"key": "trae young",
+"bbref_id": "youngtr01",
+"team": "WSH",
+"cost": 49488300,
+"salaries": {
+"2026-27": 49488300,
+"2027-28": 50478066,
+"2028-29": 54437130,
+"2029-30": 58396194
+},
+"guaranteed": 154403496,
+"waived_split": false
+},
+{
+"name": "Jaren Jackson Jr.",
+"key": "jaren jackson",
+"bbref_id": "jacksja02",
+"team": "UTAH",
+"cost": 49000000,
+"salaries": {
+"2026-27": 49000000,
+"2027-28": 50500000,
+"2028-29": 52000000,
+"2029-30": 53500000
+},
+"guaranteed": 151500000,
+"waived_split": false
+},
+{
+"name": "Zach LaVine",
+"key": "zach lavine",
+"bbref_id": "lavinza01",
+"team": "SAC",
+"cost": 48967380,
+"salaries": {
+"2026-27": 48967380
+},
+"guaranteed": 48967380,
+"waived_split": false
+},
+{
+"name": "Anthony Edwards",
+"key": "anthony edwards",
+"bbref_id": "edwaran01",
+"team": "MIN",
+"cost": 48924624,
+"salaries": {
+"2026-27": 48924624,
+"2027-28": 52298736,
+"2028-29": 55672848
+},
+"guaranteed": 156896208,
+"waived_split": false
+},
+{
+"name": "Tyrese Haliburton",
+"key": "tyrese haliburton",
+"bbref_id": "halibty01",
+"team": "IND",
+"cost": 48924624,
+"salaries": {
+"2026-27": 48924624,
+"2027-28": 52298736,
+"2028-29": 55672848
+},
+"guaranteed": 156896208,
+"waived_split": false
+},
+{
+"name": "Pascal Siakam",
+"key": "pascal siakam",
+"bbref_id": "siakapa01",
+"team": "IND",
+"cost": 48924624,
+"salaries": {
+"2026-27": 48924624,
+"2027-28": 52298736
+},
+"guaranteed": 101223360,
+"waived_split": false
+},
+{
+"name": "Lauri Markkanen",
+"key": "lauri markkanen",
+"bbref_id": "markkla01",
+"team": "UTAH",
+"cost": 46113154,
+"salaries": {
+"2026-27": 46113154,
+"2027-28": 49824681,
+"2028-29": 53536209
+},
+"guaranteed": 149474044,
+"waived_split": false
+},
+{
+"name": "Domantas Sabonis",
+"key": "domantas sabonis",
+"bbref_id": "sabondo01",
+"team": "SAC",
+"cost": 45472000,
+"salaries": {
+"2026-27": 45472000,
+"2027-28": 48608000
+},
+"guaranteed": 94080000,
+"waived_split": false
+},
+{
+"name": "Kevin Durant",
+"key": "kevin durant",
+"bbref_id": "duranke01",
+"team": "HOU",
+"cost": 43902439,
+"salaries": {
+"2026-27": 43902439,
+"2027-28": 46097561
+},
+"guaranteed": 43902439,
+"waived_split": false
+},
+{
+"name": "OG Anunoby",
+"key": "og anunoby",
+"bbref_id": "anunoog01",
+"team": "NY",
+"cost": 42500000,
+"salaries": {
+"2026-27": 42500000,
+"2027-28": 45431034,
+"2028-29": 48362068
+},
+"guaranteed": 87931034,
+"waived_split": false
+},
+{
+"name": "Ja Morant",
+"key": "ja morant",
+"bbref_id": "moranja01",
+"team": "POR",
+"cost": 42166510,
+"salaries": {
+"2026-27": 42166510,
+"2027-28": 44886930
+},
+"guaranteed": 87053440,
+"waived_split": false
+},
+{
+"name": "Zion Williamson",
+"key": "zion williamson",
+"bbref_id": "willizi01",
+"team": "NO",
+"cost": 42166510,
+"salaries": {
+"2026-27": 42166510,
+"2027-28": 44886930
+},
+"guaranteed": 87053440,
+"waived_split": false
+},
+{
+"name": "Darius Garland",
+"key": "darius garland",
+"bbref_id": "garlada01",
+"team": "LAC",
+"cost": 42166510,
+"salaries": {
+"2026-27": 42166510,
+"2027-28": 44886930
+},
+"guaranteed": 87053440,
+"waived_split": false
+},
+{
+"name": "Scottie Barnes",
+"key": "scottie barnes",
+"bbref_id": "barnesc01",
+"team": "TOR",
+"cost": 41754690,
+"salaries": {
+"2026-27": 41754690,
+"2027-28": 44847630,
+"2028-29": 47940570,
+"2029-30": 51033510
+},
+"guaranteed": 185576400,
+"waived_split": false
+},
+{
+"name": "Franz Wagner",
+"key": "franz wagner",
+"bbref_id": "wagnefr01",
+"team": "ORL",
+"cost": 41754690,
+"salaries": {
+"2026-27": 41754690,
+"2027-28": 44847630,
+"2028-29": 47940570,
+"2029-30": 51033510
+},
+"guaranteed": 185576400,
+"waived_split": false
+},
+{
+"name": "Jalen Williams",
+"key": "jalen williams",
+"bbref_id": "willija06",
+"team": "OKC",
+"cost": 41500000,
+"salaries": {
+"2026-27": 41500000,
+"2027-28": 44820000,
+"2028-29": 48140000,
+"2029-30": 51460000,
+"2030-31": 54780000
+},
+"guaranteed": 240700000,
+"waived_split": false
+},
+{
+"name": "Chet Holmgren",
+"key": "chet holmgren",
+"bbref_id": "holmgch01",
+"team": "OKC",
+"cost": 41500000,
+"salaries": {
+"2026-27": 41500000,
+"2027-28": 44820000,
+"2028-29": 48140000,
+"2029-30": 51460000,
+"2030-31": 54780000
+},
+"guaranteed": 240700000,
+"waived_split": false
+},
+{
+"name": "Paolo Banchero",
+"key": "paolo banchero",
+"bbref_id": "banchpa01",
+"team": "ORL",
+"cost": 41500000,
+"salaries": {
+"2026-27": 41500000,
+"2027-28": 44820000,
+"2028-29": 48140000,
+"2029-30": 51460000,
+"2030-31": 54780000
+},
+"guaranteed": 185920000,
+"waived_split": false
+},
+{
+"name": "Austin Reaves",
+"key": "austin reaves",
+"bbref_id": "reaveau01",
+"team": "LAL",
+"cost": 41240250,
+"salaries": {
+"2026-27": 41240250,
+"2027-28": 44539470,
+"2028-29": 47838690,
+"2029-30": 51137910
+},
+"guaranteed": 133618410,
+"waived_split": false
+},
+{
+"name": "Shai Gilgeous-Alexander",
+"key": "shai gilgeousalexander",
+"bbref_id": "gilgesh01",
+"team": "OKC",
+"cost": 40806150,
+"salaries": {
+"2026-27": 40806150,
+"2027-28": 61005000,
+"2028-29": 65885400,
+"2029-30": 70765800,
+"2030-31": 75646200
+},
+"guaranteed": 238462350,
+"waived_split": false
+},
+{
+"name": "Michael Porter Jr.",
+"key": "michael porter",
+"bbref_id": "portemi01",
+"team": "BKN",
+"cost": 40806150,
+"salaries": {
+"2026-27": 40806150
+},
+"guaranteed": 12000000,
+"waived_split": false
+},
+{
+"name": "Tyrese Maxey",
+"key": "tyrese maxey",
+"bbref_id": "maxeyty01",
+"team": "PHI",
+"cost": 40770520,
+"salaries": {
+"2026-27": 40770520,
+"2027-28": 43582280,
+"2028-29": 46394040
+},
+"guaranteed": 130746840,
+"waived_split": false
+},
+{
+"name": "LaMelo Ball",
+"key": "lamelo ball",
+"bbref_id": "ballla01",
+"team": "MIN",
+"cost": 40770520,
+"salaries": {
+"2026-27": 40770520,
+"2027-28": 43582280,
+"2028-29": 46394040
+},
+"guaranteed": 130746840,
+"waived_split": false
+},
+{
+"name": "Jalen Duren",
+"key": "jalen duren",
+"bbref_id": "durenja01",
+"team": "DET",
+"cost": 40160643,
+"salaries": {
+"2026-27": 40160643,
+"2027-28": 36947792,
+"2028-29": 38955824,
+"2029-30": 40963856,
+"2030-31": 42971885
+},
+"guaranteed": 200000000,
+"waived_split": false
+},
+{
+"name": "Brandon Ingram",
+"key": "brandon ingram",
+"bbref_id": "ingrabr01",
+"team": "LAC",
+"cost": 40000000,
+"salaries": {
+"2026-27": 40000000,
+"2027-28": 41904762
+},
+"guaranteed": 40000000,
+"waived_split": false
+},
+{
+"name": "Kyrie Irving",
+"key": "kyrie irving",
+"bbref_id": "irvinky01",
+"team": "DAL",
+"cost": 39491282,
+"salaries": {
+"2026-27": 39491282,
+"2027-28": 42416562
+},
+"guaranteed": 39491282,
+"waived_split": false
+},
+{
+"name": "Desmond Bane",
+"key": "desmond bane",
+"bbref_id": "banede01",
+"team": "ORL",
+"cost": 39446090,
+"salaries": {
+"2026-27": 39446090,
+"2027-28": 42166510,
+"2028-29": 44886930
+},
+"guaranteed": 126499530,
+"waived_split": false
+},
+{
+"name": "Jalen Brunson",
+"key": "jalen brunson",
+"bbref_id": "brunsja01",
+"team": "NY",
+"cost": 37739521,
+"salaries": {
+"2026-27": 37739521,
+"2027-28": 40535041,
+"2028-29": 43330561
+},
+"guaranteed": 78274562,
+"waived_split": false
+},
+{
+"name": "Rudy Gobert",
+"key": "rudy gobert",
+"bbref_id": "goberru01",
+"team": "MIN",
+"cost": 36500000,
+"salaries": {
+"2026-27": 36500000,
+"2027-28": 38000000
+},
+"guaranteed": 36500000,
+"waived_split": false
+},
+{
+"name": "Jalen Green",
+"key": "jalen green",
+"bbref_id": "greenja05",
+"team": "PHX",
+"cost": 36251166,
+"salaries": {
+"2026-27": 36251166,
+"2027-28": 36000000
+},
+"guaranteed": 36251166,
+"waived_split": false
+},
+{
+"name": "Alperen Şengün",
+"key": "alperen sengun",
+"bbref_id": "sengual01",
+"team": "HOU",
+"cost": 35642202,
+"salaries": {
+"2026-27": 35642202,
+"2027-28": 37339450,
+"2028-29": 39036697,
+"2029-30": 39036697
+},
+"guaranteed": 112018349,
+"waived_split": false
+},
+{
+"name": "Jrue Holiday",
+"key": "jrue holiday",
+"bbref_id": "holidjr01",
+"team": "POR",
+"cost": 34800000,
+"salaries": {
+"2026-27": 34800000,
+"2027-28": 37200000
+},
+"guaranteed": 34800000,
+"waived_split": false
+},
+{
+"name": "Jerami Grant",
+"key": "jerami grant",
+"bbref_id": "grantje01",
+"team": "MEM",
+"cost": 34206898,
+"salaries": {
+"2026-27": 34206898,
+"2027-28": 36413790
+},
+"guaranteed": 34206898,
+"waived_split": false
+},
+{
+"name": "Jordan Poole",
+"key": "jordan poole",
+"bbref_id": "poolejo01",
+"team": "NO",
+"cost": 34044642,
+"salaries": {
+"2026-27": 34044642
+},
+"guaranteed": 34044642,
+"waived_split": false
+},
+{
+"name": "Aaron Gordon",
+"key": "aaron gordon",
+"bbref_id": "gordoaa01",
+"team": "DEN",
+"cost": 33658037,
+"salaries": {
+"2026-27": 33658037,
+"2027-28": 36350680,
+"2028-29": 39043323
+},
+"guaranteed": 70008717,
+"waived_split": false
+},
+{
+"name": "Mikal Bridges",
+"key": "mikal bridges",
+"bbref_id": "bridgmi01",
+"team": "NY",
+"cost": 33482145,
+"salaries": {
+"2026-27": 33482145,
+"2027-28": 36160714,
+"2028-29": 38839285,
+"2029-30": 41517856
+},
+"guaranteed": 108482144,
+"waived_split": false
+},
+{
+"name": "Julius Randle",
+"key": "julius randle",
+"bbref_id": "randlju01",
+"team": "BKN",
+"cost": 33333334,
+"salaries": {
+"2026-27": 33333334,
+"2027-28": 35802468
+},
+"guaranteed": 33333334,
+"waived_split": false
+},
+{
+"name": "Tyler Herro",
+"key": "tyler herro",
+"bbref_id": "herroty01",
+"team": "MIL",
+"cost": 33000000,
+"salaries": {
+"2026-27": 33000000
+},
+"guaranteed": 33000000,
+"waived_split": false
+},
+{
+"name": "Dejounte Murray",
+"key": "dejounte murray",
+"bbref_id": "murrade01",
+"team": "NO",
+"cost": 32785071,
+"salaries": {
+"2026-27": 32785071,
+"2027-28": 30751504
+},
+"guaranteed": 32785071,
+"waived_split": false
+},
+{
+"name": "Immanuel Quickley",
+"key": "immanuel quickley",
+"bbref_id": "quickim01",
+"team": "TOR",
+"cost": 32500000,
+"salaries": {
+"2026-27": 32500000,
+"2027-28": 32500000,
+"2028-29": 32500000
+},
+"guaranteed": 97500000,
+"waived_split": false
+},
+{
+"name": "Jalen Suggs",
+"key": "jalen suggs",
+"bbref_id": "suggsja01",
+"team": "ORL",
+"cost": 32400000,
+"salaries": {
+"2026-27": 32400000,
+"2027-28": 29600000,
+"2028-29": 26800000,
+"2029-30": 26700000
+},
+"guaranteed": 88800000,
+"waived_split": false
+},
+{
+"name": "James Harden",
+"key": "james harden",
+"bbref_id": "hardeja01",
+"team": "CLE",
+"cost": 30647619,
+"salaries": {
+"2026-27": 30647619,
+"2027-28": 32180000,
+"2028-29": 33712381
+},
+"guaranteed": 62827619,
+"waived_split": false
+},
+{
+"name": "Derrick White",
+"key": "derrick white",
+"bbref_id": "whitede01",
+"team": "BOS",
+"cost": 30348000,
+"salaries": {
+"2026-27": 30348000,
+"2027-28": 32596000,
+"2028-29": 34844000
+},
+"guaranteed": 62944000,
+"waived_split": false
+},
+{
+"name": "Walker Kessler",
+"key": "walker kessler",
+"bbref_id": "kesslwa01",
+"team": "LAL",
+"cost": 30232558,
+"salaries": {
+"2026-27": 30232558,
+"2027-28": 31744186,
+"2028-29": 33255814,
+"2029-30": 34767442
+},
+"guaranteed": 95232558,
+"waived_split": false
+},
+{
+"name": "Andrew Wiggins",
+"key": "andrew wiggins",
+"bbref_id": "wiggian01",
+"team": "MIA",
+"cost": 30169644,
+"salaries": {
+"2026-27": 30169644,
+"2027-28": 16346154,
+"2028-29": 17653846
+},
+"guaranteed": 46515798,
+"waived_split": false
+},
+{
+"name": "Jalen Johnson",
+"key": "jalen johnson",
+"bbref_id": "johnsja05",
+"team": "ATL",
+"cost": 30000000,
+"salaries": {
+"2026-27": 30000000,
+"2027-28": 30000000,
+"2028-29": 30000000,
+"2029-30": 30000000
+},
+"guaranteed": 120000000,
+"waived_split": false
+},
+{
+"name": "RJ Barrett",
+"key": "rj barrett",
+"bbref_id": "barrerj01",
+"team": "TOR",
+"cost": 29616071,
+"salaries": {
+"2026-27": 29616071
+},
+"guaranteed": 29616071,
+"waived_split": false
+},
+{
+"name": "Jarrett Allen",
+"key": "jarrett allen",
+"bbref_id": "allenja01",
+"team": "CLE",
+"cost": 28000000,
+"salaries": {
+"2026-27": 28000000,
+"2027-28": 30240000,
+"2028-29": 32480000
+},
+"guaranteed": 90720000,
+"waived_split": false
+},
+{
+"name": "Draymond Green",
+"key": "draymond green",
+"bbref_id": "greendr01",
+"team": "GS",
+"cost": 27678571,
+"salaries": {
+"2026-27": 27678571
+},
+"guaranteed": 27678571,
+"waived_split": false
+},
+{
+"name": "Trey Murphy III",
+"key": "trey murphy",
+"bbref_id": "murphtr02",
+"team": "NO",
+"cost": 27000000,
+"salaries": {
+"2026-27": 27000000,
+"2027-28": 29000000,
+"2028-29": 31000000
+},
+"guaranteed": 87000000,
+"waived_split": false
+},
+{
+"name": "Devin Vassell",
+"key": "devin vassell",
+"bbref_id": "vassede01",
+"team": "SA",
+"cost": 27000000,
+"salaries": {
+"2026-27": 27000000,
+"2027-28": 24652174,
+"2028-29": 27000000
+},
+"guaranteed": 78652174,
+"waived_split": false
+},
+{
+"name": "Myles Turner",
+"key": "myles turner",
+"bbref_id": "turnemy01",
+"team": "MIL",
+"cost": 26584164,
+"salaries": {
+"2026-27": 26584164,
+"2027-28": 27850077,
+"2028-29": 29115990
+},
+"guaranteed": 54434241,
+"waived_split": false
+},
+{
+"name": "Jaden McDaniels",
+"key": "jaden mcdaniels",
+"bbref_id": "mcdanja02",
+"team": "MIN",
+"cost": 26200001,
+"salaries": {
+"2026-27": 26200001,
+"2027-28": 28006898,
+"2028-29": 29813790,
+"2029-30": 40000000
+},
+"guaranteed": 124020689,
+"waived_split": false
+},
+{
+"name": "Dyson Daniels",
+"key": "dyson daniels",
+"bbref_id": "daniedy01",
+"team": "ATL",
+"cost": 25000000,
+"salaries": {
+"2026-27": 25000000,
+"2027-28": 25000000,
+"2028-29": 25000000,
+"2029-30": 25000000
+},
+"guaranteed": 100000000,
+"waived_split": false
+},
+{
+"name": "Josh Giddey",
+"key": "josh giddey",
+"bbref_id": "giddejo01",
+"team": "CHI",
+"cost": 25000000,
+"salaries": {
+"2026-27": 25000000,
+"2027-28": 25000000,
+"2028-29": 25000000
+},
+"guaranteed": 75000000,
+"waived_split": false
+},
+{
+"name": "Fred VanVleet",
+"key": "fred vanvleet",
+"bbref_id": "vanvlfr01",
+"team": "HOU",
+"cost": 25000000,
+"salaries": {
+"2026-27": 25000000
+},
+"guaranteed": 25000000,
+"waived_split": false
+},
+{
+"name": "De'Andre Hunter",
+"key": "deandre hunter",
+"bbref_id": "huntede01",
+"team": "SAC",
+"cost": 24910714,
+"salaries": {
+"2026-27": 24910714
+},
+"guaranteed": 24910714,
+"waived_split": false
+},
+{
+"name": "Keegan Murray",
+"key": "keegan murray",
+"bbref_id": "murrake02",
+"team": "SAC",
+"cost": 24137936,
+"salaries": {
+"2026-27": 24137936,
+"2027-28": 26068965,
+"2028-29": 27999999,
+"2029-30": 29931033,
+"2030-31": 31862067
+},
+"guaranteed": 140000000,
+"waived_split": false
+},
+{
+"name": "Jabari Smith Jr.",
+"key": "jabari smith",
+"bbref_id": "smithja05",
+"team": "HOU",
+"cost": 23643411,
+"salaries": {
+"2026-27": 23643411,
+"2027-28": 21751940,
+"2028-29": 23643411,
+"2029-30": 25534883,
+"2030-31": 27426355
+},
+"guaranteed": 122000000,
+"waived_split": false
+},
+{
+"name": "Naz Reid",
+"key": "naz reid",
+"bbref_id": "reidna01",
+"team": "CHA",
+"cost": 23275862,
+"salaries": {
+"2026-27": 23275862,
+"2027-28": 25000000,
+"2028-29": 26724138,
+"2029-30": 28448276
+},
+"guaranteed": 75000000,
+"waived_split": false
+},
+{
+"name": "Isaiah Hartenstein",
+"key": "isaiah hartenstein",
+"bbref_id": "harteis01",
+"team": "OKC",
+"cost": 23148148,
+"salaries": {
+"2026-27": 23148148,
+"2027-28": 25000000,
+"2028-29": 26851852
+},
+"guaranteed": 48148148,
+"waived_split": false
+},
+{
+"name": "Nic Claxton",
+"key": "nic claxton",
+"bbref_id": "claxtni01",
+"team": "CHI",
+"cost": 23147727,
+"salaries": {
+"2026-27": 23147727,
+"2027-28": 20943184
+},
+"guaranteed": 44090911,
+"waived_split": false
+},
+{
+"name": "Cameron Johnson",
+"key": "cameron johnson",
+"bbref_id": "johnsca02",
+"team": "DEN",
+"cost": 23062500,
+"salaries": {
+"2026-27": 23062500
+},
+"guaranteed": 23062500,
+"waived_split": false
+},
+{
+"name": "Coby White",
+"key": "coby white",
+"bbref_id": "whiteco01",
+"team": "CHA",
+"cost": 22839506,
+"salaries": {
+"2026-27": 22839506,
+"2027-28": 24666667,
+"2028-29": 26493827
+},
+"guaranteed": 74000000,
+"waived_split": false
+},
+{
+"name": "Miles Bridges",
+"key": "miles bridges",
+"bbref_id": "bridgmi02",
+"team": "PHX",
+"cost": 22826087,
+"salaries": {
+"2026-27": 22826087
+},
+"guaranteed": 22826087,
+"waived_split": false
+},
+{
+"name": "Damian Lillard",
+"key": "damian lillard",
+"bbref_id": "lillada01",
+"team": "MIL",
+"cost": 22516603,
+"salaries": {
+"2026-27": 35915403,
+"2027-28": 36620603,
+"2028-29": 22516603,
+"2029-30": 22516603
+},
+"guaranteed": 90066412,
+"waived_split": true
+},
+{
+"name": "Christian Braun",
+"key": "christian braun",
+"bbref_id": "braunch01",
+"team": "DEN",
+"cost": 21551726,
+"salaries": {
+"2026-27": 21551726,
+"2027-28": 23275863,
+"2028-29": 25000000,
+"2029-30": 26724137,
+"2030-31": 28448274
+},
+"guaranteed": 125000000,
+"waived_split": false
+},
+{
+"name": "Norman Powell",
+"key": "norman powell",
+"bbref_id": "powelno01",
+"team": "CHI",
+"cost": 21500000,
+"salaries": {
+"2026-27": 21500000,
+"2027-28": 22575000
+},
+"guaranteed": 21500000,
+"waived_split": false
+},
+{
+"name": "CJ McCollum",
+"key": "cj mccollum",
+"bbref_id": "mccolcj01",
+"team": "ATL",
+"cost": 21000000,
+"salaries": {
+"2026-27": 21000000
+},
+"guaranteed": 21000000,
+"waived_split": false
+},
+{
+"name": "Josh Hart",
+"key": "josh hart",
+"bbref_id": "hartjo01",
+"team": "NY",
+"cost": 20923760,
+"salaries": {
+"2026-27": 20923760,
+"2027-28": 22375280
+},
+"guaranteed": 20923760,
+"waived_split": false
+},
+{
+"name": "Peyton Watson",
+"key": "peyton watson",
+"bbref_id": "watsope01",
+"team": "CLE",
+"cost": 20465116,
+"salaries": {
+"2026-27": 20465116,
+"2027-28": 21488372,
+"2028-29": 22511628,
+"2029-30": 23534884
+},
+"guaranteed": 64465116,
+"waived_split": false
+},
+{
+"name": "Kyle Kuzma",
+"key": "kyle kuzma",
+"bbref_id": "kuzmaky01",
+"team": "MIL",
+"cost": 20345152,
+"salaries": {
+"2026-27": 20345152
+},
+"guaranteed": 20345152,
+"waived_split": false
+},
+{
+"name": "Ivica Zubac",
+"key": "ivica zubac",
+"bbref_id": "zubaciv01",
+"team": "IND",
+"cost": 20342140,
+"salaries": {
+"2026-27": 20342140,
+"2027-28": 21790300
+},
+"guaranteed": 42132440,
+"waived_split": false
+},
+{
+"name": "Malik Monk",
+"key": "malik monk",
+"bbref_id": "monkma01",
+"team": "SAC",
+"cost": 20190035,
+"salaries": {
+"2026-27": 20190035,
+"2027-28": 21582451
+},
+"guaranteed": 20190035,
+"waived_split": false
+},
+{
+"name": "Shaedon Sharpe",
+"key": "shaedon sharpe",
+"bbref_id": "sharpsh01",
+"team": "POR",
+"cost": 20089287,
+"salaries": {
+"2026-27": 20089287,
+"2027-28": 21696429,
+"2028-29": 23303571,
+"2029-30": 24910713
+},
+"guaranteed": 90000000,
+"waived_split": false
+},
+{
+"name": "Dillon Brooks",
+"key": "dillon brooks",
+"bbref_id": "brookdi01",
+"team": "PHX",
+"cost": 19992727,
+"salaries": {
+"2026-27": 19992727,
+"2027-28": 22530864,
+"2028-29": 24333333,
+"2029-30": 26135802
+},
+"guaranteed": 92992726,
+"waived_split": false
+},
+{
+"name": "P.J. Washington",
+"key": "pj washington",
+"bbref_id": "washipj01",
+"team": "DAL",
+"cost": 19813044,
+"salaries": {
+"2026-27": 19813044,
+"2027-28": 21398088,
+"2028-29": 22983132,
+"2029-30": 24568176
+},
+"guaranteed": 88762440,
+"waived_split": false
+},
+{
+"name": "Alex Caruso",
+"key": "alex caruso",
+"bbref_id": "carusal01",
+"team": "OKC",
+"cost": 19550160,
+"salaries": {
+"2026-27": 19550160,
+"2027-28": 20998320,
+"2028-29": 22446480
+},
+"guaranteed": 62994960,
+"waived_split": false
+},
+{
+"name": "Andrew Nembhard",
+"key": "andrew nembhard",
+"bbref_id": "nembhan01",
+"team": "IND",
+"cost": 19550160,
+"salaries": {
+"2026-27": 19550160,
+"2027-28": 20998320
+},
+"guaranteed": 40548480,
+"waived_split": false
+},
+{
+"name": "Kristaps Porziņģis",
+"key": "kristaps porzingis",
+"bbref_id": "porzikr01",
+"team": "GS",
+"cost": 19512195,
+"salaries": {
+"2026-27": 19512195,
+"2027-28": 20487805
+},
+"guaranteed": 19512195,
+"waived_split": false
+},
+{
+"name": "Jakob Poeltl",
+"key": "jakob poeltl",
+"bbref_id": "poeltja01",
+"team": "TOR",
+"cost": 19500000,
+"salaries": {
+"2026-27": 19500000,
+"2027-28": 27300000,
+"2028-29": 29484000,
+"2029-30": 27300000
+},
+"guaranteed": 76284000,
+"waived_split": false
+},
+{
+"name": "Bradley Beal",
+"key": "bradley beal",
+"bbref_id": "bealbr01",
+"team": "PHX",
+"cost": 19383010,
+"salaries": {
+"2026-27": 25807810,
+"2027-28": 26129050,
+"2028-29": 19383010,
+"2029-30": 19383010
+},
+"guaranteed": 77532040,
+"waived_split": true
+},
+{
+"name": "Ayo Dosunmu",
+"key": "ayo dosunmu",
+"bbref_id": "dosunay01",
+"team": "MIN",
+"cost": 19310345,
+"salaries": {
+"2026-27": 19310345,
+"2027-28": 20855173,
+"2028-29": 22400001,
+"2029-30": 23944829,
+"2030-31": 25489652
+},
+"guaranteed": 86510348,
+"waived_split": false
+},
+{
+"name": "Luguentz Dort",
+"key": "luguentz dort",
+"bbref_id": "dortlu01",
+"team": "ATL",
+"cost": 18222222,
+"salaries": {
+"2026-27": 18222222
+},
+"guaranteed": 18222222,
+"waived_split": false
+},
+{
+"name": "Grayson Allen",
+"key": "grayson allen",
+"bbref_id": "allengr01",
+"team": "CHA",
+"cost": 18125000,
+"salaries": {
+"2026-27": 18125000,
+"2027-28": 19375000
+},
+"guaranteed": 18125000,
+"waived_split": false
+},
+{
+"name": "Wendell Carter Jr.",
+"key": "wendell carter",
+"bbref_id": "cartewe01",
+"team": "ORL",
+"cost": 18102000,
+"salaries": {
+"2026-27": 18102000,
+"2027-28": 19550160,
+"2028-29": 20998320
+},
+"guaranteed": 37652160,
+"waived_split": false
+},
+{
+"name": "Toumani Camara",
+"key": "toumani camara",
+"bbref_id": "camarto01",
+"team": "POR",
+"cost": 18080358,
+"salaries": {
+"2026-27": 18080358,
+"2027-28": 19526786,
+"2028-29": 20973214,
+"2029-30": 22419642
+},
+"guaranteed": 81000000,
+"waived_split": false
+},
+{
+"name": "Patrick Williams",
+"key": "patrick williams",
+"bbref_id": "willipa01",
+"team": "CHI",
+"cost": 18000000,
+"salaries": {
+"2026-27": 18000000,
+"2027-28": 18000000,
+"2028-29": 18000000
+},
+"guaranteed": 36000000,
+"waived_split": false
+},
+{
+"name": "Kentavious Caldwell-Pope",
+"key": "kentavious caldwellpope",
+"bbref_id": "caldwke01",
+"team": "MEM",
+"cost": 17744971,
+"salaries": {
+"2026-27": 20194392
+},
+"guaranteed": 17744971,
+"waived_split": true
+},
+{
+"name": "Keldon Johnson",
+"key": "keldon johnson",
+"bbref_id": "johnske04",
+"team": "SA",
+"cost": 17500000,
+"salaries": {
+"2026-27": 17500000
+},
+"guaranteed": 17500000,
+"waived_split": false
+},
+{
+"name": "Klay Thompson",
+"key": "klay thompson",
+"bbref_id": "thompkl01",
+"team": "DAL",
+"cost": 16561191,
+"salaries": {
+"2026-27": 23060317,
+"2027-28": 5880000
+},
+"guaranteed": 17460317,
+"waived_split": true
+},
+{
+"name": "Daniel Gafford",
+"key": "daniel gafford",
+"bbref_id": "gaffoda01",
+"team": "DAL",
+"cost": 17263584,
+"salaries": {
+"2026-27": 17263584,
+"2027-28": 18126763,
+"2028-29": 18989942
+},
+"guaranteed": 54380289,
+"waived_split": false
+},
+{
+"name": "Santi Aldama",
+"key": "santi aldama",
+"bbref_id": "aldamsa01",
+"team": "DAL",
+"cost": 17007043,
+"salaries": {
+"2026-27": 17007043,
+"2027-28": 17007043
+},
+"guaranteed": 17007043,
+"waived_split": false
+},
+{
+"name": "John Collins",
+"key": "john collins",
+"bbref_id": "collijo01",
+"team": "DET",
+"cost": 17000000,
+"salaries": {
+"2026-27": 17000000,
+"2027-28": 17000000,
+"2028-29": 17000000
+},
+"guaranteed": 17000000,
+"waived_split": false
+},
+{
+"name": "Victor Wembanyama",
+"key": "victor wembanyama",
+"bbref_id": "wembavi01",
+"team": "SA",
+"cost": 16868246,
+"salaries": {
+"2026-27": 16868246,
+"2027-28": 43500000,
+"2028-29": 46980000,
+"2029-30": 50460000,
+"2030-31": 53940000,
+"2031-32": 57420000
+},
+"guaranteed": 211748246,
+"waived_split": false
+},
+{
+"name": "Max Strus",
+"key": "max strus",
+"bbref_id": "strusma01",
+"team": "LAC",
+"cost": 16660836,
+"salaries": {
+"2026-27": 16660836
+},
+"guaranteed": 16660836,
+"waived_split": false
+},
+{
+"name": "Nikola Jović",
+"key": "nikola jovic",
+"bbref_id": "jovicni01",
+"team": "MIA",
+"cost": 16200000,
+"salaries": {
+"2026-27": 16200000,
+"2027-28": 14904000,
+"2028-29": 15096000,
+"2029-30": 16200000
+},
+"guaranteed": 62400000,
+"waived_split": false
+},
+{
+"name": "Onyeka Okongwu",
+"key": "onyeka okongwu",
+"bbref_id": "okongon01",
+"team": "ATL",
+"cost": 16120000,
+"salaries": {
+"2026-27": 16120000,
+"2027-28": 16880000
+},
+"guaranteed": 33000000,
+"waived_split": false
+},
+{
+"name": "Duncan Robinson",
+"key": "duncan robinson",
+"bbref_id": "robindu01",
+"team": "DET",
+"cost": 15992957,
+"salaries": {
+"2026-27": 15992957,
+"2027-28": 15151222
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Terance Mann",
+"key": "terance mann",
+"bbref_id": "mannte01",
+"team": "BKN",
+"cost": 15500000,
+"salaries": {
+"2026-27": 15500000,
+"2027-28": 16000000
+},
+"guaranteed": 31500000,
+"waived_split": false
+},
+{
+"name": "Gary Trent Jr.",
+"key": "gary trent",
+"bbref_id": "trentga02",
+"team": "MIL",
+"cost": 15200000,
+"salaries": {
+"2026-27": 15200000,
+"2027-28": 16400000,
+"2028-29": 16400000,
+"2029-30": 16000000
+},
+"guaranteed": 64000000,
+"waived_split": false
+},
+{
+"name": "Brandon Miller",
+"key": "brandon miller",
+"bbref_id": "millebr02",
+"team": "CHA",
+"cost": 15104626,
+"salaries": {
+"2026-27": 15104626,
+"2027-28": 36034483,
+"2028-29": 38917241,
+"2029-30": 41800000,
+"2030-31": 44682759,
+"2031-32": 47565517
+},
+"guaranteed": 224104626,
+"waived_split": false
+},
+{
+"name": "Mitchell Robinson",
+"key": "mitchell robinson",
+"bbref_id": "robinmi01",
+"team": "BOS",
+"cost": 15044000,
+"salaries": {
+"2026-27": 15044000,
+"2027-28": 15796200,
+"2028-29": 16548400
+},
+"guaranteed": 47388600,
+"waived_split": false
+},
+{
+"name": "Tobias Harris",
+"key": "tobias harris",
+"bbref_id": "harrito02",
+"team": "SA",
+"cost": 15044000,
+"salaries": {
+"2026-27": 15044000,
+"2027-28": 15796200
+},
+"guaranteed": 30840200,
+"waived_split": false
+},
+{
+"name": "Obi Toppin",
+"key": "obi toppin",
+"bbref_id": "toppiob01",
+"team": "IND",
+"cost": 15000000,
+"salaries": {
+"2026-27": 15000000,
+"2027-28": 16025000
+},
+"guaranteed": 31025000,
+"waived_split": false
+},
+{
+"name": "Isaiah Stewart",
+"key": "isaiah stewart",
+"bbref_id": "stewais01",
+"team": "MEM",
+"cost": 15000000,
+"salaries": {
+"2026-27": 15000000,
+"2027-28": 15000000
+},
+"guaranteed": 15000000,
+"waived_split": false
+},
+{
+"name": "Herbert Jones",
+"key": "herbert jones",
+"bbref_id": "joneshe01",
+"team": "NO",
+"cost": 14898786,
+"salaries": {
+"2026-27": 14898786,
+"2027-28": 20858300,
+"2028-29": 22526964,
+"2029-30": 24195628
+},
+"guaranteed": 58284050,
+"waived_split": false
+},
+{
+"name": "Caris LeVert",
+"key": "caris levert",
+"bbref_id": "leverca01",
+"team": "MIL",
+"cost": 14809200,
+"salaries": {
+"2026-27": 14809200
+},
+"guaranteed": 14809200,
+"waived_split": false
+},
+{
+"name": "Dennis Schröder",
+"key": "dennis schroder",
+"bbref_id": "schrode01",
+"team": "CHA",
+"cost": 14809200,
+"salaries": {
+"2026-27": 14809200,
+"2027-28": 15514400
+},
+"guaranteed": 14809200,
+"waived_split": false
+},
+{
+"name": "AJ Dybantsa",
+"key": "aj dybantsa",
+"bbref_id": "dybanaj01",
+"team": "WSH",
+"cost": 14748000,
+"salaries": {
+"2026-27": 14748000,
+"2027-28": 15485760,
+"2028-29": 16223040,
+"2029-30": 20457254
+},
+"guaranteed": 30233760,
+"waived_split": false
+},
+{
+"name": "Josh Green",
+"key": "josh green",
+"bbref_id": "greenjo02",
+"team": "UTAH",
+"cost": 14679012,
+"salaries": {
+"2026-27": 14679012
+},
+"guaranteed": 14679012,
+"waived_split": false
+},
+{
+"name": "Bobby Portis",
+"key": "bobby portis",
+"bbref_id": "portibo01",
+"team": "MIA",
+"cost": 14521414,
+"salaries": {
+"2026-27": 14521414,
+"2027-28": 15597074
+},
+"guaranteed": 14521414,
+"waived_split": false
+},
+{
+"name": "Cooper Flagg",
+"key": "cooper flagg",
+"bbref_id": "flaggco01",
+"team": "DAL",
+"cost": 14517480,
+"salaries": {
+"2026-27": 14517480,
+"2027-28": 15208680,
+"2028-29": 19178146
+},
+"guaranteed": 29726160,
+"waived_split": false
+},
+{
+"name": "Nickeil Alexander-Walker",
+"key": "nickeil alexanderwalker",
+"bbref_id": "alexani01",
+"team": "ATL",
+"cost": 14403710,
+"salaries": {
+"2026-27": 14403710,
+"2027-28": 15161800,
+"2028-29": 15919890
+},
+"guaranteed": 29565510,
+"waived_split": false
+},
+{
+"name": "Grant Williams",
+"key": "grant williams",
+"bbref_id": "willigr01",
+"team": "CHA",
+"cost": 14265750,
+"salaries": {
+"2026-27": 14265750
+},
+"guaranteed": 14265750,
+"waived_split": false
+},
+{
+"name": "Jock Landale",
+"key": "jock landale",
+"bbref_id": "landajo01",
+"team": "ATL",
+"cost": 14100000,
+"salaries": {
+"2026-27": 14100000
+},
+"guaranteed": 14100000,
+"waived_split": false
+},
+{
+"name": "Tari Eason",
+"key": "tari eason",
+"bbref_id": "easonta01",
+"team": "HOU",
+"cost": 14051724,
+"salaries": {
+"2026-27": 14051724,
+"2027-28": 15175862,
+"2028-29": 16300000,
+"2029-30": 17424138,
+"2030-31": 18548276
+},
+"guaranteed": 62951724,
+"waived_split": false
+},
+{
+"name": "Rui Hachimura",
+"key": "rui hachimura",
+"bbref_id": "hachiru01",
+"team": "LAC",
+"cost": 14000000,
+"salaries": {
+"2026-27": 14000000,
+"2027-28": 14000000
+},
+"guaranteed": 14000000,
+"waived_split": false
+},
+{
+"name": "Corey Kispert",
+"key": "corey kispert",
+"bbref_id": "kispeco01",
+"team": "ATL",
+"cost": 13975000,
+"salaries": {
+"2026-27": 13975000,
+"2027-28": 13050000,
+"2028-29": 13050000
+},
+"guaranteed": 27025000,
+"waived_split": false
+},
+{
+"name": "Robert Williams",
+"key": "robert williams",
+"bbref_id": "williro04",
+"team": "POR",
+"cost": 13968254,
+"salaries": {
+"2026-27": 13968254,
+"2027-28": 14666667,
+"2028-29": 15365079
+},
+"guaranteed": 18968254,
+"waived_split": false
+},
+{
+"name": "Quentin Grimes",
+"key": "quentin grimes",
+"bbref_id": "grimequ01",
+"team": "LAL",
+"cost": 13953489,
+"salaries": {
+"2026-27": 13953489,
+"2027-28": 14651163,
+"2028-29": 15348837,
+"2029-30": 16046511
+},
+"guaranteed": 43953489,
+"waived_split": false
+},
+{
+"name": "Julian Champagnie",
+"key": "julian champagnie",
+"bbref_id": "champju02",
+"team": "SA",
+"cost": 13888889,
+"salaries": {
+"2026-27": 13888889,
+"2027-28": 15000000,
+"2028-29": 16111111
+},
+"guaranteed": 45000000,
+"waived_split": false
+},
+{
+"name": "Zaccharie Risacher",
+"key": "zaccharie risacher",
+"bbref_id": "risacza01",
+"team": "DAL",
+"cost": 13826040,
+"salaries": {
+"2026-27": 13826040,
+"2027-28": 17434637
+},
+"guaranteed": 31260677,
+"waived_split": false
+},
+{
+"name": "Scoot Henderson",
+"key": "scoot henderson",
+"bbref_id": "hendesc01",
+"team": "POR",
+"cost": 13585523,
+"salaries": {
+"2026-27": 13585523
+},
+"guaranteed": 13585523,
+"waived_split": false
+},
+{
+"name": "Damian Lillard",
+"key": "damian lillard",
+"bbref_id": "lillada01",
+"team": "POR",
+"cost": 13398800,
+"salaries": {
+"2026-27": 35915403,
+"2027-28": 36620603,
+"2028-29": 22516603,
+"2029-30": 22516603
+},
+"guaranteed": 13398800,
+"waived_split": true
+},
+{
+"name": "Dorian Finney-Smith",
+"key": "dorian finneysmith",
+"bbref_id": "finnedo01",
+"team": "ATL",
+"cost": 13335000,
+"salaries": {
+"2026-27": 13335000,
+"2027-28": 13335000,
+"2028-29": 13335000
+},
+"guaranteed": 26670000,
+"waived_split": false
+},
+{
+"name": "Darryn Peterson",
+"key": "darryn peterson",
+"bbref_id": "peterda02",
+"team": "UTAH",
+"cost": 13195320,
+"salaries": {
+"2026-27": 13195320,
+"2027-28": 13855320,
+"2028-29": 14515320,
+"2029-30": 18318335
+},
+"guaranteed": 27050640,
+"waived_split": false
+},
+{
+"name": "Deni Avdija",
+"key": "deni avdija",
+"bbref_id": "avdijde01",
+"team": "POR",
+"cost": 13125000,
+"salaries": {
+"2026-27": 13125000,
+"2027-28": 11875000
+},
+"guaranteed": 25000000,
+"waived_split": false
+},
+{
+"name": "Sandro Mamukelashvili",
+"key": "sandro mamukelashvili",
+"bbref_id": "mamuksa01",
+"team": "LAL",
+"cost": 13000000,
+"salaries": {
+"2026-27": 13000000,
+"2027-28": 12350000,
+"2028-29": 13000000,
+"2029-30": 13650000
+},
+"guaranteed": 38350000,
+"waived_split": false
+},
+{
+"name": "Steven Adams",
+"key": "steven adams",
+"bbref_id": "adamsst01",
+"team": "HOU",
+"cost": 13000000,
+"salaries": {
+"2026-27": 13000000,
+"2027-28": 11869566
+},
+"guaranteed": 24869566,
+"waived_split": false
+},
+{
+"name": "Dylan Harper",
+"key": "dylan harper",
+"bbref_id": "harpedy01",
+"team": "SA",
+"cost": 12989040,
+"salaries": {
+"2026-27": 12989040,
+"2027-28": 13607760,
+"2028-29": 17172994
+},
+"guaranteed": 26596800,
+"waived_split": false
+},
+{
+"name": "Donte DiVincenzo",
+"key": "donte divincenzo",
+"bbref_id": "divindo01",
+"team": "MIN",
+"cost": 12535000,
+"salaries": {
+"2026-27": 12535000
+},
+"guaranteed": 12535000,
+"waived_split": false
+},
+{
+"name": "Moses Moody",
+"key": "moses moody",
+"bbref_id": "moodymo01",
+"team": "GS",
+"cost": 12500000,
+"salaries": {
+"2026-27": 12500000,
+"2027-28": 13425925
+},
+"guaranteed": 25925925,
+"waived_split": false
+},
+{
+"name": "Jarred Vanderbilt",
+"key": "jarred vanderbilt",
+"bbref_id": "vandeja01",
+"team": "LAL",
+"cost": 12428571,
+"salaries": {
+"2026-27": 12428571,
+"2027-28": 13285714
+},
+"guaranteed": 12428571,
+"waived_split": false
+},
+{
+"name": "Davion Mitchell",
+"key": "davion mitchell",
+"bbref_id": "mitchda01",
+"team": "MIA",
+"cost": 12400000,
+"salaries": {
+"2026-27": 12400000
+},
+"guaranteed": 12400000,
+"waived_split": false
+},
+{
+"name": "Alex Sarr",
+"key": "alex sarr",
+"bbref_id": "sarral01",
+"team": "WSH",
+"cost": 12370680,
+"salaries": {
+"2026-27": 12370680,
+"2027-28": 15611798
+},
+"guaranteed": 27982478,
+"waived_split": false
+},
+{
+"name": "Amen Thompson",
+"key": "amen thompson",
+"bbref_id": "thompam01",
+"team": "HOU",
+"cost": 12258609,
+"salaries": {
+"2026-27": 12258609,
+"2027-28": 35862069,
+"2028-29": 38731034,
+"2029-30": 41600000,
+"2030-31": 44468966,
+"2031-32": 47337931
+},
+"guaranteed": 220258609,
+"waived_split": false
+},
+{
+"name": "Cameron Boozer",
+"key": "cameron boozer",
+"bbref_id": "boozeca02",
+"team": "MEM",
+"cost": 11849760,
+"salaries": {
+"2026-27": 11849760,
+"2027-28": 12441840,
+"2028-29": 13034880,
+"2029-30": 16476089
+},
+"guaranteed": 24291600,
+"waived_split": false
+},
+{
+"name": "Isaac Okoro",
+"key": "isaac okoro",
+"bbref_id": "okorois01",
+"team": "CHI",
+"cost": 11814814,
+"salaries": {
+"2026-27": 11814814
+},
+"guaranteed": 11814814,
+"waived_split": false
+},
+{
+"name": "Mark Williams",
+"key": "mark williams",
+"bbref_id": "willima07",
+"team": "PHX",
+"cost": 11728395,
+"salaries": {
+"2026-27": 11728395,
+"2027-28": 12666667,
+"2028-29": 13604938
+},
+"guaranteed": 38000000,
+"waived_split": false
+},
+{
+"name": "VJ Edgecombe",
+"key": "vj edgecombe",
+"bbref_id": "edgecvj01",
+"team": "PHI",
+"cost": 11663880,
+"salaries": {
+"2026-27": 11663880,
+"2027-28": 12219720,
+"2028-29": 15445727
+},
+"guaranteed": 23883600,
+"waived_split": false
+},
+{
+"name": "Isaiah Joe",
+"key": "isaiah joe",
+"bbref_id": "joeis01",
+"team": "DET",
+"cost": 11323006,
+"salaries": {
+"2026-27": 11323006,
+"2027-28": 11323006
+},
+"guaranteed": 11323006,
+"waived_split": false
+},
+{
+"name": "Ausar Thompson",
+"key": "ausar thompson",
+"bbref_id": "thompau01",
+"team": "DET",
+"cost": 11117925,
+"salaries": {
+"2026-27": 11117925,
+"2027-28": 26724138,
+"2028-29": 28862069,
+"2029-30": 31000000,
+"2030-31": 33137931,
+"2031-32": 35275862
+},
+"guaranteed": 166117925,
+"waived_split": false
+},
+{
+"name": "Reed Sheppard",
+"key": "reed sheppard",
+"bbref_id": "sheppre01",
+"team": "HOU",
+"cost": 11108880,
+"salaries": {
+"2026-27": 11108880,
+"2027-28": 14041625
+},
+"guaranteed": 25150505,
+"waived_split": false
+},
+{
+"name": "Aaron Nesmith",
+"key": "aaron nesmith",
+"bbref_id": "nesmiaa01",
+"team": "IND",
+"cost": 11000000,
+"salaries": {
+"2026-27": 11000000,
+"2027-28": 19418000,
+"2028-29": 20971440
+},
+"guaranteed": 51389440,
+"waived_split": false
+},
+{
+"name": "T.J. McConnell",
+"key": "tj mcconnell",
+"bbref_id": "mccontj01",
+"team": "IND",
+"cost": 11000000,
+"salaries": {
+"2026-27": 11000000,
+"2027-28": 11800000,
+"2028-29": 11800000
+},
+"guaranteed": 22800000,
+"waived_split": false
+},
+{
+"name": "Royce O'Neale",
+"key": "royce oneale",
+"bbref_id": "onealro01",
+"team": "CHA",
+"cost": 10875000,
+"salaries": {
+"2026-27": 10875000,
+"2027-28": 11625000
+},
+"guaranteed": 22500000,
+"waived_split": false
+},
+{
+"name": "Sam Hauser",
+"key": "sam hauser",
+"bbref_id": "hausesa01",
+"team": "BOS",
+"cost": 10848215,
+"salaries": {
+"2026-27": 10848215,
+"2027-28": 11651785,
+"2028-29": 12455356
+},
+"guaranteed": 34955356,
+"waived_split": false
+},
+{
+"name": "Collin Gillespie",
+"key": "collin gillespie",
+"bbref_id": "gilleco01",
+"team": "PHX",
+"cost": 10714286,
+"salaries": {
+"2026-27": 10714286,
+"2027-28": 11571429,
+"2028-29": 12428571,
+"2029-30": 13285714
+},
+"guaranteed": 48000000,
+"waived_split": false
+},
+{
+"name": "Caleb Wilson",
+"key": "caleb wilson",
+"bbref_id": "wilsoca01",
+"team": "CHI",
+"cost": 10683720,
+"salaries": {
+"2026-27": 10683720,
+"2027-28": 11217960,
+"2028-29": 11752320,
+"2029-30": 14866685
+},
+"guaranteed": 21901680,
+"waived_split": false
+},
+{
+"name": "Jusuf Nurkić",
+"key": "jusuf nurkic",
+"bbref_id": "nurkiju01",
+"team": "UTAH",
+"cost": 10576923,
+"salaries": {
+"2026-27": 10576923,
+"2027-28": 11423077
+},
+"guaranteed": 22000000,
+"waived_split": false
+},
+{
+"name": "Kon Knueppel",
+"key": "kon knueppel",
+"bbref_id": "knuepko01",
+"team": "CHA",
+"cost": 10516560,
+"salaries": {
+"2026-27": 10516560,
+"2027-28": 11017560,
+"2028-29": 13937214
+},
+"guaranteed": 21534120,
+"waived_split": false
+},
+{
+"name": "Derrick Jones Jr.",
+"key": "derrick jones",
+"bbref_id": "jonesde02",
+"team": "LAC",
+"cost": 10476190,
+"salaries": {
+"2026-27": 10476190
+},
+"guaranteed": 10476190,
+"waived_split": false
+},
+{
+"name": "Luke Kornet",
+"key": "luke kornet",
+"bbref_id": "kornelu01",
+"team": "SA",
+"cost": 10450000,
+"salaries": {
+"2026-27": 10450000,
+"2027-28": 9900000,
+"2028-29": 9350000
+},
+"guaranteed": 13000000,
+"waived_split": false
+},
+{
+"name": "Anthony Black",
+"key": "anthony black",
+"bbref_id": "blackan01",
+"team": "ORL",
+"cost": 10106316,
+"salaries": {
+"2026-27": 10106316
+},
+"guaranteed": 10106316,
+"waived_split": false
+},
+{
+"name": "A.J. Green",
+"key": "aj green",
+"bbref_id": "greenaj01",
+"team": "MIL",
+"cost": 10044644,
+"salaries": {
+"2026-27": 10044644,
+"2027-28": 10848215,
+"2028-29": 11651786,
+"2029-30": 12455355
+},
+"guaranteed": 45000000,
+"waived_split": false
+},
+{
+"name": "Stephon Castle",
+"key": "stephon castle",
+"bbref_id": "castlst01",
+"team": "SA",
+"cost": 10015920,
+"salaries": {
+"2026-27": 10015920,
+"2027-28": 12670139
+},
+"guaranteed": 22686059,
+"waived_split": false
+},
+{
+"name": "Caleb Martin",
+"key": "caleb martin",
+"bbref_id": "martica02",
+"team": "DAL",
+"cost": 10001493,
+"salaries": {
+"2026-27": 10001493,
+"2027-28": 9371351
+},
+"guaranteed": 10001493,
+"waived_split": false
+},
+{
+"name": "Day'Ron Sharpe",
+"key": "dayron sharpe",
+"bbref_id": "sharpda01",
+"team": "BKN",
+"cost": 10000000,
+"salaries": {
+"2026-27": 10000000,
+"2027-28": 10000000
+},
+"guaranteed": 10000000,
+"waived_split": false
+},
+{
+"name": "Keaton Wagler",
+"key": "keaton wagler",
+"bbref_id": "wagleke01",
+"team": "LAC",
+"cost": 9674760,
+"salaries": {
+"2026-27": 9674760,
+"2027-28": 10158240,
+"2028-29": 10641960,
+"2029-30": 13483364
+},
+"guaranteed": 19833000,
+"waived_split": false
+},
+{
+"name": "Buddy Hield",
+"key": "buddy hield",
+"bbref_id": "hieldbu01",
+"team": "CHI",
+"cost": 9658536,
+"salaries": {
+"2026-27": 9658536,
+"2027-28": 10097560
+},
+"guaranteed": 9658536,
+"waived_split": false
+},
+{
+"name": "Ace Bailey",
+"key": "ace bailey",
+"bbref_id": "baileac01",
+"team": "UTAH",
+"cost": 9523080,
+"salaries": {
+"2026-27": 9523080,
+"2027-28": 9976560,
+"2028-29": 12640302
+},
+"guaranteed": 19499640,
+"waived_split": false
+},
+{
+"name": "Naji Marshall",
+"key": "naji marshall",
+"bbref_id": "marshna01",
+"team": "DAL",
+"cost": 9428571,
+"salaries": {
+"2026-27": 9428571,
+"2027-28": 18195600,
+"2028-29": 17285820,
+"2029-30": 16376040
+},
+"guaranteed": 61286031,
+"waived_split": false
+},
+{
+"name": "Jalen Smith",
+"key": "jalen smith",
+"bbref_id": "smithja04",
+"team": "CHI",
+"cost": 9428571,
+"salaries": {
+"2026-27": 9428571
+},
+"guaranteed": 9428571,
+"waived_split": false
+},
+{
+"name": "Collin Sexton",
+"key": "collin sexton",
+"bbref_id": "sextoco01",
+"team": "LAL",
+"cost": 9366000,
+"salaries": {
+"2026-27": 9366000,
+"2027-28": 9834300
+},
+"guaranteed": 19200300,
+"waived_split": false
+},
+{
+"name": "Moritz Wagner",
+"key": "moritz wagner",
+"bbref_id": "wagnemo01",
+"team": "BKN",
+"cost": 9268293,
+"salaries": {
+"2026-27": 9268293,
+"2027-28": 9731707
+},
+"guaranteed": 9268293,
+"waived_split": false
+},
+{
+"name": "Bilal Coulibaly",
+"key": "bilal coulibaly",
+"bbref_id": "coulibi01",
+"team": "WSH",
+"cost": 9240012,
+"salaries": {
+"2026-27": 9240012
+},
+"guaranteed": 9240012,
+"waived_split": false
+},
+{
+"name": "Aaron Wiggins",
+"key": "aaron wiggins",
+"bbref_id": "wiggiaa01",
+"team": "ATL",
+"cost": 9224300,
+"salaries": {
+"2026-27": 9224300,
+"2027-28": 8345797,
+"2028-29": 8345797
+},
+"guaranteed": 17570097,
+"waived_split": false
+},
+{
+"name": "Ty Jerome",
+"key": "ty jerome",
+"bbref_id": "jeromty01",
+"team": "MEM",
+"cost": 9220050,
+"salaries": {
+"2026-27": 9220050,
+"2027-28": 9659100
+},
+"guaranteed": 9220050,
+"waived_split": false
+},
+{
+"name": "Brook Lopez",
+"key": "brook lopez",
+"bbref_id": "lopezbr01",
+"team": "LAC",
+"cost": 9187500,
+"salaries": {
+"2026-27": 9187500
+},
+"guaranteed": 9187500,
+"waived_split": false
+},
+{
+"name": "Sam Merrill",
+"key": "sam merrill",
+"bbref_id": "merrisa01",
+"team": "CLE",
+"cost": 9160715,
+"salaries": {
+"2026-27": 9160715,
+"2027-28": 9839285,
+"2028-29": 10517856
+},
+"guaranteed": 29517856,
+"waived_split": false
+},
+{
+"name": "Ron Holland",
+"key": "ron holland",
+"bbref_id": "hollaro01",
+"team": "DET",
+"cost": 9069600,
+"salaries": {
+"2026-27": 9069600,
+"2027-28": 11491183
+},
+"guaranteed": 20560783,
+"waived_split": false
+},
+{
+"name": "Dean Wade",
+"key": "dean wade",
+"bbref_id": "wadede01",
+"team": "PHI",
+"cost": 9000000,
+"salaries": {
+"2026-27": 9000000,
+"2027-28": 9450000,
+"2028-29": 9900000,
+"2029-30": 10350000
+},
+"guaranteed": 30000000,
+"waived_split": false
+},
+{
+"name": "Mikel Brown Jr.",
+"key": "mikel brown",
+"bbref_id": "brownmi02",
+"team": "BKN",
+"cost": 8787000,
+"salaries": {
+"2026-27": 8787000,
+"2027-28": 9226440,
+"2028-29": 9666000,
+"2029-30": 12256488
+},
+"guaranteed": 18013440,
+"waived_split": false
+},
+{
+"name": "Keon Ellis",
+"key": "keon ellis",
+"bbref_id": "elliske01",
+"team": "BKN",
+"cost": 8780488,
+"salaries": {
+"2026-27": 8780488,
+"2027-28": 9219512
+},
+"guaranteed": 8780488,
+"waived_split": false
+},
+{
+"name": "Tre Johnson",
+"key": "tre johnson",
+"bbref_id": "johnstr03",
+"team": "WSH",
+"cost": 8649600,
+"salaries": {
+"2026-27": 8649600,
+"2027-28": 9061680,
+"2028-29": 11490211
+},
+"guaranteed": 17711280,
+"waived_split": false
+},
+{
+"name": "Jarace Walker",
+"key": "jarace walker",
+"bbref_id": "walkeja02",
+"team": "IND",
+"cost": 8478542,
+"salaries": {
+"2026-27": 8478542
+},
+"guaranteed": 8478542,
+"waived_split": false
+},
+{
+"name": "Kevin Huerter",
+"key": "kevin huerter",
+"bbref_id": "huertke01",
+"team": "DET",
+"cost": 8333333,
+"salaries": {
+"2026-27": 8333333,
+"2027-28": 9000000,
+"2028-29": 9666667
+},
+"guaranteed": 27000000,
+"waived_split": false
+},
+{
+"name": "Zach Collins",
+"key": "zach collins",
+"bbref_id": "colliza01",
+"team": "CHI",
+"cost": 8292683,
+"salaries": {
+"2026-27": 8292683,
+"2027-28": 8707317
+},
+"guaranteed": 17000000,
+"waived_split": false
+},
+{
+"name": "Quinten Post",
+"key": "quinten post",
+"bbref_id": "postqu01",
+"team": "MEM",
+"cost": 8285714,
+"salaries": {
+"2026-27": 8285714,
+"2027-28": 8700000,
+"2028-29": 9114286
+},
+"guaranteed": 8285714,
+"waived_split": false
+},
+{
+"name": "Max Christie",
+"key": "max christie",
+"bbref_id": "chrisma02",
+"team": "DAL",
+"cost": 8285714,
+"salaries": {
+"2026-27": 8285714,
+"2027-28": 8857143
+},
+"guaranteed": 8285714,
+"waived_split": false
+},
+{
+"name": "Tidjane Salaün",
+"key": "tidjane salaun",
+"bbref_id": "salauti01",
+"team": "CHA",
+"cost": 8237880,
+"salaries": {
+"2026-27": 8237880,
+"2027-28": 10445633
+},
+"guaranteed": 8237880,
+"waived_split": false
+},
+{
+"name": "Deandre Ayton",
+"key": "deandre ayton",
+"bbref_id": "aytonde01",
+"team": "WSH",
+"cost": 8104000,
+"salaries": {
+"2026-27": 8104000
+},
+"guaranteed": 8104000,
+"waived_split": false
+},
+{
+"name": "Kelly Oubre Jr.",
+"key": "kelly oubre",
+"bbref_id": "oubreke01",
+"team": "IND",
+"cost": 8050000,
+"salaries": {
+"2026-27": 8050000,
+"2027-28": 8450000
+},
+"guaranteed": 16500000,
+"waived_split": false
+},
+{
+"name": "Darius Acuff Jr.",
+"key": "darius acuff",
+"bbref_id": "acuffda01",
+"team": "SAC",
+"cost": 8021640,
+"salaries": {
+"2026-27": 8021640,
+"2027-28": 8422920,
+"2028-29": 8823600,
+"2029-30": 11205972
+},
+"guaranteed": 16444560,
+"waived_split": false
+},
+{
+"name": "Jonathan Isaac",
+"key": "jonathan isaac",
+"bbref_id": "isaacjo01",
+"team": "ORL",
+"cost": 10449421,
+"salaries": {
+"2026-27": 10449421
+},
+"guaranteed": 10449421,
+"waived_split": false
+},
+{
+"name": "Tre Mann",
+"key": "tre mann",
+"bbref_id": "manntr01",
+"team": "WSH",
+"cost": 8000000,
+"salaries": {
+"2026-27": 8000000,
+"2027-28": 8000000
+},
+"guaranteed": 8000000,
+"waived_split": false
+},
+{
+"name": "Harrison Barnes",
+"key": "harrison barnes",
+"bbref_id": "barneha02",
+"team": "SA",
+"cost": 8000000,
+"salaries": {
+"2026-27": 8000000
+},
+"guaranteed": 8000000,
+"waived_split": false
+},
+{
+"name": "Tre Jones",
+"key": "tre jones",
+"bbref_id": "jonestr01",
+"team": "CHI",
+"cost": 8000000,
+"salaries": {
+"2026-27": 8000000,
+"2027-28": 8000000
+},
+"guaranteed": 8000000,
+"waived_split": false
+},
+{
+"name": "Jeremiah Fears",
+"key": "jeremiah fears",
+"bbref_id": "fearsje01",
+"team": "NO",
+"cost": 7896240,
+"salaries": {
+"2026-27": 7896240,
+"2027-28": 8271960,
+"2028-29": 10505389
+},
+"guaranteed": 16168200,
+"waived_split": false
+},
+{
+"name": "Taylor Hendricks",
+"key": "taylor hendricks",
+"bbref_id": "hendrta01",
+"team": "MEM",
+"cost": 7805900,
+"salaries": {
+"2026-27": 7805900
+},
+"guaranteed": 7805900,
+"waived_split": false
+},
+{
+"name": "Bennedict Mathurin",
+"key": "bennedict mathurin",
+"bbref_id": "mathube01",
+"team": "NO",
+"cost": 7804878,
+"salaries": {
+"2026-27": 7804878,
+"2027-28": 8195122
+},
+"guaranteed": 7804878,
+"waived_split": false
+},
+{
+"name": "Jaylin Williams",
+"key": "jaylin williams",
+"bbref_id": "willija07",
+"team": "OKC",
+"cost": 7774648,
+"salaries": {
+"2026-27": 7774648,
+"2027-28": 7774648
+},
+"guaranteed": 7774648,
+"waived_split": false
+},
+{
+"name": "Payton Pritchard",
+"key": "payton pritchard",
+"bbref_id": "pritcpa01",
+"team": "BOS",
+"cost": 7767857,
+"salaries": {
+"2026-27": 7767857,
+"2027-28": 8303571,
+"2028-29": 21228200,
+"2029-30": 22926456
+},
+"guaranteed": 37299628,
+"waived_split": false
+},
+{
+"name": "Goga Bitadze",
+"key": "goga bitadze",
+"bbref_id": "bitadgo01",
+"team": "ORL",
+"cost": 7608696,
+"salaries": {
+"2026-27": 7608696
+},
+"guaranteed": 7608696,
+"waived_split": false
+},
+{
+"name": "Donovan Clingan",
+"key": "donovan clingan",
+"bbref_id": "clingdo01",
+"team": "POR",
+"cost": 7519920,
+"salaries": {
+"2026-27": 7519920,
+"2027-28": 9550298
+},
+"guaranteed": 17070218,
+"waived_split": false
+},
+{
+"name": "Zeke Nnaji",
+"key": "zeke nnaji",
+"bbref_id": "nnajize01",
+"team": "DEN",
+"cost": 7466667,
+"salaries": {
+"2026-27": 7466667,
+"2027-28": 7466667
+},
+"guaranteed": 7466667,
+"waived_split": false
+},
+{
+"name": "Cason Wallace",
+"key": "cason wallace",
+"bbref_id": "wallaca01",
+"team": "OKC",
+"cost": 7420806,
+"salaries": {
+"2026-27": 7420806,
+"2027-28": 23965517,
+"2028-29": 25882759,
+"2029-30": 27800000,
+"2030-31": 29717241,
+"2031-32": 31634483
+},
+"guaranteed": 146420806,
+"waived_split": false
+},
+{
+"name": "Kingston Flemings",
+"key": "kingston flemings",
+"bbref_id": "flemiki01",
+"team": "ATL",
+"cost": 7348680,
+"salaries": {
+"2026-27": 7348680,
+"2027-28": 7716120,
+"2028-29": 8083680,
+"2029-30": 10282441
+},
+"guaranteed": 15064800,
+"waived_split": false
+},
+{
+"name": "Dereck Lively II",
+"key": "dereck lively",
+"bbref_id": "livelde01",
+"team": "DAL",
+"cost": 7239131,
+"salaries": {
+"2026-27": 7239131
+},
+"guaranteed": 7239131,
+"waived_split": false
+},
+{
+"name": "Egor Dëmin",
+"key": "egor demin",
+"bbref_id": "demineg01",
+"team": "BKN",
+"cost": 7233720,
+"salaries": {
+"2026-27": 7233720,
+"2027-28": 7578240,
+"2028-29": 9639522
+},
+"guaranteed": 14811960,
+"waived_split": false
+},
+{
+"name": "Gradey Dick",
+"key": "gradey dick",
+"bbref_id": "dickgr01",
+"team": "LAC",
+"cost": 7131511,
+"salaries": {
+"2026-27": 7131511
+},
+"guaranteed": 7131511,
+"waived_split": false
+},
+{
+"name": "Clint Capela",
+"key": "clint capela",
+"bbref_id": "capelca01",
+"team": "HOU",
+"cost": 7035000,
+"salaries": {
+"2026-27": 7035000,
+"2027-28": 7370000
+},
+"guaranteed": 14405000,
+"waived_split": false
+},
+{
+"name": "Jordan Hawkins",
+"key": "jordan hawkins",
+"bbref_id": "hawkijo01",
+"team": "MEM",
+"cost": 7021895,
+"salaries": {
+"2026-27": 7021895
+},
+"guaranteed": 7021895,
+"waived_split": false
+},
+{
+"name": "Isaiah Jackson",
+"key": "isaiah jackson",
+"bbref_id": "jacksis01",
+"team": "LAC",
+"cost": 7000000,
+"salaries": {
+"2026-27": 7000000,
+"2027-28": 6400000
+},
+"guaranteed": 13400000,
+"waived_split": false
+},
+{
+"name": "Rob Dillingham",
+"key": "rob dillingham",
+"bbref_id": "dilliro01",
+"team": "CHA",
+"cost": 6889320,
+"salaries": {
+"2026-27": 6889320
+},
+"guaranteed": 6889320,
+"waived_split": false
+},
+{
+"name": "Al Horford",
+"key": "al horford",
+"bbref_id": "horfoal01",
+"team": "GS",
+"cost": 6822000,
+"salaries": {
+"2026-27": 6822000,
+"2027-28": 7163100
+},
+"guaranteed": 13985100,
+"waived_split": false
+},
+{
+"name": "Morez Johnson Jr.",
+"key": "morez johnson",
+"bbref_id": "johnsmo01",
+"team": "DAL",
+"cost": 6754800,
+"salaries": {
+"2026-27": 6754800,
+"2027-28": 7093080,
+"2028-29": 7430640,
+"2029-30": 9466636
+},
+"guaranteed": 13847880,
+"waived_split": false
+},
+{
+"name": "Collin Murray-Boyles",
+"key": "collin murrayboyles",
+"bbref_id": "murraco01",
+"team": "TOR",
+"cost": 6649560,
+"salaries": {
+"2026-27": 6649560,
+"2027-28": 6966000,
+"2028-29": 8874684
+},
+"guaranteed": 13615560,
+"waived_split": false
+},
+{
+"name": "Keyonte George",
+"key": "keyonte george",
+"bbref_id": "georgke01",
+"team": "UTAH",
+"cost": 6563925,
+"salaries": {
+"2026-27": 6563925,
+"2027-28": 28700000,
+"2028-29": 29848000,
+"2029-30": 31041920,
+"2030-31": 32283597,
+"2031-32": 33574941
+},
+"guaranteed": 162012383,
+"waived_split": false
+},
+{
+"name": "Tim Hardaway Jr.",
+"key": "tim hardaway",
+"bbref_id": "hardati02",
+"team": "MIA",
+"cost": 6500000,
+"salaries": {
+"2026-27": 6500000
+},
+"guaranteed": 6500000,
+"waived_split": false
+},
+{
+"name": "Saddiq Bey",
+"key": "saddiq bey",
+"bbref_id": "beysa01",
+"team": "NO",
+"cost": 6440678,
+"salaries": {
+"2026-27": 6440678,
+"2027-28": 17129630,
+"2028-29": 18500000,
+"2029-30": 19870370
+},
+"guaranteed": 61940678,
+"waived_split": false
+},
+{
+"name": "Bradley Beal",
+"key": "bradley beal",
+"bbref_id": "bealbr01",
+"team": "LAC",
+"cost": 6424800,
+"salaries": {
+"2026-27": 25807810,
+"2027-28": 26129050,
+"2028-29": 19383010,
+"2029-30": 19383010
+},
+"guaranteed": 6424800,
+"waived_split": true
+},
+{
+"name": "Brayden Burries",
+"key": "brayden burries",
+"bbref_id": "burribr01",
+"team": "MIL",
+"cost": 6417360,
+"salaries": {
+"2026-27": 6417360,
+"2027-28": 6738000,
+"2028-29": 7058520,
+"2029-30": 8999614
+},
+"guaranteed": 13155360,
+"waived_split": false
+},
+{
+"name": "Zach Edey",
+"key": "zach edey",
+"bbref_id": "edeyza01",
+"team": "MEM",
+"cost": 6332760,
+"salaries": {
+"2026-27": 6332760,
+"2027-28": 8067937
+},
+"guaranteed": 14400697,
+"waived_split": false
+},
+{
+"name": "Khaman Maluach",
+"key": "khaman maluach",
+"bbref_id": "maluakh01",
+"team": "PHX",
+"cost": 6316680,
+"salaries": {
+"2026-27": 6316680,
+"2027-28": 6617160,
+"2028-29": 8436880
+},
+"guaranteed": 12933840,
+"waived_split": false
+},
+{
+"name": "Yaxel Lendeborg",
+"key": "yaxel lendeborg",
+"bbref_id": "lendeya01",
+"team": "GS",
+"cost": 6096240,
+"salaries": {
+"2026-27": 6096240,
+"2027-28": 6401280,
+"2028-29": 6706200,
+"2029-30": 8899128
+},
+"guaranteed": 12497520,
+"waived_split": false
+},
+{
+"name": "Luke Kennard",
+"key": "luke kennard",
+"bbref_id": "kennalu01",
+"team": "PHX",
+"cost": 6064000,
+"salaries": {
+"2026-27": 6064000,
+"2027-28": 6367200
+},
+"guaranteed": 6064000,
+"waived_split": false
+},
+{
+"name": "Jonathan Kuminga",
+"key": "jonathan kuminga",
+"bbref_id": "kuminjo01",
+"team": "MIN",
+"cost": 6064000,
+"salaries": {
+"2026-27": 6064000,
+"2027-28": 6367200
+},
+"guaranteed": 6064000,
+"waived_split": false
+},
+{
+"name": "Marcus Smart",
+"key": "marcus smart",
+"bbref_id": "smartma01",
+"team": "HOU",
+"cost": 6064000,
+"salaries": {
+"2026-27": 6064000,
+"2027-28": 6367200
+},
+"guaranteed": 6064000,
+"waived_split": false
+},
+{
+"name": "Cody Williams",
+"key": "cody williams",
+"bbref_id": "willico04",
+"team": "MIN",
+"cost": 6015600,
+"salaries": {
+"2026-27": 6015600,
+"2027-28": 7669890
+},
+"guaranteed": 6015600,
+"waived_split": false
+},
+{
+"name": "Cedric Coward",
+"key": "cedric coward",
+"bbref_id": "cowarce01",
+"team": "MEM",
+"cost": 6001080,
+"salaries": {
+"2026-27": 6001080,
+"2027-28": 6286920,
+"2028-29": 8342743
+},
+"guaranteed": 12288000,
+"waived_split": false
+},
+{
+"name": "Spencer Jones",
+"key": "spencer jones",
+"bbref_id": "jonessp01",
+"team": "DEN",
+"cost": 6000000,
+"salaries": {
+"2026-27": 6000000,
+"2027-28": 5750000
+},
+"guaranteed": 11750000,
+"waived_split": false
+},
+{
+"name": "Jaxson Hayes",
+"key": "jaxson hayes",
+"bbref_id": "hayesja02",
+"team": "UTAH",
+"cost": 6000000,
+"salaries": {
+"2026-27": 6000000,
+"2027-28": 6000000
+},
+"guaranteed": 6000000,
+"waived_split": false
+},
+{
+"name": "Josh Okogie",
+"key": "josh okogie",
+"bbref_id": "okogijo01",
+"team": "UTAH",
+"cost": 6000000,
+"salaries": {
+"2026-27": 6000000,
+"2027-28": 6000000
+},
+"guaranteed": 6000000,
+"waived_split": false
+},
+{
+"name": "Anfernee Simons",
+"key": "anfernee simons",
+"bbref_id": "simonan01",
+"team": "PHI",
+"cost": 6000000,
+"salaries": {
+"2026-27": 6000000,
+"2027-28": 6300000
+},
+"guaranteed": 6000000,
+"waived_split": false
+},
+{
+"name": "Jake LaRavia",
+"key": "jake laravia",
+"bbref_id": "laravja01",
+"team": "LAL",
+"cost": 6000000,
+"salaries": {
+"2026-27": 6000000
+},
+"guaranteed": 6000000,
+"waived_split": false
+},
+{
+"name": "Jaden Hardy",
+"key": "jaden hardy",
+"bbref_id": "hardyja02",
+"team": "LAL",
+"cost": 6000000,
+"salaries": {
+"2026-27": 6000000,
+"2027-28": 6000000
+},
+"guaranteed": 6000000,
+"waived_split": false
+},
+{
+"name": "D'Angelo Russell",
+"key": "dangelo russell",
+"bbref_id": "russeda01",
+"team": "MEM",
+"cost": 5969250,
+"salaries": {
+"2026-27": 5969250
+},
+"guaranteed": 5969250,
+"waived_split": false
+},
+{
+"name": "Jaime Jaquez Jr.",
+"key": "jaime jaquez",
+"bbref_id": "jaqueja01",
+"team": "MIL",
+"cost": 5939141,
+"salaries": {
+"2026-27": 5939141
+},
+"guaranteed": 5939141,
+"waived_split": false
+},
+{
+"name": "Nicolas Batum",
+"key": "nicolas batum",
+"bbref_id": "batumni01",
+"team": "LAC",
+"cost": 5881680,
+"salaries": {
+"2026-27": 5881680
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Jordan Goodwin",
+"key": "jordan goodwin",
+"bbref_id": "goodwjo01",
+"team": "PHX",
+"cost": 5864198,
+"salaries": {
+"2026-27": 5864198,
+"2027-28": 6333333,
+"2028-29": 6802469
+},
+"guaranteed": 12197531,
+"waived_split": false
+},
+{
+"name": "Aday Mara",
+"key": "aday mara",
+"bbref_id": "maraad01",
+"team": "OKC",
+"cost": 5791680,
+"salaries": {
+"2026-27": 5791680,
+"2027-28": 6081480,
+"2028-29": 6371160,
+"2029-30": 8779459
+},
+"guaranteed": 11873160,
+"waived_split": false
+},
+{
+"name": "Ousmane Dieng",
+"key": "ousmane dieng",
+"bbref_id": "diengou01",
+"team": "MIL",
+"cost": 5750000,
+"salaries": {
+"2026-27": 5750000,
+"2027-28": 5750000,
+"2028-29": 5750000
+},
+"guaranteed": 11500000,
+"waived_split": false
+},
+{
+"name": "Matas Buzelis",
+"key": "matas buzelis",
+"bbref_id": "buzelma01",
+"team": "CHI",
+"cost": 5715360,
+"salaries": {
+"2026-27": 5715360,
+"2027-28": 7584283
+},
+"guaranteed": 13299643,
+"waived_split": false
+},
+{
+"name": "Noa Essengue",
+"key": "noa essengue",
+"bbref_id": "essenno01",
+"team": "CHI",
+"cost": 5701200,
+"salaries": {
+"2026-27": 5701200,
+"2027-28": 5972760,
+"2028-29": 8230464
+},
+"guaranteed": 11673960,
+"waived_split": false
+},
+{
+"name": "Kris Dunn",
+"key": "kris dunn",
+"bbref_id": "dunnkr01",
+"team": "LAC",
+"cost": 5684800,
+"salaries": {
+"2026-27": 5684800
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Brandin Podziemski",
+"key": "brandin podziemski",
+"bbref_id": "podzibr01",
+"team": "GS",
+"cost": 5679459,
+"salaries": {
+"2026-27": 5679459,
+"2027-28": 18965517,
+"2028-29": 20482759,
+"2029-30": 22000000,
+"2030-31": 23517241,
+"2031-32": 25034483
+},
+"guaranteed": 90644976,
+"waived_split": false
+},
+{
+"name": "Paul Reed",
+"key": "paul reed",
+"bbref_id": "reedpa01",
+"team": "DET",
+"cost": 5602689,
+"salaries": {
+"2026-27": 5602689
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Klay Thompson",
+"key": "klay thompson",
+"bbref_id": "thompkl01",
+"team": "MIA",
+"cost": 5600000,
+"salaries": {
+"2026-27": 23060317,
+"2027-28": 5880000
+},
+"guaranteed": 5600000,
+"waived_split": true
+},
+{
+"name": "Khris Middleton",
+"key": "khris middleton",
+"bbref_id": "middlkh01",
+"team": "WSH",
+"cost": 5591122,
+"salaries": {
+"2026-27": 5591122,
+"2027-28": 5870678,
+"2028-29": 6150234
+},
+"guaranteed": 6499000,
+"waived_split": false
+},
+{
+"name": "Nate Ament",
+"key": "nate ament",
+"bbref_id": "amentna01",
+"team": "MIL",
+"cost": 5502000,
+"salaries": {
+"2026-27": 5502000,
+"2027-28": 5777280,
+"2028-29": 6052200,
+"2029-30": 8648594
+},
+"guaranteed": 11279280,
+"waived_split": false
+},
+{
+"name": "Precious Achiuwa",
+"key": "precious achiuwa",
+"bbref_id": "achiupr01",
+"team": "SAC",
+"cost": 5477000,
+"salaries": {
+"2026-27": 5477000,
+"2027-28": 5750850
+},
+"guaranteed": 11227850,
+"waived_split": false
+},
+{
+"name": "De'Anthony Melton",
+"key": "deanthony melton",
+"bbref_id": "meltode01",
+"team": "GS",
+"cost": 5477000,
+"salaries": {
+"2026-27": 5477000,
+"2027-28": 5750850
+},
+"guaranteed": 5477000,
+"waived_split": false
+},
+{
+"name": "Nikola Topić",
+"key": "nikola topic",
+"bbref_id": "topicni01",
+"team": "OKC",
+"cost": 5429760,
+"salaries": {
+"2026-27": 5429760,
+"2027-28": 7482210
+},
+"guaranteed": 5429760,
+"waived_split": false
+},
+{
+"name": "Derik Queen",
+"key": "derik queen",
+"bbref_id": "queende01",
+"team": "NO",
+"cost": 5416080,
+"salaries": {
+"2026-27": 5416080,
+"2027-28": 5673840,
+"2028-29": 8107918
+},
+"guaranteed": 11089920,
+"waived_split": false
+},
+{
+"name": "Noah Clowney",
+"key": "noah clowney",
+"bbref_id": "clownno01",
+"team": "BKN",
+"cost": 5414034,
+"salaries": {
+"2026-27": 5414034
+},
+"guaranteed": 5414034,
+"waived_split": false
+},
+{
+"name": "Kevin Porter Jr.",
+"key": "kevin porter",
+"bbref_id": "porteke02",
+"team": "MIL",
+"cost": 5390700,
+"salaries": {
+"2026-27": 5390700
+},
+"guaranteed": 5390700,
+"waived_split": false
+},
+{
+"name": "Landry Shamet",
+"key": "landry shamet",
+"bbref_id": "shamela01",
+"team": "NY",
+"cost": 5357143,
+"salaries": {
+"2026-27": 5357143,
+"2027-28": 5785714,
+"2028-29": 6214286,
+"2029-30": 6642857
+},
+"guaranteed": 24000000,
+"waived_split": false
+},
+{
+"name": "Kris Murray",
+"key": "kris murray",
+"bbref_id": "murrakr01",
+"team": "MEM",
+"cost": 5315004,
+"salaries": {
+"2026-27": 5315004
+},
+"guaranteed": 5315004,
+"waived_split": false
+},
+{
+"name": "Jordan Miller",
+"key": "jordan miller",
+"bbref_id": "millejo02",
+"team": "LAC",
+"cost": 5300000,
+"salaries": {
+"2026-27": 5300000,
+"2027-28": 5000000,
+"2028-29": 5000000
+},
+"guaranteed": 5300000,
+"waived_split": false
+},
+{
+"name": "Hannes Steinbach",
+"key": "hannes steinbach",
+"bbref_id": "steinha02",
+"team": "CHA",
+"cost": 5227200,
+"salaries": {
+"2026-27": 5227200,
+"2027-28": 5488560,
+"2028-29": 5750160,
+"2029-30": 8515987
+},
+"guaranteed": 10715760,
+"waived_split": false
+},
+{
+"name": "Marcus Sasser",
+"key": "marcus sasser",
+"bbref_id": "sassema01",
+"team": "DAL",
+"cost": 5198983,
+"salaries": {
+"2026-27": 5198983
+},
+"guaranteed": 5198983,
+"waived_split": false
+},
+{
+"name": "Devin Carter",
+"key": "devin carter",
+"bbref_id": "cartede02",
+"team": "ATL",
+"cost": 5158080,
+"salaries": {
+"2026-27": 5158080
+},
+"guaranteed": 5158080,
+"waived_split": false
+},
+{
+"name": "Carter Bryant",
+"key": "carter bryant",
+"bbref_id": "bryanca01",
+"team": "SA",
+"cost": 5145360,
+"salaries": {
+"2026-27": 5145360,
+"2027-28": 5390640,
+"2028-29": 7983539
+},
+"guaranteed": 10536000,
+"waived_split": false
+},
+{
+"name": "Ben Sheppard",
+"key": "ben sheppard",
+"bbref_id": "sheppbe01",
+"team": "IND",
+"cost": 5031669,
+"salaries": {
+"2026-27": 5031669
+},
+"guaranteed": 5031669,
+"waived_split": false
+},
+{
+"name": "Kenrich Williams",
+"key": "kenrich williams",
+"bbref_id": "willike04",
+"team": "OKC",
+"cost": 5000000,
+"salaries": {
+"2026-27": 5000000
+},
+"guaranteed": 5000000,
+"waived_split": false
+},
+{
+"name": "Dailyn Swain",
+"key": "dailyn swain",
+"bbref_id": "swainda01",
+"team": "CHI",
+"cost": 4965480,
+"salaries": {
+"2026-27": 4965480,
+"2027-28": 5213760,
+"2028-29": 5461920,
+"2029-30": 8373124
+},
+"guaranteed": 10179240,
+"waived_split": false
+},
+{
+"name": "Bub Carrington",
+"key": "bub carrington",
+"bbref_id": "carrica01",
+"team": "WSH",
+"cost": 4900560,
+"salaries": {
+"2026-27": 4900560,
+"2027-28": 7257730
+},
+"guaranteed": 12158290,
+"waived_split": false
+},
+{
+"name": "Thomas Sorber",
+"key": "thomas sorber",
+"bbref_id": "sorbeth01",
+"team": "OKC",
+"cost": 4887720,
+"salaries": {
+"2026-27": 4887720,
+"2027-28": 5120400,
+"2028-29": 7849573
+},
+"guaranteed": 10008120,
+"waived_split": false
+},
+{
+"name": "Brice Sensabaugh",
+"key": "brice sensabaugh",
+"bbref_id": "sensabr01",
+"team": "UTAH",
+"cost": 4862237,
+"salaries": {
+"2026-27": 4862237
+},
+"guaranteed": 4862237,
+"waived_split": false
+},
+{
+"name": "Julian Strawther",
+"key": "julian strawther",
+"bbref_id": "strawju01",
+"team": "DEN",
+"cost": 4826931,
+"salaries": {
+"2026-27": 4826931
+},
+"guaranteed": 4826931,
+"waived_split": false
+},
+{
+"name": "Bennett Stirtz",
+"key": "bennett stirtz",
+"bbref_id": "stirtbe01",
+"team": "OKC",
+"cost": 4717320,
+"salaries": {
+"2026-27": 4717320,
+"2027-28": 4953240,
+"2028-29": 5189400,
+"2029-30": 7960540
+},
+"guaranteed": 9670560,
+"waived_split": false
+},
+{
+"name": "Kel'el Ware",
+"key": "kelel ware",
+"bbref_id": "wareke01",
+"team": "MIL",
+"cost": 4654920,
+"salaries": {
+"2026-27": 4654920,
+"2027-28": 7135992
+},
+"guaranteed": 11790912,
+"waived_split": false
+},
+{
+"name": "Yang Hansen",
+"key": "yang hansen",
+"bbref_id": "yangha01",
+"team": "POR",
+"cost": 4643520,
+"salaries": {
+"2026-27": 4643520,
+"2027-28": 4864920,
+"2028-29": 7462788
+},
+"guaranteed": 9508440,
+"waived_split": false
+},
+{
+"name": "Gui Santos",
+"key": "gui santos",
+"bbref_id": "santogu01",
+"team": "GS",
+"cost": 4629630,
+"salaries": {
+"2026-27": 4629630,
+"2027-28": 5000000,
+"2028-29": 5370370
+},
+"guaranteed": 9629630,
+"waived_split": false
+},
+{
+"name": "Jose Alvarado",
+"key": "jose alvarado",
+"bbref_id": "alvarjo01",
+"team": "NY",
+"cost": 4500000,
+"salaries": {
+"2026-27": 4500000,
+"2027-28": 4860000,
+"2028-29": 5220000
+},
+"guaranteed": 14580000,
+"waived_split": false
+},
+{
+"name": "Josh Minott",
+"key": "josh minott",
+"bbref_id": "minotjo01",
+"team": "BKN",
+"cost": 4500000,
+"salaries": {
+"2026-27": 4500000,
+"2027-28": 4500000
+},
+"guaranteed": 4500000,
+"waived_split": false
+},
+{
+"name": "Ebuka Okorie",
+"key": "ebuka okorie",
+"bbref_id": "okorieb01",
+"team": "DET",
+"cost": 4481280,
+"salaries": {
+"2026-27": 4481280,
+"2027-28": 4705440,
+"2028-29": 4929360,
+"2029-30": 7571497
+},
+"guaranteed": 9186720,
+"waived_split": false
+},
+{
+"name": "Jared McCain",
+"key": "jared mccain",
+"bbref_id": "mccaija01",
+"team": "OKC",
+"cost": 4422600,
+"salaries": {
+"2026-27": 4422600,
+"2027-28": 6784268
+},
+"guaranteed": 11206868,
+"waived_split": false
+},
+{
+"name": "Joan Beringer",
+"key": "joan beringer",
+"bbref_id": "berinjo01",
+"team": "MIN",
+"cost": 4411200,
+"salaries": {
+"2026-27": 4411200,
+"2027-28": 4621200,
+"2028-29": 7098163
+},
+"guaranteed": 9032400,
+"waived_split": false
+},
+{
+"name": "Christian Anderson Jr.",
+"key": "christian anderson",
+"bbref_id": "anderch02",
+"team": "CHA",
+"cost": 4257480,
+"salaries": {
+"2026-27": 4257480,
+"2027-28": 4470000,
+"2028-29": 4683120,
+"2029-30": 7202639
+},
+"guaranteed": 8727480,
+"waived_split": false
+},
+{
+"name": "Dalton Knecht",
+"key": "dalton knecht",
+"bbref_id": "knechda01",
+"team": "LAL",
+"cost": 4201080,
+"salaries": {
+"2026-27": 4201080
+},
+"guaranteed": 4201080,
+"waived_split": false
+},
+{
+"name": "Walter Clayton",
+"key": "walter clayton",
+"bbref_id": "claytwa01",
+"team": "MEM",
+"cost": 4190520,
+"salaries": {
+"2026-27": 4190520
+},
+"guaranteed": 4190520,
+"waived_split": false
+},
+{
+"name": "Allen Graves",
+"key": "allen graves",
+"bbref_id": "graveal01",
+"team": "TOR",
+"cost": 4065720,
+"salaries": {
+"2026-27": 4065720,
+"2027-28": 4268880,
+"2028-29": 4472640,
+"2029-30": 6887866
+},
+"guaranteed": 8334600,
+"waived_split": false
+},
+{
+"name": "Nolan Traoré",
+"key": "nolan traore",
+"bbref_id": "traorno01",
+"team": "BKN",
+"cost": 4002000,
+"salaries": {
+"2026-27": 4002000,
+"2027-28": 4193040,
+"2028-29": 6457282
+},
+"guaranteed": 8195040,
+"waived_split": false
+},
+{
+"name": "Ryan Rollins",
+"key": "ryan rollins",
+"bbref_id": "rolliry01",
+"team": "MIL",
+"cost": 4000000,
+"salaries": {
+"2026-27": 4000000,
+"2027-28": 4000000
+},
+"guaranteed": 4000000,
+"waived_split": false
+},
+{
+"name": "Daniss Jenkins",
+"key": "daniss jenkins",
+"bbref_id": "jenkida01",
+"team": "DET",
+"cost": 4000000,
+"salaries": {
+"2026-27": 4000000
+},
+"guaranteed": 4000000,
+"waived_split": false
+},
+{
+"name": "Tristan Da Silva",
+"key": "tristan da silva",
+"bbref_id": "dasiltr01",
+"team": "ORL",
+"cost": 3991200,
+"salaries": {
+"2026-27": 3991200,
+"2027-28": 6138466
+},
+"guaranteed": 10129666,
+"waived_split": false
+},
+{
+"name": "Miles McBride",
+"key": "miles mcbride",
+"bbref_id": "mcbrimi01",
+"team": "NY",
+"cost": 3956523,
+"salaries": {
+"2026-27": 3956523
+},
+"guaranteed": 3956523,
+"waived_split": false
+},
+{
+"name": "Javonte Green",
+"key": "javonte green",
+"bbref_id": "greenja02",
+"team": "DET",
+"cost": 3943679,
+"salaries": {
+"2026-27": 3943679
+},
+"guaranteed": 3943679,
+"waived_split": false
+},
+{
+"name": "Jayden Quaintance",
+"key": "jayden quaintance",
+"bbref_id": "quainja01",
+"team": "SA",
+"cost": 3902760,
+"salaries": {
+"2026-27": 3902760,
+"2027-28": 4097880,
+"2028-29": 4292880,
+"2029-30": 6619621
+},
+"guaranteed": 8000640,
+"waived_split": false
+},
+{
+"name": "DeAndre Jordan",
+"key": "deandre jordan",
+"bbref_id": "jordade01",
+"team": "NO",
+"cost": 3876529,
+"salaries": {
+"2026-27": 3876529,
+"2027-28": 4070355
+},
+"guaranteed": 7946884,
+"waived_split": false
+},
+{
+"name": "LeBron James",
+"key": "lebron james",
+"bbref_id": "jamesle01",
+"team": "PHI",
+"cost": 3876529,
+"salaries": {
+"2026-27": 3876529,
+"2027-28": 4070355
+},
+"guaranteed": 3876529,
+"waived_split": false
+},
+{
+"name": "Svi Mykhailiuk",
+"key": "svi mykhailiuk",
+"bbref_id": "mykhasv01",
+"team": "UTAH",
+"cost": 3850000,
+"salaries": {
+"2026-27": 3850000,
+"2027-28": 4025000
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Kasparas Jakučionis",
+"key": "kasparas jakucionis",
+"bbref_id": "jakucka01",
+"team": "MIL",
+"cost": 3841680,
+"salaries": {
+"2026-27": 3841680,
+"2027-28": 4024440,
+"2028-29": 6205687
+},
+"guaranteed": 7866120,
+"waived_split": false
+},
+{
+"name": "Gary Harris",
+"key": "gary harris",
+"bbref_id": "harriga01",
+"team": "DET",
+"cost": 3815861,
+"salaries": {
+"2026-27": 3815861
+},
+"guaranteed": 3815861,
+"waived_split": false
+},
+{
+"name": "Taurean Prince",
+"key": "taurean prince",
+"bbref_id": "princta02",
+"team": "DET",
+"cost": 3815861,
+"salaries": {
+"2026-27": 3815861
+},
+"guaranteed": 3815861,
+"waived_split": false
+},
+{
+"name": "Pat Connaughton",
+"key": "pat connaughton",
+"bbref_id": "connapa01",
+"team": "CHA",
+"cost": 3815861,
+"salaries": {
+"2026-27": 3815861
+},
+"guaranteed": 3815861,
+"waived_split": false
+},
+{
+"name": "Ja'Kobe Walter",
+"key": "jakobe walter",
+"bbref_id": "walteja01",
+"team": "TOR",
+"cost": 3811800,
+"salaries": {
+"2026-27": 3811800,
+"2027-28": 5870172
+},
+"guaranteed": 9681972,
+"waived_split": false
+},
+{
+"name": "Karim López",
+"key": "karim lopez",
+"bbref_id": "lopezka01",
+"team": "MEM",
+"cost": 3746760,
+"salaries": {
+"2026-27": 3746760,
+"2027-28": 3934320,
+"2028-29": 4121760,
+"2029-30": 6565964
+},
+"guaranteed": 7681080,
+"waived_split": false
+},
+{
+"name": "Cole Anthony",
+"key": "cole anthony",
+"bbref_id": "anthoco01",
+"team": "MEM",
+"cost": 3700000,
+"salaries": {
+"2026-27": 3700000,
+"2027-28": 3700000
+},
+"guaranteed": 7400000,
+"waived_split": false
+},
+{
+"name": "Will Riley",
+"key": "will riley",
+"bbref_id": "rileywi01",
+"team": "WSH",
+"cost": 3688320,
+"salaries": {
+"2026-27": 3688320,
+"2027-28": 3864000,
+"2028-29": 6155352
+},
+"guaranteed": 7552320,
+"waived_split": false
+},
+{
+"name": "Jaylon Tyson",
+"key": "jaylon tyson",
+"bbref_id": "tysonja01",
+"team": "CLE",
+"cost": 3658560,
+"salaries": {
+"2026-27": 3658560,
+"2027-28": 5641500
+},
+"guaranteed": 9300060,
+"waived_split": false
+},
+{
+"name": "Labaron Philon Jr.",
+"key": "labaron philon",
+"bbref_id": "philola01",
+"team": "PHI",
+"cost": 3597120,
+"salaries": {
+"2026-27": 3597120,
+"2027-28": 3776760,
+"2028-29": 3956760,
+"2029-30": 6508871
+},
+"guaranteed": 7373880,
+"waived_split": false
+},
+{
+"name": "Drake Powell",
+"key": "drake powell",
+"bbref_id": "poweldr01",
+"team": "BKN",
+"cost": 3540600,
+"salaries": {
+"2026-27": 3540600,
+"2027-28": 3709320,
+"2028-29": 6101832
+},
+"guaranteed": 7249920,
+"waived_split": false
+},
+{
+"name": "Yves Missi",
+"key": "yves missi",
+"bbref_id": "missiyv01",
+"team": "NO",
+"cost": 3512760,
+"salaries": {
+"2026-27": 3512760,
+"2027-28": 5595827
+},
+"guaranteed": 9108587,
+"waived_split": false
+},
+{
+"name": "Zuby Ejiofor",
+"key": "zuby ejiofor",
+"bbref_id": "ejiofzu01",
+"team": "ATL",
+"cost": 3453360,
+"salaries": {
+"2026-27": 3453360,
+"2027-28": 3626160,
+"2028-29": 3798360,
+"2029-30": 6445818
+},
+"guaranteed": 7079520,
+"waived_split": false
+},
+{
+"name": "Dominick Barlow",
+"key": "dominick barlow",
+"bbref_id": "barlodo01",
+"team": "PHI",
+"cost": 3415000,
+"salaries": {
+"2026-27": 3415000
+},
+"guaranteed": 3415000,
+"waived_split": false
+},
+{
+"name": "Ariel Hukporti",
+"key": "ariel hukporti",
+"bbref_id": "hukpoar01",
+"team": "PHI",
+"cost": 3400000,
+"salaries": {
+"2026-27": 3400000
+},
+"guaranteed": 3400000,
+"waived_split": false
+},
+{
+"name": "Asa Newell",
+"key": "asa newell",
+"bbref_id": "newelas01",
+"team": "ATL",
+"cost": 3399480,
+"salaries": {
+"2026-27": 3399480,
+"2027-28": 3560880,
+"2028-29": 6042814
+},
+"guaranteed": 6960360,
+"waived_split": false
+},
+{
+"name": "DaRon Holmes",
+"key": "daron holmes",
+"bbref_id": "holmeda01",
+"team": "DEN",
+"cost": 3372120,
+"salaries": {
+"2026-27": 3372120,
+"2027-28": 5547138
+},
+"guaranteed": 3372120,
+"waived_split": false
+},
+{
+"name": "Cameron Carr",
+"key": "cameron carr",
+"bbref_id": "carrca01",
+"team": "LAL",
+"cost": 3315360,
+"salaries": {
+"2026-27": 3315360,
+"2027-28": 3481080,
+"2028-29": 3646800,
+"2029-30": 6378253
+},
+"guaranteed": 6796440,
+"waived_split": false
+},
+{
+"name": "Mo Bamba",
+"key": "mo bamba",
+"bbref_id": "bambamo01",
+"team": "UTAH",
+"cost": 3286399,
+"salaries": {
+"2026-27": 3286399,
+"2027-28": 3681991
+},
+"guaranteed": 6968390,
+"waived_split": false
+},
+{
+"name": "Nique Clifford",
+"key": "nique clifford",
+"bbref_id": "cliffni01",
+"team": "SAC",
+"cost": 3263400,
+"salaries": {
+"2026-27": 3263400,
+"2027-28": 3418800,
+"2028-29": 5979481
+},
+"guaranteed": 6682200,
+"waived_split": false
+},
+{
+"name": "AJ Johnson",
+"key": "aj johnson",
+"bbref_id": "johnsaj01",
+"team": "NO",
+"cost": 3237120,
+"salaries": {
+"2026-27": 3237120,
+"2027-28": 5493394
+},
+"guaranteed": 3237120,
+"waived_split": false
+},
+{
+"name": "Sergio de Larrea",
+"key": "sergio de larrea",
+"bbref_id": "delarse01",
+"team": "DAL",
+"cost": 3182280,
+"salaries": {
+"2026-27": 3182280,
+"2027-28": 3341280,
+"2028-29": 3500880,
+"2029-30": 6305086
+},
+"guaranteed": 6523560,
+"waived_split": false
+},
+{
+"name": "Ron Harper Jr.",
+"key": "ron harper",
+"bbref_id": "harpero02",
+"team": "BOS",
+"cost": 3150752,
+"salaries": {
+"2026-27": 3150752,
+"2027-28": 3308290,
+"2028-29": 3465828,
+"2029-30": 3779359
+},
+"guaranteed": 6459042,
+"waived_split": false
+},
+{
+"name": "Jase Richardson",
+"key": "jase richardson",
+"bbref_id": "richaja02",
+"team": "ORL",
+"cost": 3132360,
+"salaries": {
+"2026-27": 3132360,
+"2027-28": 3282000,
+"2028-29": 5910882
+},
+"guaranteed": 6414360,
+"waived_split": false
+},
+{
+"name": "Kyshawn George",
+"key": "kyshawn george",
+"bbref_id": "georgky01",
+"team": "WSH",
+"cost": 3108000,
+"salaries": {
+"2026-27": 3108000,
+"2027-28": 5435892
+},
+"guaranteed": 8543892,
+"waived_split": false
+},
+{
+"name": "Nassir Little",
+"key": "nassir little",
+"bbref_id": "littlna01",
+"team": "PHX",
+"cost": 3107143,
+"salaries": {
+"2026-27": 3107143,
+"2027-28": 3107143,
+"2028-29": 3107143
+},
+"guaranteed": 9321429,
+"waived_split": false
+},
+{
+"name": "Jaylen Clark",
+"key": "jaylen clark",
+"bbref_id": "clarkja02",
+"team": "MIN",
+"cost": 3086420,
+"salaries": {
+"2026-27": 3086420,
+"2027-28": 3333334,
+"2028-29": 3580246
+},
+"guaranteed": 10000000,
+"waived_split": false
+},
+{
+"name": "Tarris Reed Jr.",
+"key": "tarris reed",
+"bbref_id": "reedjta01",
+"team": "SA",
+"cost": 3076920,
+"salaries": {
+"2026-27": 3076920,
+"2027-28": 3230520,
+"2028-29": 3384480,
+"2029-30": 6102218
+},
+"guaranteed": 6307440,
+"waived_split": false
+},
+{
+"name": "Ben Saraf",
+"key": "ben saraf",
+"bbref_id": "sarafbe01",
+"team": "BKN",
+"cost": 3028560,
+"salaries": {
+"2026-27": 3028560,
+"2027-28": 3172920,
+"2028-29": 5720776
+},
+"guaranteed": 6201480,
+"waived_split": false
+},
+{
+"name": "Tarik Biberovic",
+"key": "tarik biberovic",
+"bbref_id": "biberta01",
+"team": "DAL",
+"cost": 3000000,
+"salaries": {
+"2026-27": 3000000,
+"2027-28": 3000000
+},
+"guaranteed": 3000000,
+"waived_split": false
+},
+{
+"name": "Kyle Filipowski",
+"key": "kyle filipowski",
+"bbref_id": "filipky01",
+"team": "UTAH",
+"cost": 3000000,
+"salaries": {
+"2026-27": 3000000,
+"2027-28": 3000000
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Chris Cenac Jr.",
+"key": "chris cenac",
+"bbref_id": "cenacch01",
+"team": "BOS",
+"cost": 2988120,
+"salaries": {
+"2026-27": 2988120,
+"2027-28": 3137640,
+"2028-29": 3287400,
+"2029-30": 5930470
+},
+"guaranteed": 6125760,
+"waived_split": false
+},
+{
+"name": "Pacôme Dadiet",
+"key": "pacome dadiet",
+"bbref_id": "dadiepa01",
+"team": "NY",
+"cost": 2983680,
+"salaries": {
+"2026-27": 2983680,
+"2027-28": 5373608
+},
+"guaranteed": 2983680,
+"waived_split": false
+},
+{
+"name": "Joshua Jefferson",
+"key": "joshua jefferson",
+"bbref_id": "jeffejo01",
+"team": "BKN",
+"cost": 2969520,
+"salaries": {
+"2026-27": 2969520,
+"2027-28": 3118560,
+"2028-29": 3266880,
+"2029-30": 5896718
+},
+"guaranteed": 6088080,
+"waived_split": false
+},
+{
+"name": "Alex Karaban",
+"key": "alex karaban",
+"bbref_id": "karabal01",
+"team": "SAC",
+"cost": 2948280,
+"salaries": {
+"2026-27": 2948280,
+"2027-28": 3095640,
+"2028-29": 3243120,
+"2029-30": 5853832
+},
+"guaranteed": 6043920,
+"waived_split": false
+},
+{
+"name": "Danny Wolf",
+"key": "danny wolf",
+"bbref_id": "wolfda01",
+"team": "BKN",
+"cost": 2941440,
+"salaries": {
+"2026-27": 2941440,
+"2027-28": 3081840,
+"2028-29": 5559640
+},
+"guaranteed": 6023280,
+"waived_split": false
+},
+{
+"name": "Koa Peat",
+"key": "koa peat",
+"bbref_id": "peatko01",
+"team": "PHX",
+"cost": 2926800,
+"salaries": {
+"2026-27": 2926800,
+"2027-28": 3073080,
+"2028-29": 3219840,
+"2029-30": 5811811
+},
+"guaranteed": 5999880,
+"waived_split": false
+},
+{
+"name": "Hugo González",
+"key": "hugo gonzalez",
+"bbref_id": "gonzahu01",
+"team": "BOS",
+"cost": 2923560,
+"salaries": {
+"2026-27": 2923560,
+"2027-28": 3062640,
+"2028-29": 5528065
+},
+"guaranteed": 5986200,
+"waived_split": false
+},
+{
+"name": "Liam McNeeley",
+"key": "liam mcneeley",
+"bbref_id": "mcneeli01",
+"team": "CHA",
+"cost": 2902080,
+"salaries": {
+"2026-27": 2902080,
+"2027-28": 3040320,
+"2028-29": 5487778
+},
+"guaranteed": 5942400,
+"waived_split": false
+},
+{
+"name": "Yanic Konan Niederhäuser",
+"key": "yanic konan niederhauser",
+"bbref_id": "konanya01",
+"team": "LAC",
+"cost": 2880960,
+"salaries": {
+"2026-27": 2880960,
+"2027-28": 3018480,
+"2028-29": 5448356
+},
+"guaranteed": 5899440,
+"waived_split": false
+},
+{
+"name": "Ajay Mitchell",
+"key": "ajay mitchell",
+"bbref_id": "mitchaj01",
+"team": "OKC",
+"cost": 2850000,
+"salaries": {
+"2026-27": 2850000,
+"2027-28": 2850000
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Bones Hyland",
+"key": "bones hyland",
+"bbref_id": "hylanbo01",
+"team": "MIN",
+"cost": 2845883,
+"salaries": {
+"2026-27": 2845883
+},
+"guaranteed": 2845883,
+"waived_split": false
+},
+{
+"name": "Terrence Shannon Jr.",
+"key": "terrence shannon",
+"bbref_id": "shannte01",
+"team": "MIN",
+"cost": 2801640,
+"salaries": {
+"2026-27": 2801640,
+"2027-28": 5054159
+},
+"guaranteed": 7855799,
+"waived_split": false
+},
+{
+"name": "Micah Potter",
+"key": "micah potter",
+"bbref_id": "pottemi01",
+"team": "POR",
+"cost": 2801346,
+"salaries": {
+"2026-27": 2801346
+},
+"guaranteed": 2801346,
+"waived_split": false
+},
+{
+"name": "Jericho Sims",
+"key": "jericho sims",
+"bbref_id": "simsje01",
+"team": "MIL",
+"cost": 2801346,
+"salaries": {
+"2026-27": 2801346
+},
+"guaranteed": 2801346,
+"waived_split": false
+},
+{
+"name": "Luka Garza",
+"key": "luka garza",
+"bbref_id": "garzalu01",
+"team": "BOS",
+"cost": 2801346,
+"salaries": {
+"2026-27": 2801346
+},
+"guaranteed": 2801346,
+"waived_split": false
+},
+{
+"name": "Ryan Dunn",
+"key": "ryan dunn",
+"bbref_id": "dunnry01",
+"team": "PHX",
+"cost": 2784240,
+"salaries": {
+"2026-27": 2784240,
+"2027-28": 5025553
+},
+"guaranteed": 7809793,
+"waived_split": false
+},
+{
+"name": "Isaiah Collier",
+"key": "isaiah collier",
+"bbref_id": "colliis01",
+"team": "UTAH",
+"cost": 2763960,
+"salaries": {
+"2026-27": 2763960,
+"2027-28": 4988948
+},
+"guaranteed": 2763960,
+"waived_split": false
+},
+{
+"name": "Baylor Scheierman",
+"key": "baylor scheierman",
+"bbref_id": "scheiba01",
+"team": "BOS",
+"cost": 2744040,
+"salaries": {
+"2026-27": 2744040,
+"2027-28": 4952993
+},
+"guaranteed": 7697033,
+"waived_split": false
+},
+{
+"name": "Neemias Queta",
+"key": "neemias queta",
+"bbref_id": "quetane01",
+"team": "BOS",
+"cost": 2667944,
+"salaries": {
+"2026-27": 2667944,
+"2027-28": 12500000,
+"2028-29": 13500000,
+"2029-30": 14500000,
+"2030-31": 15500000
+},
+"guaranteed": 58667944,
+"waived_split": false
+},
+{
+"name": "Justin Champagnie",
+"key": "justin champagnie",
+"bbref_id": "champju01",
+"team": "WSH",
+"cost": 2667944,
+"salaries": {
+"2026-27": 2667944,
+"2027-28": 3005085
+},
+"guaranteed": 2667944,
+"waived_split": false
+},
+{
+"name": "Vít Krejčí",
+"key": "vit krejci",
+"bbref_id": "krejcvi01",
+"team": "POR",
+"cost": 2667944,
+"salaries": {
+"2026-27": 2667944,
+"2027-28": 3005085
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Jay Huff",
+"key": "jay huff",
+"bbref_id": "huffja01",
+"team": "IND",
+"cost": 2667944,
+"salaries": {
+"2026-27": 2667944,
+"2027-28": 3005085
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Kobe Sanders",
+"key": "kobe sanders",
+"bbref_id": "sandeko01",
+"team": "LAC",
+"cost": 2622139,
+"salaries": {
+"2026-27": 2622139,
+"2027-28": 2753246,
+"2028-29": 2884353,
+"2029-30": 3019474
+},
+"guaranteed": 5375385,
+"waived_split": false
+},
+{
+"name": "Jamaree Bouyea",
+"key": "jamaree bouyea",
+"bbref_id": "bouyeja01",
+"team": "PHX",
+"cost": 2584539,
+"salaries": {
+"2026-27": 2584539
+},
+"guaranteed": 2584539,
+"waived_split": false
+},
+{
+"name": "Jamal Cain",
+"key": "jamal cain",
+"bbref_id": "cainja01",
+"team": "ORL",
+"cost": 2584539,
+"salaries": {
+"2026-27": 2584539
+},
+"guaranteed": 2584539,
+"waived_split": false
+},
+{
+"name": "Bryce McGowens",
+"key": "bryce mcgowens",
+"bbref_id": "mcgowbr01",
+"team": "NO",
+"cost": 2584539,
+"salaries": {
+"2026-27": 2584539,
+"2027-28": 2934742
+},
+"guaranteed": 2584539,
+"waived_split": false
+},
+{
+"name": "Jabari Walker",
+"key": "jabari walker",
+"bbref_id": "walkeja01",
+"team": "PHI",
+"cost": 2584539,
+"salaries": {
+"2026-27": 2584539
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Dru Smith",
+"key": "dru smith",
+"bbref_id": "smithdr01",
+"team": "MIA",
+"cost": 2584539,
+"salaries": {
+"2026-27": 2584539,
+"2027-28": 2934742
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Pete Nance",
+"key": "pete nance",
+"bbref_id": "nancepe01",
+"team": "MIL",
+"cost": 2537526,
+"salaries": {
+"2026-27": 2537526
+},
+"guaranteed": 2537526,
+"waived_split": false
+},
+{
+"name": "Olivier-Maxence Prosper",
+"key": "oliviermaxence prosper",
+"bbref_id": "prospol01",
+"team": "MEM",
+"cost": 2497812,
+"salaries": {
+"2026-27": 3500172,
+"2027-28": 1002360
+},
+"guaranteed": 2497812,
+"waived_split": true
+},
+{
+"name": "Sidy Cissoko",
+"key": "sidy cissoko",
+"bbref_id": "cissosi01",
+"team": "POR",
+"cost": 2497812,
+"salaries": {
+"2026-27": 2497812
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Scotty Pippen Jr.",
+"key": "scotty pippen",
+"bbref_id": "pippesc02",
+"team": "MEM",
+"cost": 2461462,
+"salaries": {
+"2026-27": 2461462,
+"2027-28": 2789215
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Moussa Diabaté",
+"key": "moussa diabate",
+"bbref_id": "diabamo01",
+"team": "CHA",
+"cost": 2461462,
+"salaries": {
+"2026-27": 2461462
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Daeqwon Plowden",
+"key": "daeqwon plowden",
+"bbref_id": "plowdda01",
+"team": "SAC",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421,
+"2027-28": 2664401
+},
+"guaranteed": 5113822,
+"waived_split": false
+},
+{
+"name": "Isaiah Crawford",
+"key": "isaiah crawford",
+"bbref_id": "crawfis01",
+"team": "HOU",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421,
+"2027-28": 2664401
+},
+"guaranteed": 5113822,
+"waived_split": false
+},
+{
+"name": "Anthony Gill",
+"key": "anthony gill",
+"bbref_id": "gillan01",
+"team": "WSH",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Kyle Anderson",
+"key": "kyle anderson",
+"bbref_id": "anderky01",
+"team": "TOR",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Jordan McLaughlin",
+"key": "jordan mclaughlin",
+"bbref_id": "mclaujo01",
+"team": "SA",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Branden Carlson",
+"key": "branden carlson",
+"bbref_id": "carlsbr01",
+"team": "POR",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Kentavious Caldwell-Pope",
+"key": "kentavious caldwellpope",
+"bbref_id": "caldwke01",
+"team": "PHI",
+"cost": 2449421,
+"salaries": {
+"2026-27": 20194392
+},
+"guaranteed": 2449421,
+"waived_split": true
+},
+{
+"name": "Jevon Carter",
+"key": "jevon carter",
+"bbref_id": "carteje01",
+"team": "ORL",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Nikola Vučević",
+"key": "nikola vucevic",
+"bbref_id": "vucevni01",
+"team": "ORL",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Jordan Clarkson",
+"key": "jordan clarkson",
+"bbref_id": "clarkjo01",
+"team": "NY",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Andre Drummond",
+"key": "andre drummond",
+"bbref_id": "drumman01",
+"team": "NY",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Trey Lyles",
+"key": "trey lyles",
+"bbref_id": "lylestr01",
+"team": "MIN",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Nick Richards",
+"key": "nick richards",
+"bbref_id": "richani01",
+"team": "MIA",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Simone Fontecchio",
+"key": "simone fontecchio",
+"bbref_id": "fontesi01",
+"team": "MIA",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Matisse Thybulle",
+"key": "matisse thybulle",
+"bbref_id": "thybuma01",
+"team": "LAL",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Ziaire Williams",
+"key": "ziaire williams",
+"bbref_id": "willizi02",
+"team": "LAL",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Kevon Looney",
+"key": "kevon looney",
+"bbref_id": "looneke01",
+"team": "LAL",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Larry Nance Jr.",
+"key": "larry nance",
+"bbref_id": "nancela02",
+"team": "IND",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Jae'Sean Tate",
+"key": "jaesean tate",
+"bbref_id": "tateja01",
+"team": "HOU",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Bogdan Bogdanović",
+"key": "bogdan bogdanovic",
+"bbref_id": "bogdabo01",
+"team": "HOU",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Gary Payton II",
+"key": "gary payton",
+"bbref_id": "paytoga02",
+"team": "GS",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Charles Bassey",
+"key": "charles bassey",
+"bbref_id": "bassech01",
+"team": "GS",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "DeMar DeRozan",
+"key": "demar derozan",
+"bbref_id": "derozde01",
+"team": "DEN",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Marvin Bagley III",
+"key": "marvin bagley",
+"bbref_id": "baglema01",
+"team": "DEN",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Tyus Jones",
+"key": "tyus jones",
+"bbref_id": "jonesty01",
+"team": "DEN",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Mario Hezonja",
+"key": "mario hezonja",
+"bbref_id": "hezonma01",
+"team": "CLE",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Thomas Bryant",
+"key": "thomas bryant",
+"bbref_id": "bryanth01",
+"team": "CLE",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Mike Conley",
+"key": "mike conley",
+"bbref_id": "conlemi01",
+"team": "BOS",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": 2449421,
+"waived_split": false
+},
+{
+"name": "Ben Simmons",
+"key": "ben simmons",
+"bbref_id": "simmobe01",
+"team": "SAC",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "James Wiseman",
+"key": "james wiseman",
+"bbref_id": "wisemja01",
+"team": "NY",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Trendon Watford",
+"key": "trendon watford",
+"bbref_id": "watfotr01",
+"team": "NO",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Georges Niang",
+"key": "georges niang",
+"bbref_id": "niangge01",
+"team": "GS",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Brandon Williams",
+"key": "brandon williams",
+"bbref_id": "willibr03",
+"team": "GS",
+"cost": 2449421,
+"salaries": {
+"2026-27": 2449421
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Cam Spencer",
+"key": "cam spencer",
+"bbref_id": "spencca01",
+"team": "MEM",
+"cost": 2411090,
+"salaries": {
+"2026-27": 2411090,
+"2027-28": 2616754,
+"2028-29": 2830685
+},
+"guaranteed": 5027844,
+"waived_split": false
+},
+{
+"name": "Justin Edwards",
+"key": "justin edwards",
+"bbref_id": "edwarju01",
+"team": "PHI",
+"cost": 2411090,
+"salaries": {
+"2026-27": 2411090,
+"2027-28": 2616754
+},
+"guaranteed": 2411090,
+"waived_split": false
+},
+{
+"name": "Tolu Smith",
+"key": "tolu smith",
+"bbref_id": "smithto05",
+"team": "DET",
+"cost": 2411090,
+"salaries": {
+"2026-27": 2411090
+},
+"guaranteed": 2411090,
+"waived_split": false
+},
+{
+"name": "Nae'Qwan Tomlin",
+"key": "naeqwan tomlin",
+"bbref_id": "tomlina01",
+"team": "CLE",
+"cost": 2411090,
+"salaries": {
+"2026-27": 2411090
+},
+"guaranteed": 2411090,
+"waived_split": false
+},
+{
+"name": "Sion James",
+"key": "sion james",
+"bbref_id": "jamessi01",
+"team": "CHA",
+"cost": 2411090,
+"salaries": {
+"2026-27": 2411090,
+"2027-28": 2525901,
+"2028-29": 2735698
+},
+"guaranteed": 2411090,
+"waived_split": false
+},
+{
+"name": "Ryan Kalkbrenner",
+"key": "ryan kalkbrenner",
+"bbref_id": "kalkbry01",
+"team": "CHA",
+"cost": 2411090,
+"salaries": {
+"2026-27": 2411090,
+"2027-28": 2525901,
+"2028-29": 2735698
+},
+"guaranteed": 2411090,
+"waived_split": false
+},
+{
+"name": "Jordan Walsh",
+"key": "jordan walsh",
+"bbref_id": "walshjo01",
+"team": "BOS",
+"cost": 2406205,
+"salaries": {
+"2026-27": 2406205,
+"2027-28": 4629630,
+"2028-29": 5000000,
+"2029-30": 5370370
+},
+"guaranteed": 17406205,
+"waived_split": false
+},
+{
+"name": "Trayce Jackson-Davis",
+"key": "trayce jacksondavis",
+"bbref_id": "jackstr02",
+"team": "TOR",
+"cost": 2406205,
+"salaries": {
+"2026-27": 2406205
+},
+"guaranteed": 2406205,
+"waived_split": false
+},
+{
+"name": "GG Jackson II",
+"key": "gg jackson",
+"bbref_id": "jacksgg01",
+"team": "MEM",
+"cost": 2406205,
+"salaries": {
+"2026-27": 2406205
+},
+"guaranteed": 2406205,
+"waived_split": false
+},
+{
+"name": "Craig Porter Jr.",
+"key": "craig porter",
+"bbref_id": "portecr01",
+"team": "CLE",
+"cost": 2406205,
+"salaries": {
+"2026-27": 2406205
+},
+"guaranteed": 2406205,
+"waived_split": false
+},
+{
+"name": "Leonard Miller",
+"key": "leonard miller",
+"bbref_id": "millele01",
+"team": "CHI",
+"cost": 2406205,
+"salaries": {
+"2026-27": 2406205
+},
+"guaranteed": 2406205,
+"waived_split": false
+},
+{
+"name": "Mouhamed Gueye",
+"key": "mouhamed gueye",
+"bbref_id": "gueyemo02",
+"team": "ATL",
+"cost": 2406205,
+"salaries": {
+"2026-27": 2406205
+},
+"guaranteed": 2406205,
+"waived_split": false
+},
+{
+"name": "Pelle Larsson",
+"key": "pelle larsson",
+"bbref_id": "larsspe01",
+"team": "MIA",
+"cost": 2296271,
+"salaries": {
+"2026-27": 2296271,
+"2027-28": 13392857,
+"2028-29": 14464286,
+"2029-30": 15535714,
+"2030-31": 16607143
+},
+"guaranteed": 45689128,
+"waived_split": false
+},
+{
+"name": "Oso Ighodaro",
+"key": "oso ighodaro",
+"bbref_id": "ighodos01",
+"team": "PHX",
+"cost": 2296271,
+"salaries": {
+"2026-27": 2296271,
+"2027-28": 2486995,
+"2028-29": 8950617,
+"2029-30": 9666667,
+"2030-31": 10382716
+},
+"guaranteed": 33783266,
+"waived_split": false
+},
+{
+"name": "Jamal Shead",
+"key": "jamal shead",
+"bbref_id": "sheadja01",
+"team": "TOR",
+"cost": 2296271,
+"salaries": {
+"2026-27": 2296271,
+"2027-28": 7407407,
+"2028-29": 8000000,
+"2029-30": 8592593
+},
+"guaranteed": 26296271,
+"waived_split": false
+},
+{
+"name": "Tyler Kolek",
+"key": "tyler kolek",
+"bbref_id": "kolekty01",
+"team": "NY",
+"cost": 2296271,
+"salaries": {
+"2026-27": 2296271,
+"2027-28": 2486995
+},
+"guaranteed": 2296271,
+"waived_split": false
+},
+{
+"name": "Karlo Matković",
+"key": "karlo matkovic",
+"bbref_id": "matkoka01",
+"team": "NO",
+"cost": 2296271,
+"salaries": {
+"2026-27": 2296271
+},
+"guaranteed": 2296271,
+"waived_split": false
+},
+{
+"name": "Johnny Furphy",
+"key": "johnny furphy",
+"bbref_id": "furphjo01",
+"team": "IND",
+"cost": 2296271,
+"salaries": {
+"2026-27": 2296271,
+"2027-28": 2486995
+},
+"guaranteed": 2296271,
+"waived_split": false
+},
+{
+"name": "Jamison Battle",
+"key": "jamison battle",
+"bbref_id": "battlja01",
+"team": "TOR",
+"cost": 2296271,
+"salaries": {
+"2026-27": 2296271
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Adem Bona",
+"key": "adem bona",
+"bbref_id": "bonaad01",
+"team": "PHI",
+"cost": 2296271,
+"salaries": {
+"2026-27": 2296271,
+"2027-28": 2486995
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Jaylen Wells",
+"key": "jaylen wells",
+"bbref_id": "wellsja01",
+"team": "MEM",
+"cost": 2296271,
+"salaries": {
+"2026-27": 2296271,
+"2027-28": 2486995
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Bronny James",
+"key": "bronny james",
+"bbref_id": "jamesbr02",
+"team": "LAL",
+"cost": 2296271,
+"salaries": {
+"2026-27": 2296271,
+"2027-28": 2486995
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Mohamed Diawara",
+"key": "mohamed diawara",
+"bbref_id": "diawamo01",
+"team": "NY",
+"cost": 2232143,
+"salaries": {
+"2026-27": 2232143,
+"2027-28": 2410714,
+"2028-29": 2589286,
+"2029-30": 2767857
+},
+"guaranteed": 10000000,
+"waived_split": false
+},
+{
+"name": "JaVale McGee",
+"key": "javale mcgee",
+"bbref_id": "mcgeeja01",
+"team": "DAL",
+"cost": 2208856,
+"salaries": {
+"2026-27": 2208856,
+"2027-28": 2208856
+},
+"guaranteed": 4417712,
+"waived_split": false
+},
+{
+"name": "Alijah Martin",
+"key": "alijah martin",
+"bbref_id": "martial01",
+"team": "TOR",
+"cost": 2185116,
+"salaries": {
+"2026-27": 2185116,
+"2027-28": 2571895
+},
+"guaranteed": 2185116,
+"waived_split": false
+},
+{
+"name": "Moussa Cissé",
+"key": "moussa cisse",
+"bbref_id": "cissemo01",
+"team": "DAL",
+"cost": 2185116,
+"salaries": {
+"2026-27": 2185116,
+"2027-28": 2571895
+},
+"guaranteed": 2185116,
+"waived_split": false
+},
+{
+"name": "Rasheer Fleming",
+"key": "rasheer fleming",
+"bbref_id": "flemira01",
+"team": "PHX",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917,
+"2027-28": 2525901,
+"2028-29": 2735698
+},
+"guaranteed": 4676818,
+"waived_split": false
+},
+{
+"name": "Maxime Raynaud",
+"key": "maxime raynaud",
+"bbref_id": "raynama01",
+"team": "SAC",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917,
+"2027-28": 2525901
+},
+"guaranteed": 2150917,
+"waived_split": false
+},
+{
+"name": "Noah Penda",
+"key": "noah penda",
+"bbref_id": "pendano01",
+"team": "ORL",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917,
+"2027-28": 2525901,
+"2028-29": 2735698
+},
+"guaranteed": 2150917,
+"waived_split": false
+},
+{
+"name": "Micah Peavy",
+"key": "micah peavy",
+"bbref_id": "peavymi01",
+"team": "MEM",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917
+},
+"guaranteed": 2150917,
+"waived_split": false
+},
+{
+"name": "Adou Thiero",
+"key": "adou thiero",
+"bbref_id": "thierad01",
+"team": "LAL",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917,
+"2027-28": 2525901
+},
+"guaranteed": 2150917,
+"waived_split": false
+},
+{
+"name": "Johni Broome",
+"key": "johni broome",
+"bbref_id": "broomjo01",
+"team": "LAC",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917
+},
+"guaranteed": 2150917,
+"waived_split": false
+},
+{
+"name": "Will Richard",
+"key": "will richard",
+"bbref_id": "richawi02",
+"team": "GS",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917,
+"2027-28": 2525901,
+"2028-29": 2735698
+},
+"guaranteed": 2150917,
+"waived_split": false
+},
+{
+"name": "Chaz Lanier",
+"key": "chaz lanier",
+"bbref_id": "laniech01",
+"team": "DET",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917,
+"2027-28": 2525901,
+"2028-29": 2735698
+},
+"guaranteed": 2150917,
+"waived_split": false
+},
+{
+"name": "Tyrese Proctor",
+"key": "tyrese proctor",
+"bbref_id": "proctty01",
+"team": "CLE",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917,
+"2027-28": 2525901,
+"2028-29": 2735698
+},
+"guaranteed": 2150917,
+"waived_split": false
+},
+{
+"name": "Ryan Nembhard",
+"key": "ryan nembhard",
+"bbref_id": "nembhry01",
+"team": "CHA",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917
+},
+"guaranteed": 2150917,
+"waived_split": false
+},
+{
+"name": "Myron Gardner",
+"key": "myron gardner",
+"bbref_id": "gardnmy01",
+"team": "MIA",
+"cost": 2150917,
+"salaries": {
+"2026-27": 2150917,
+"2027-28": 2525901
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "John Konchar",
+"key": "john konchar",
+"bbref_id": "konchjo01",
+"team": "MIN",
+"cost": 2055000,
+"salaries": {
+"2026-27": 2055000,
+"2027-28": 2055000,
+"2028-29": 2055000
+},
+"guaranteed": 6165000,
+"waived_split": false
+},
+{
+"name": "Cam Whitmore",
+"key": "cam whitmore",
+"bbref_id": "whitmca01",
+"team": "CLE",
+"cost": 1819437,
+"salaries": {
+"2026-27": 1819437,
+"2027-28": 1819437,
+"2028-29": 1819437
+},
+"guaranteed": 5458311,
+"waived_split": false
+},
+{
+"name": "Baba Miller",
+"key": "baba miller",
+"bbref_id": "milleba01",
+"team": "LAC",
+"cost": 1705630,
+"salaries": {
+"2026-27": 1705630,
+"2027-28": 2294370,
+"2028-29": 2694363,
+"2029-30": 2918152
+},
+"guaranteed": 4000000,
+"waived_split": false
+},
+{
+"name": "Isaiah Evans",
+"key": "isaiah evans",
+"bbref_id": "evansis01",
+"team": "MIN",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763,
+"2027-28": 2294370,
+"2028-29": 2694363,
+"2029-30": 2918152
+},
+"guaranteed": 6346496,
+"waived_split": false
+},
+{
+"name": "Bogoljub Markovic",
+"key": "bogoljub markovic",
+"bbref_id": "markobo01",
+"team": "MIL",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763,
+"2027-28": 2294370,
+"2028-29": 2694363,
+"2029-30": 2918152
+},
+"guaranteed": 6346496,
+"waived_split": false
+},
+{
+"name": "Meleek Thomas",
+"key": "meleek thomas",
+"bbref_id": "thomame01",
+"team": "CLE",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763,
+"2027-28": 2294370,
+"2028-29": 2694363,
+"2029-30": 2918152
+},
+"guaranteed": 6346496,
+"waived_split": false
+},
+{
+"name": "Emanuel Sharp",
+"key": "emanuel sharp",
+"bbref_id": "sharpem01",
+"team": "SAC",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763,
+"2027-28": 2294370,
+"2028-29": 2694363
+},
+"guaranteed": 3652133,
+"waived_split": false
+},
+{
+"name": "Ryan Conwell",
+"key": "ryan conwell",
+"bbref_id": "conwery01",
+"team": "MIA",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763,
+"2027-28": 2294370,
+"2028-29": 2694363
+},
+"guaranteed": 3652133,
+"waived_split": false
+},
+{
+"name": "Henri Veesaar",
+"key": "henri veesaar",
+"bbref_id": "veesahe01",
+"team": "ATL",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763,
+"2027-28": 2294370,
+"2028-29": 2694363,
+"2029-30": 2918152
+},
+"guaranteed": 3652133,
+"waived_split": false
+},
+{
+"name": "Jaden Bradley",
+"key": "jaden bradley",
+"bbref_id": "bradlja02",
+"team": "TOR",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763,
+"2027-28": 2294370,
+"2028-29": 2694363,
+"2029-30": 2918152
+},
+"guaranteed": 1357763,
+"waived_split": false
+},
+{
+"name": "Bruce Thornton",
+"key": "bruce thornton",
+"bbref_id": "thornbr01",
+"team": "HOU",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763,
+"2027-28": 2294370,
+"2028-29": 2694363,
+"2029-30": 2918152
+},
+"guaranteed": 1357763,
+"waived_split": false
+},
+{
+"name": "Trevon Brazile",
+"key": "trevon brazile",
+"bbref_id": "brazitr01",
+"team": "DEN",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763
+},
+"guaranteed": 1357763,
+"waived_split": false
+},
+{
+"name": "Khalifa Diop",
+"key": "khalifa diop",
+"bbref_id": "diopkh01",
+"team": "CLE",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763,
+"2027-28": 2294370,
+"2028-29": 2694363,
+"2029-30": 2918152
+},
+"guaranteed": 1357763,
+"waived_split": false
+},
+{
+"name": "Alpha Diallo",
+"key": "alpha diallo",
+"bbref_id": "diallal01",
+"team": "DEN",
+"cost": 1357763,
+"salaries": {
+"2026-27": 1357763
+},
+"guaranteed": null,
+"waived_split": false
+},
+{
+"name": "Olivier-Maxence Prosper",
+"key": "oliviermaxence prosper",
+"bbref_id": "prospol01",
+"team": "DAL",
+"cost": 1901486,
+"salaries": {
+"2026-27": 3500172,
+"2027-28": 1002360
+},
+"guaranteed": 2004720,
+"waived_split": true
+},
+{
+"name": "Haywood Highsmith",
+"key": "haywood highsmith",
+"bbref_id": "highsha01",
+"team": "PHX",
+"cost": 1000000,
+"salaries": {
+"2026-27": 1000000
+},
+"guaranteed": 1000000,
+"waived_split": false
+},
+{
+"name": "E.J. Liddell",
+"key": "ej liddell",
+"bbref_id": "liddeej01",
+"team": "PHX",
+"cost": 706898,
+"salaries": {
+"2026-27": 706898
+},
+"guaranteed": 706898,
+"waived_split": false
+},
+{
+"name": "Vasilije Micić",
+"key": "vasilije micic",
+"bbref_id": "micicva01",
+"team": "MIL",
+"cost": 666667,
+"salaries": {
+"2026-27": 666667,
+"2027-28": 666667
+},
+"guaranteed": 1333334,
+"waived_split": false
+},
+{
+"name": "Mamadi Diakite",
+"key": "mamadi diakite",
+"bbref_id": "diakima01",
+"team": "MEM",
+"cost": 464050,
+"salaries": {
+"2026-27": 464050
+},
+"guaranteed": 464050,
+"waived_split": false
+},
+{
+"name": "Ricky Rubio",
+"key": "ricky rubio",
+"bbref_id": "rubiori01",
+"team": "CLE",
+"cost": 424672,
+"salaries": {
+"2026-27": 424672
+},
+"guaranteed": 424672,
+"waived_split": false
+},
+{
+"name": "Didi Louzada",
+"key": "didi louzada",
+"bbref_id": "louzama01",
+"team": "POR",
+"cost": 268032,
+"salaries": {
+"2026-27": 268032,
+"2027-28": 268032,
+"2028-29": 268032
+},
+"guaranteed": 804096,
+"waived_split": false
+},
+{
+"name": "Taj Gibson",
+"key": "taj gibson",
+"bbref_id": "gibsota01",
+"team": "NO",
+"cost": 148828,
+"salaries": {
+"2026-27": 148828
+},
+"guaranteed": 148828,
+"waived_split": false
+}
+],
+"payroll": {
+"NY": {
+"2026-27": 220398177,
+"2027-28": 226434292,
+"2028-29": 144555486,
+"2029-30": 50928570
+},
+"GS": {
+"2026-27": 219763627,
+"2027-28": 135420378,
+"2028-29": 95451027,
+"2029-30": 30899128,
+"2030-31": 23517241,
+"2031-32": 25034483
+},
+"DEN": {
+"2026-27": 219140512,
+"2027-28": 195049206,
+"2028-29": 121572007,
+"2029-30": 26724137,
+"2030-31": 28448274
+},
+"ORL": {
+"2026-27": 218125071,
+"2027-28": 192930667,
+"2028-29": 197412400,
+"2029-30": 129193510,
+"2030-31": 54780000
+},
+"MIN": {
+"2026-27": 215327417,
+"2027-28": 214138240,
+"2028-29": 169708451,
+"2029-30": 66862981,
+"2030-31": 25489652
+},
+"OKC": {
+"2026-27": 214798992,
+"2027-28": 261655083,
+"2028-29": 256756624,
+"2029-30": 218225799,
+"2030-31": 214923441,
+"2031-32": 31634483
+},
+"PHX": {
+"2026-27": 213776085,
+"2027-28": 198703527,
+"2028-29": 167068451,
+"2029-30": 143474232,
+"2030-31": 10382716
+},
+"CLE": {
+"2026-27": 208969955,
+"2027-28": 223052291,
+"2028-29": 232479262,
+"2029-30": 161269204,
+"2030-31": 75530756
+},
+"MIA": {
+"2026-27": 206935956,
+"2027-28": 190445780,
+"2028-29": 107676495,
+"2029-30": 31735714,
+"2030-31": 16607143
+},
+"PHI": {
+"2026-27": 206643098,
+"2027-28": 208266056,
+"2028-29": 208044183,
+"2029-30": 16858871
+},
+"IND": {
+"2026-27": 203715395,
+"2027-28": 208571172,
+"2028-29": 88444288
+},
+"LAL": {
+"2026-27": 201332759,
+"2027-28": 194682809,
+"2028-29": 170858141,
+"2029-30": 121980116
+},
+"TOR": {
+"2026-27": 201188888,
+"2027-28": 190123915,
+"2028-29": 192868696,
+"2029-30": 96732121
+},
+"HOU": {
+"2026-27": 200412291,
+"2027-28": 200834044,
+"2028-29": 120405505,
+"2029-30": 126513870,
+"2030-31": 90443597,
+"2031-32": 47337931
+},
+"BOS": {
+"2026-27": 198722406,
+"2027-28": 219312101,
+"2028-29": 182974047,
+"2029-30": 123953569,
+"2030-31": 15500000
+},
+"ATL": {
+"2026-27": 198503800,
+"2027-28": 138970127,
+"2028-29": 126269904,
+"2029-30": 74646411
+},
+"DAL": {
+"2026-27": 197866094,
+"2027-28": 187233338,
+"2028-29": 89368560,
+"2029-30": 56715938
+},
+"NO": {
+"2026-27": 196558353,
+"2027-28": 182861604,
+"2028-29": 90640271,
+"2029-30": 44065998
+},
+"SA": {
+"2026-27": 196130556,
+"2027-28": 201629313,
+"2028-29": 190043004,
+"2029-30": 124933839,
+"2030-31": 53940000,
+"2031-32": 57420000
+},
+"DET": {
+"2026-27": 193324469,
+"2027-28": 188685838,
+"2028-29": 159678302,
+"2029-30": 140775565,
+"2030-31": 76109816,
+"2031-32": 35275862
+},
+"POR": {
+"2026-27": 192061727,
+"2027-28": 181644147,
+"2028-29": 67372684,
+"2029-30": 47330355
+},
+"SAC": {
+"2026-27": 191795907,
+"2027-28": 124432298,
+"2028-29": 48740563,
+"2029-30": 46990837,
+"2030-31": 31862067
+},
+"WSH": {
+"2026-27": 191462525,
+"2027-28": 186857371,
+"2028-29": 94455967,
+"2029-30": 78853448
+},
+"MIL": {
+"2026-27": 191358866,
+"2027-28": 114001644,
+"2028-29": 107445149,
+"2029-30": 71538318
+},
+"LAC": {
+"2026-27": 188948233,
+"2027-28": 137162068,
+"2028-29": 26669032,
+"2029-30": 19420990
+},
+"UTAH": {
+"2026-27": 179414010,
+"2027-28": 191975577,
+"2028-29": 162539831,
+"2029-30": 102860255,
+"2030-31": 32283597,
+"2031-32": 33574941
+},
+"CHA": {
+"2026-27": 170575884,
+"2027-28": 171729425,
+"2028-29": 127464874,
+"2029-30": 85966902,
+"2030-31": 44682759,
+"2031-32": 47565517
+},
+"CHI": {
+"2026-27": 164314296,
+"2027-28": 143311824,
+"2028-29": 68444704,
+"2029-30": 23239809
+},
+"MEM": {
+"2026-27": 161078369,
+"2027-28": 112096871,
+"2028-29": 37444354,
+"2029-30": 23042053
+},
+"BKN": {
+"2026-27": 160105139,
+"2027-28": 119334047,
+"2028-29": 46411932,
+"2029-30": 18153206
+}
+},
+"checks": [
+{
+"team": "ATL",
+"payroll": 198503800,
+"players_sum": 198503800,
+"diff": 0
+},
+{
+"team": "BKN",
+"payroll": 160105139,
+"players_sum": 160105139,
+"diff": 0
+},
+{
+"team": "BOS",
+"payroll": 198722406,
+"players_sum": 198722406,
+"diff": 0
+},
+{
+"team": "CHA",
+"payroll": 170575884,
+"players_sum": 170575884,
+"diff": 0
+},
+{
+"team": "CHI",
+"payroll": 164314296,
+"players_sum": 164314296,
+"diff": 0
+},
+{
+"team": "CLE",
+"payroll": 208969955,
+"players_sum": 208969955,
+"diff": 0
+},
+{
+"team": "DAL",
+"payroll": 197866094,
+"players_sum": 197866094,
+"diff": 0
+},
+{
+"team": "DEN",
+"payroll": 219140512,
+"players_sum": 219140512,
+"diff": 0
+},
+{
+"team": "DET",
+"payroll": 193324469,
+"players_sum": 193324469,
+"diff": 0
+},
+{
+"team": "GS",
+"payroll": 219763627,
+"players_sum": 219763627,
+"diff": 0
+},
+{
+"team": "HOU",
+"payroll": 200412291,
+"players_sum": 200412291,
+"diff": 0
+},
+{
+"team": "IND",
+"payroll": 203715395,
+"players_sum": 203715395,
+"diff": 0
+},
+{
+"team": "LAC",
+"payroll": 188948233,
+"players_sum": 188948233,
+"diff": 0
+},
+{
+"team": "LAL",
+"payroll": 201332759,
+"players_sum": 201332759,
+"diff": 0
+},
+{
+"team": "MEM",
+"payroll": 161078369,
+"players_sum": 161078369,
+"diff": 0
+},
+{
+"team": "MIA",
+"payroll": 206935956,
+"players_sum": 206935956,
+"diff": 0
+},
+{
+"team": "MIL",
+"payroll": 191358866,
+"players_sum": 191358866,
+"diff": 0
+},
+{
+"team": "MIN",
+"payroll": 215327417,
+"players_sum": 215327417,
+"diff": 0
+},
+{
+"team": "NO",
+"payroll": 196558353,
+"players_sum": 196558353,
+"diff": 0
+},
+{
+"team": "NY",
+"payroll": 220398177,
+"players_sum": 220398177,
+"diff": 0
+},
+{
+"team": "OKC",
+"payroll": 214798992,
+"players_sum": 214798992,
+"diff": 0
+},
+{
+"team": "ORL",
+"payroll": 218125071,
+"players_sum": 218125071,
+"diff": 0
+},
+{
+"team": "PHI",
+"payroll": 206643098,
+"players_sum": 206643098,
+"diff": 0
+},
+{
+"team": "PHX",
+"payroll": 213776085,
+"players_sum": 213776085,
+"diff": 0
+},
+{
+"team": "POR",
+"payroll": 192061727,
+"players_sum": 192061727,
+"diff": 0
+},
+{
+"team": "SA",
+"payroll": 196130556,
+"players_sum": 196130556,
+"diff": 0
+},
+{
+"team": "SAC",
+"payroll": 191795907,
+"players_sum": 191795907,
+"diff": 0
+},
+{
+"team": "TOR",
+"payroll": 201188888,
+"players_sum": 201188888,
+"diff": 0
+},
+{
+"team": "UTAH",
+"payroll": 179414010,
+"players_sum": 179414010,
+"diff": 0
+},
+{
+"team": "WSH",
+"payroll": 191462525,
+"players_sum": 191462525,
+"diff": 0
+}
+]
+}

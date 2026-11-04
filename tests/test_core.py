@@ -210,3 +210,38 @@ def test_lineups_ratings_and_rotation_shares():
     assert n["H"] == 1
     assert rot["H"]["5"][:4] == [1.0, 1.0, 0.0, 0.0]          # first 6 minutes = two 3-minute stretches
     assert rot["H"]["6"][:4] == [0.0, 0.0, 1.0, 1.0]
+
+
+# ------------------------------------------------------------------ Basketball-Reference contract exports
+
+def _export(tmp_path, name, head, rows):
+    cells = "".join(f'<th data-stat="{k}">{v}</th>' for k, v in head)
+    body = "".join("<tr>" + "".join(f'<td data-stat="{k}"{a}>{v}</td>' for k, v, a in r) + "</tr>" for r in rows)
+    p = tmp_path / name
+    p.write_text(f"<table><thead><tr>{cells}</tr></thead><tbody>{body}</tbody></table>", encoding="utf-8")
+    return p
+
+
+def test_contract_import_reconciles_waived_players(tmp_path):
+    from scripts import import_contracts as ic
+    head = [("player", "Player"), ("team_id", "Tm"), ("y1", "2026-27"), ("y2", "2027-28"), ("remain_gtd", "Gtd")]
+    pl = lambda n, i, t, y1, g: [("player", n, f' data-append-csv="{i}"'), ("team_id", t, ""), ("y1", y1, ""),
+                                 ("y2", "", ""), ("remain_gtd", g, "")]
+    players = _export(tmp_path, "p.xls", head, [
+        pl("Star Guy", "starg01", "LAL", "$40,000,000", "$40,000,000"),
+        pl("Old Vet", "oldve01", "MIL", "$30,000,000", "$20,000,000"),     # waived by MIL ...
+        pl("Old Vet", "oldve01", "LAL", "$30,000,000", "$10,000,000"),     # ... signed by LAL: listed twice
+        pl("Star Guy", "starg01", "LAL", "$40,000,000", "$40,000,000"),    # exact repeat row
+        pl("Bench Guy", "bench01", "MIL", "$5,000,000", "$5,000,000")])
+    teams = _export(tmp_path, "t.xls", [("team_name", "Team"), ("y1", "2026-27")], [
+        [("team_name", "Los Angeles Lakers", ""), ("y1", "$50,000,000", "")],
+        [("team_name", "Milwaukee Bucks", ""), ("y1", "$25,000,000", "")]])
+    assert ic.kind(players) == "players" and ic.kind(teams) == "teams"
+    s = ic.build(players, teams, {"LAL": "Los Angeles Lakers", "MIL": "Milwaukee Bucks"})
+    assert s["season"] == "2026-27" and all(c["diff"] == 0 for c in s["checks"])
+    cost = {(p["name"], p["team"]): p["cost"] for p in s["players"]}
+    assert cost[("Old Vet", "LAL")] == 10_000_000 and cost[("Old Vet", "MIL")] == 20_000_000
+    roster = [{"name": "Star Guy", "abbr": "LAL"}, {"name": "Old Vet", "abbr": "LAL"},
+              {"name": "Two Way", "abbr": "LAL"}, {"name": "Bench Guy", "abbr": "LAL"}]
+    m = ic.match(s, roster)
+    assert [m[i][0] for i in range(4)] == ["ok", "ok", "none", "elsewhere"]

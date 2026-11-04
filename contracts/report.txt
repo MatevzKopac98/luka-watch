@@ -1,0 +1,78 @@
+Season 2026-27: 460 contracts, 30 teams
+Team sums match the team payroll table for all teams.
+Waived and signed elsewhere (cost split between teams): Damian Lillard MIL $22.5M, Bradley Beal PHX $19.4M, Kentavious Caldwell-Pope MEM $17.7M, Klay Thompson DAL $16.6M, Damian Lillard POR $13.4M, Bradley Beal LAC $6.4M, Klay Thompson MIA $5.6M, Olivier-Maxence Prosper MEM $2.5M, Kentavious Caldwell-Pope PHI $2.4M, Olivier-Maxence Prosper DAL $1.9M
+
+On a new team, contract still listed with the old one: 7 (waived or traded; the new deal isn't in the export yet)
+  Devin Carter: now BOS, contract with ATL ($5.16M)
+  Jordan Hawkins: now CHI, contract with MEM ($7.02M)
+  Walter Clayton Jr.: now DAL, contract with MEM ($4.19M)
+  Ryan Nembhard: now DEN, contract with CHA ($2.15M)
+  Cam Whitmore: now DEN, contract with CLE ($1.82M)
+  Dalton Knecht: now NY, contract with LAL ($4.20M)
+  Micah Peavy: now OKC, contract with MEM ($2.15M)
+
+Roster players with no contract in the export: 86 of 521 (almost all two-way contracts, which don't count toward payroll)
+  ATL: RayJ Dennis, Keshon Gilbert, Jalen Wilson
+  BKN: Tyler Bilodeau, Chaney Johnson, Grant Nelson
+  BOS: Dillon Mitchell, Amari Williams
+  CHA: Kylan Boswell, PJ Hall
+  CHI: Tobe Awaka, Jaylin Sellers
+  CLE: Tristan Enaruna, Riley Minix, Ernest Udeh Jr.
+  DAL: Jett Howard, Tobi Lawal
+  DEN: Bryce Hopkins
+  DET: Elijah Harkless, Isaac Jones, Ugonna Onyenso
+  GS: LJ Cryer, Graham Ike, Malevy Leons
+  HOU: Quadir Copeland, Julian Phillips, Oscar Tshiebwe
+  IND: Kobe Brown, Quenton Jackson, Jalen Slawson, Braden Smith
+  LAC: Cam Christie, Nick Martinelli, Jalen Pickett, Blake Wesley
+  LAL: Arthur Kaluma, Lawson Lovering, Chris Manon, AK Okereke
+  MEM: Carson Cooper, Jahmai Mashack, Javon Small
+  MIA: Tre Donaldson, Vladislav Goldin, Keshad Johnson
+  MIL: Kam Jones, Cormac Ryan
+  MIN: Zyon Pullin, Rocco Zikarsky
+  NO: Malik Dia, Jaron Pierre Jr., Julian Reese
+  NY: Jaden Akins, Tyler Nickel
+  OKC: Brooks Barnhizer, Josh Dix, Dalen Terry
+  ORL: Colin Castleton, Alex Morales, Izaiyah Nelson
+  PHI: Tacko Fall, Caleb Love, Rayan Rupert
+  PHX: Duop Reath, Pat Spencer, Drew Timme
+  POR: Jayson Kent, John Tonje, Chris Youngblood
+  SA: Maliq Brown, Ja'Kobi Gillespie, David Jones Garcia
+  SAC: Leaky Black, Dylan Cardwell, Jonathan Mogbo, Sean Pedulla
+  TOR: Nate Bittle, Malachi Smith
+  UTAH: Trey Alexander, Tony Bradley, Kobe Bufkin, Harrison Ingram
+  WSH: Reece Beekman, Felix Okpara, Tristan Vukcevic, Jamir Watkins
+
+Paid but not on that team's roster: 32 (waived players still on the books = dead money)
+  ATL: Devin Carter $5.16M
+  CHA: Rob Dillingham $6.89M
+  CHA: Pat Connaughton $3.82M
+  CHA: Ryan Nembhard $2.15M
+  CLE: Nae'Qwan Tomlin $2.41M
+  CLE: Cam Whitmore $1.82M
+  CLE: Khalifa Diop $1.36M
+  CLE: Ricky Rubio $0.42M
+  DAL: Klay Thompson $16.56M
+  DAL: JaVale McGee $2.21M
+  DAL: Olivier-Maxence Prosper $1.90M
+  DET: Gary Harris $3.82M
+  LAC: Nicolas Batum $5.88M
+  LAC: Johni Broome $2.15M
+  LAL: Dalton Knecht $4.20M
+  MEM: Kentavious Caldwell-Pope $17.74M
+  MEM: Jordan Hawkins $7.02M
+  MEM: D'Angelo Russell $5.97M
+  MEM: Walter Clayton $4.19M
+  MEM: Cole Anthony $3.70M
+  MEM: Micah Peavy $2.15M
+  MEM: Mamadi Diakite $0.46M
+  MIL: Damian Lillard $22.52M
+  MIL: Kevin Porter Jr. $5.39M
+  MIL: Vasilije Micić $0.67M
+  MIN: John Konchar $2.06M
+  NO: Taj Gibson $0.15M
+  PHX: Bradley Beal $19.38M
+  PHX: Nassir Little $3.11M
+  PHX: Haywood Highsmith $1.00M
+  PHX: E.J. Liddell $0.71M
+  POR: Didi Louzada $0.27M
