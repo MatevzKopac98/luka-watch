@@ -138,7 +138,7 @@ def players_table(roster, lines, mode, salary_key, abbr_of, team_id, last):
         line = lines.get(r["athlete_id"])
         v = view(line, mode)
         team_note = ""
-        if last and line and line["team_id"] != team_id:
+        if line and (len(line["teams"]) > 1 or line["team_id"] != team_id):     # traded or signed elsewhere
             team_note = "with " + "/".join(abbr_of.get(t, "?") for t in line["teams"])
         sal = money(r.get(salary_key))
         if not v:
@@ -256,6 +256,86 @@ def value_card(roster, impact, salary_of):
 </div>"""
 
 
+def trades_card(d, teams, roster_all, bb_of, years_of, impact, cur, last, payroll, abbr_of):
+    """Trade ideas for the Lakers (model.trades), with the salary, depth and 'why would they' checks spelled out."""
+    from model import trade_inputs, trades as tr
+    players = trade_inputs.build(roster_all, bb_of, years_of, impact, cur, last, d["injuries"])
+    league = next(iter(d["projection"].values()))["league_rtg"] if d["projection"] else 112.0
+    found, weak = tr.ideas(players, teams, payroll, league)
+    me = abbr_of[LAKERS_ID]
+    weak_txt = ", ".join(f"{lbl} ({ordinal(rk)})" for lbl, rk, _ in weak)
+    season = d["season"] or date.today().year
+    before_dec15 = date.today() < date(season - 1, 12, 15)
+
+    def is_new(p):
+        """Joined the Lakers in the summer (played for another team last season), while the 15 Dec rule applies."""
+        prev = last.get(p.pid)
+        return before_dec15 and bool(prev) and prev["team_id"] != LAKERS_ID
+
+    def who(p):
+        line = cur.get(p.pid) or last.get(p.pid)
+        stat = ""
+        if line and line["gp"]:
+            g = line["gp"]
+            stat = f' · {line["pts"] / g:.1f} pts, {line["reb"] / g:.1f} reb, {line["ast"] / g:.1f} ast'
+        yrs = f'{p.years} yr{"s" if p.years != 1 else ""}'
+        return (f'<li><strong>{escape(p.name)}</strong> <span class="muted small">{p.pos} · {p.age} · '
+                f'{money(p.salary)}, {yrs}{stat} · impact {p.net:+.1f}</span></li>')
+
+    cards = []
+    for i in found:
+        t = teams[i["other"]]
+        s = i["salary"]
+        fits = "; ".join(f"helps {lbl} (Lakers {ordinal(rk)} in NBA)" for lbl, rk in i["fits"])
+        effect = (f'Lakers projected net rating <strong class="pos">{i["gain"]:+.1f}</strong> per 100 possessions '
+                  f'(offense {i["off"]:+.1f}, defense {i["def"]:+.1f}).' + (f" {fits[0].upper() + fits[1:]}." if fits else ""))
+        why = "; ".join(i["reasons"]) or "the value is roughly even"
+        early = t["wins"] + t["losses"] < 20
+        dirn = {"seller": "off to a poor start" if early else "rebuilding",
+                "contender": "off to a strong start" if early else "contending",
+                "middle": "in the middle of the pack"}[i["direction"]]
+        extra = ", ".join(f'{p.name.split()[-1]} {i["mins_before"][p.pid]:.0f}→{i["mins_after"][p.pid]:.0f}'
+                          for dm, p in i["most_extra"]
+                          if round(i["mins_after"][p.pid]) - round(i["mins_before"][p.pid]) >= 1)
+        new = [p.name for p in i["send"] if is_new(p)]
+        warn = (f'<p class="small"><strong>Timing:</strong> {escape(" and ".join(new))} joined this summer; if '
+                f'{"they signed as free agents" if len(new) > 1 else "he signed as a free agent"}, the trade can’t happen before 15 December.</p>'
+                if new else "")
+        n = i["roster_change"]
+        spots = " Opens a roster spot." if n < 0 else " Uses an open roster spot." if n > 0 else ""
+        depth = (f'Rotation stays at {i["rotation"]} players.'
+                 + (f" Most extra minutes: {extra} a game." if extra else " Nobody's minutes go up noticeably.")
+                 + spots)
+        salary = (f'{me} send {money(s["out"])}, take back {money(s["in"])} (limit {money(s["lim1"])}: {s["rule1"]}); '
+                  f'payroll after {money(s["pay1"])}'
+                  + (" (over the tax)" if s["pay1"] > tr.TAX else "") + f'. {t["abbr"]} take back {money(s["out"])} '
+                  f'(limit {money(s["lim2"])}: {s["rule2"]}).')
+        cards.append(f"""
+<div class="trade">
+  <div class="trade-head"><img src="{t['logo']}" alt="" class="logo-m"><strong>Trade with the {escape(t['name'])}</strong>
+  <span class="pill {'good' if i['label'] == 'Realistic' else ''}">{i['label']}</span></div>
+  <div class="grid2 tight"><div><p class="lbl-k">Lakers get</p><ul class="results">{''.join(who(p) for p in i['get'])}</ul></div>
+  <div><p class="lbl-k">Lakers send</p><ul class="results">{''.join(who(p) for p in i['send'])}</ul></div></div>
+  <p class="small"><strong>Why it helps:</strong> {effect}</p>
+  <p class="small"><strong>Why {escape(t['abbr'])} might say yes:</strong> they're {t['wins']}-{t['losses']} and {dirn}; {escape(why)}.</p>
+  <p class="small muted"><strong>Depth:</strong> {escape(depth)}</p>
+  <p class="small muted"><strong>Salary check ✓</strong> {escape(salary)}</p>{warn}
+</div>""")
+    body = "".join(cards) or ('<p class="muted">No trade passes every check today (salary rules, depth, a real '
+                              'improvement and a reason for the other team to agree).</p>')
+    return f"""
+<div class="card" id="trades"><h3>Trade ideas</h3>
+  <p class="muted small">Where the Lakers rank lowest: {weak_txt}.</p>
+  {body}
+  <p class="muted small">Model ideas, not rumours. Each one passes the 2026-27 salary-matching rules for both teams,
+  keeps at least {tr.MIN_ROTATION} rotation players, never sends more than one extra player either way, adds no more than
+  {tr.MAX_EXTRA_MIN:g} minutes a game to anyone already here, keeps minutes under {tr.MAX_MIN:g}, and improves the
+  projected net rating by at least {tr.MIN_GAIN:g}. "Realistic" = the other team gains value or it fits their direction;
+  "Possible" = close to even for them. Not modelled: draft picks, no-trade clauses and what front offices actually want.
+  Players who signed as free agents this summer can't be traded until 15 December. Refreshed every morning.</p>
+</div>"""
+
+
 def contracts_source(summary):
     """Footnote naming where salaries come from, and asking for a fresh export when it's old."""
     if not summary:
@@ -279,13 +359,19 @@ def contracts_card(roster, salary_of, years_of, payroll, pay, dead=(), source=""
         f'<tr>{player_cell(r)}<td class="strong">{money(s) if s else "–"}</td>{bar(s)}'
         f'<td>{years_of(r) if years_of(r) is not None else "–"}</td></tr>'
         for s, r in rows)
+    label = lambda c: (f'now with {c["moved_to"]} (waived or traded): check the next salary export' if c.get("moved_to")
+                       else "waived, still paid")
     body += "".join(
-        f'<tr class="dim"><th scope="row"><span>{escape(c["name"])}<small>waived, still paid</small></span></th>'
+        f'<tr class="dim"><th scope="row"><span>{escape(c["name"])}<small>{label(c)}</small></span></th>'
         f'<td class="strong">{money(c["cost"])}</td>{bar(c["cost"])}<td>–</td></tr>'
         for c in sorted(dead, key=lambda c: -c["cost"]))
+    moved = [c for c in dead if c.get("moved_to")]
+    stale = (f'<p class="muted small"><strong>{len(moved)} player{"s have" if len(moved) > 1 else " has"} changed team '
+             f'since the salary export</strong> (trade or waiver), so this payroll may be out of date until the next '
+             f'download.</p>' if moved else "")
     return f"""
 <div class="card"><h3>Contracts</h3>
-  <p class="verdict"><strong>{escape(pay[2])}</strong></p>
+  <p class="verdict"><strong>{escape(pay[2])}</strong></p>{stale}
   <div class="tablewrap"><table class="stats contracts roster"><thead><tr><th scope="col">Player</th><th>Salary</th>
   <th>Share of payroll</th><th>Years left</th></tr></thead><tbody>{body}</tbody></table></div>
   <p class="muted small">{source}</p>
@@ -364,8 +450,9 @@ def build_teams(d, page):
     summary = import_contracts.load()
     if summary and summary.get("season") != label:
         summary = None
-    bb_of, dead = {}, defaultdict(list)
+    bb_of, dead, moved_to = {}, defaultdict(list), {}
     if summary:
+        first_game = lu.first_games(season)
         rows = [{**r, "abbr": abbr_of.get(r["team_id"])} for r in roster_all]
         matched = import_contracts.match(summary, rows)
         used = set()
@@ -374,9 +461,15 @@ def build_teams(d, page):
             if status == "ok":
                 bb_of[r["athlete_id"]] = c
                 used.add(id(c))
+            elif status == "elsewhere":
+                # Played for the new team before the export -> the export already knew: he was waived and the
+                # old team still pays him. Otherwise he moved after the export (trade or waiver): needs a re-export.
+                first = first_game.get((r["athlete_id"], r["team_id"]))
+                if not first or first > summary["exported"].replace("-", ""):
+                    moved_to[id(c)] = r["abbr"]
         for c in summary["players"]:
             if id(c) not in used:
-                dead[c["team"]].append(c)
+                dead[c["team"]].append({**c, "moved_to": moved_to.get(id(c))})
 
     def salary_of(r):
         if r["athlete_id"] in bb_of:
@@ -403,6 +496,12 @@ def build_teams(d, page):
     complete = [t for t in teams if coverage[t][1] and coverage[t][0] / coverage[t][1] >= PAYROLL_COMPLETE]
     pay_rank = {t: i for i, t in enumerate(sorted(complete, key=lambda t: -payroll[t]), 1)}
     source = contracts_source(summary)
+    trade_html = ""
+    if summary:                                                  # needs complete salaries from the export
+        try:
+            trade_html = trades_card(d, teams, roster_all, bb_of, years_of, impact, cur, last, payroll, abbr_of)
+        except Exception as e:                                   # never let trade ideas break the team pages
+            print(f"Trade ideas skipped: {e}")
     out_dir = OUT.parent / "teams"
     out_dir.mkdir(exist_ok=True)
     for tid, team in teams.items():
@@ -415,6 +514,7 @@ def build_teams(d, page):
                 + '<section>' + players_card(team, roster, cur, last, abbr_of)
                 + lineups_card(tid, seasons, names) + rotation_card(tid, seasons, names)
                 + impact_card(roster, impact)
+                + (trade_html if tid == LAKERS_ID else "")
                 + '<div class="grid2">' + value_card(roster, impact, salary_of)
                 + contracts_card(roster, salary_of, years_of, payroll[tid], pay, team_dead, source)
                 + '</div></section>')

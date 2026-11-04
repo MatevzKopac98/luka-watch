@@ -120,3 +120,16 @@ def usage(season):
                 "usg": 100 * a["plays"] / a["team_plays_on"] if a["team_plays_on"] else None,
                 "pts_share": 100 * a["pts"] / a["team_pts"] if a["team_pts"] else None}
             for k, a in acc.items()}
+
+
+def first_games(season):
+    """{(athlete_id, team_id): first US date (YYYYMMDD) he played for that team this season}."""
+    d = HISTORY / str(season)
+    dates = {g["event_id"]: g["us_date"] for g in _read(d / "games.csv.gz")}
+    out = {}
+    for p in _read(d / "players.csv.gz"):
+        day = dates.get(p["event_id"])
+        if day and _f(p["min"]):
+            k = (p["athlete_id"], p["team_id"])
+            out[k] = min(out.get(k, day), day)
+    return out

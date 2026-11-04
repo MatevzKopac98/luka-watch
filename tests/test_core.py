@@ -245,3 +245,44 @@ def test_contract_import_reconciles_waived_players(tmp_path):
               {"name": "Two Way", "abbr": "LAL"}, {"name": "Bench Guy", "abbr": "LAL"}]
     m = ic.match(s, roster)
     assert [m[i][0] for i in range(4)] == ["ok", "ok", "none", "elsewhere"]
+
+
+# ------------------------------------------------------------------ trade ideas
+
+def test_salary_matching_tiers_and_aprons():
+    from model import trades as tr
+    over_cap = 190_000_000
+    assert tr.allowed_incoming(5e6, over_cap, 10.25e6, 1)[0]          # small: 200% + 250K
+    assert not tr.allowed_incoming(5e6, over_cap, 10.3e6, 1)[0]
+    assert tr.allowed_incoming(20e6, over_cap, 29.1e6, 2)[0]          # middle: + 9.1M
+    assert not tr.allowed_incoming(20e6, over_cap, 29.2e6, 2)[0]
+    assert tr.allowed_incoming(40e6, 170e6, 50.25e6, 1)[0]            # large: 125% + 250K
+    ok, _, rule = tr.allowed_incoming(10e6, 208e6, 12e6, 1)           # would end over the first apron
+    assert not ok and "first apron" in rule
+    assert not tr.allowed_incoming(10e6, 230e6, 9e6, 2)[0]            # second apron: no combining salaries
+    assert tr.allowed_incoming(0, 150e6, 14e6, 0)[0]                  # cap room absorbs
+
+
+def _pl(pid, mpg, net=0.0, pos="F", salary=5e6, out=False, team="13"):
+    from model.trades import P
+    return P(pid=pid, name=f"Player {pid}", team=team, pos=pos, age=27, salary=salary, years=2,
+             off=net / 2, dfn=-net / 2, poss=3000, mpg=mpg, out=out)
+
+
+def test_minutes_keep_starters_and_flag_overload():
+    from model import trades as tr
+    roster = [_pl(str(i), m) for i, m in enumerate([36, 34, 30, 28, 26, 24, 22, 18, 14, 10, 6, 4])]
+    mins, ok = tr.allocate(roster)
+    assert ok and abs(sum(mins.values()) - 240) < 0.5 and abs(mins["0"] - 36) < 0.1
+    thin = [_pl(str(i), 30) for i in range(6)]                       # six players can't cover 240 minutes
+    assert tr.allocate(thin)[1] is False
+
+
+def test_depth_rule_blocks_thin_rotation():
+    from model import trades as tr
+    before = [_pl(str(i), m, pos="G" if i < 5 else "C" if i < 7 else "F")
+              for i, m in enumerate([36, 34, 30, 28, 26, 24, 22, 20, 16, 12, 6, 4, 3, 2])]
+    m0, _ = tr.allocate(before)
+    after = before[3:] + [_pl("new", 30, pos="G")]                   # three rotation players out, one in
+    m1, _ = tr.allocate(after)
+    assert tr._depth_problem(before, after, m0, m1) is not None

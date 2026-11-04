@@ -692,6 +692,8 @@ def section_lakers(d):
     return f"""
 <section id="lakers">
   <h2>Lakers</h2>
+  <p class="muted small"><a href="teams/LAL.html">Full Lakers page</a> · lineups, rotation, contracts and
+  <a href="teams/LAL.html#trades">trade ideas</a></p>
   <div class="tiles">{tiles_html}</div>
   <div class="grid2">
     <div class="card"><h3>Stats & league rank</h3>
@@ -1287,6 +1289,11 @@ table.lineups th.five{display:table-cell;font-weight:500;white-space:normal;min-
 .rot .rname small{display:block;font-weight:400;color:var(--muted);font-size:10.5px}
 .rot i{display:block;height:26px;border-radius:2px;background:color-mix(in srgb,var(--hi) var(--v),var(--grid))}
 .rot i.qs{margin-left:3px}
+.trade{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin:12px 0;background:var(--page)}
+.trade-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.trade-head .logo-m{width:28px;height:28px}
+.trade p.small{margin:6px 0;line-height:1.45}
+.pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--axis);color:var(--ink2);margin-left:auto}
+.pill.good{border-color:var(--good);color:var(--good)}
 .status{max-width:1080px;margin:10px auto 0;padding:0 16px}
 .status p{margin:0;padding:8px 12px;border:1px solid var(--bad);border-radius:10px;font-size:13px;color:var(--ink);
 background:color-mix(in srgb,var(--bad) 8%,var(--surface))}
