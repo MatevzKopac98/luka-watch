@@ -57,6 +57,20 @@ CREATE TABLE IF NOT EXISTS nights_done (             -- US dates whose box score
     us_date TEXT PRIMARY KEY
 );
 
+CREATE TABLE IF NOT EXISTS luka_vs_opp (              -- Luka's per-opponent averages, every season
+    season INTEGER, opp_abbr TEXT, gp REAL, min REAL, pts REAL, reb REAL, ast REAL,
+    fgm REAL, fga REAL, fg3m REAL, fg3a REAL, ftm REAL, fta REAL,
+    PRIMARY KEY (season, opp_abbr)
+);
+
+CREATE TABLE IF NOT EXISTS luka_prev_games (          -- Luka's game log from last season
+    season INTEGER, espn_id TEXT, event_id TEXT, game_date TEXT, opp_abbr TEXT, home_away TEXT,
+    result TEXT, score TEXT,
+    min REAL, pts INTEGER, reb INTEGER, ast INTEGER, stl INTEGER, blk INTEGER, tov INTEGER,
+    fgm INTEGER, fga INTEGER, fg3m INTEGER, fg3a INTEGER, ftm INTEGER, fta INTEGER,
+    PRIMARY KEY (espn_id, event_id)
+);
+
 CREATE TABLE IF NOT EXISTS luka_news (                -- record/history headlines, kept as they appear
     url TEXT PRIMARY KEY, published TEXT, headline TEXT
 );

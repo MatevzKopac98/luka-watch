@@ -85,6 +85,9 @@ def load():
     career = q("SELECT * FROM player_career WHERE espn_id=? ORDER BY snapshot_date DESC LIMIT 1", luka["espn_id"])
     data["career"] = career[0] if career else None
     data["news"] = q("SELECT * FROM luka_news ORDER BY published DESC LIMIT 3")
+    data["vs_opp"] = q("SELECT * FROM luka_vs_opp")
+    data["prev_games"] = q("SELECT * FROM luka_prev_games ORDER BY game_date")
+    data["season"] = max((r["season"] for r in data["vs_opp"]), default=None)
     con.close()
     return data
 
@@ -564,6 +567,7 @@ def schedule_card(d):
             f'<td>{opp.get("wins", "")}-{opp.get("losses", "")}</td>'
             f'<td><span class="lvl {level}">{fmt(net)}</span> <small class="muted">'
             f'{ordinal(net_rank[opp["team_id"]]) if opp.get("team_id") in net_rank else ""}</small></td>'
+            f'<td>{luka_last_season_cell(d, opp.get("abbr"))}</td>'
             f'<td>{"<span class=\"tag b2b\">B2B</span>" if is_b2b else (f"{rest}d rest" if rest is not None else "")}'
             f'</td></tr>')
     avg = sum(nets) / len(nets) if nets else 0
@@ -573,9 +577,24 @@ def schedule_card(d):
       <p class="verdict"><strong>{verdict}</strong> · opponents' average net rating {avg:+.1f} ·
       {road} on the road · {b2b} back-to-back{'s' if b2b != 1 else ''}</p>
       <div class="tablewrap"><table class="sched"><thead><tr><th>Date</th><th></th><th>Opp</th><th>W-L</th>
-      <th>Net rtg</th><th>Rest</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
+      <th>Net rtg</th><th>Luka '{str(d["season"] - 1)[2:] if d["season"] else ""}</th><th>Rest</th></tr></thead>
+      <tbody>{''.join(rows)}</tbody></table></div>
       <p class="muted small">Net rating = points scored minus allowed per 100 possessions (rank of 30).
+      Luka '{str(d["season"] - 1)[2:] if d["season"] else ""} = his points per game against that team last season
+      (games in brackets); green/red when 3+ above/below his season average.
       B2B = second night of a back-to-back, when stars most often rest.</p></div>"""
+
+
+def luka_last_season_cell(d, abbr):
+    if not d["season"] or not d["prev_games"]:
+        return "–"
+    games = [g for g in d["prev_games"] if g["opp_abbr"] == abbr]
+    if not games:
+        return '<span class="muted">–</span>'
+    avg_all = sum(g["pts"] or 0 for g in d["prev_games"]) / len(d["prev_games"])
+    ppg = sum(g["pts"] or 0 for g in games) / len(games)
+    level = "easy" if ppg >= avg_all + 3 else "hard" if ppg <= avg_all - 3 else "mid"
+    return f'<span class="lvl {level}">{ppg:.1f}</span> <small class="muted">({len(games)})</small>'
 
 
 IMPACT_TOP = 5
@@ -689,6 +708,75 @@ def section_lakers(d):
 </section>"""
 
 
+def season_label(year):
+    return f"{year - 1}-{str(year)[2:]}"
+
+
+def career_vs(d, abbr):
+    """Luka's career averages vs one team, weighting each season's averages by games played."""
+    rows = [r for r in d["vs_opp"] if r["opp_abbr"] == abbr and r["gp"]]
+    gp = sum(r["gp"] for r in rows)
+    if not gp:
+        return None
+    tot = lambda k: sum((r[k] or 0) * r["gp"] for r in rows)
+    return {"gp": gp, "pts": tot("pts") / gp, "reb": tot("reb") / gp, "ast": tot("ast") / gp,
+            "fg_pct": 100 * tot("fgm") / tot("fga") if tot("fga") else None,
+            "fg3_pct": 100 * tot("fg3m") / tot("fg3a") if tot("fg3a") else None}
+
+
+def luka_game_rows(games):
+    return "".join(
+        f'<tr><td>{local(g["game_date"]):%d %b %Y}</td><td class="muted">{"vs" if g["home_away"] == "home" else "@"}</td>'
+        f'<td><span class="wl {g["result"]}">{g["result"]}</span> {g["score"]}</td><td>{g["min"]:.0f}</td>'
+        f'<td class="strong">{g["pts"]:.0f}</td><td>{g["reb"]:.0f}</td><td>{g["ast"]:.0f}</td>'
+        f'<td>{g["fgm"]:.0f}/{g["fga"]:.0f}</td><td>{g["fg3m"]:.0f}/{g["fg3a"]:.0f}</td></tr>' for g in games)
+
+
+def luka_vs_block(d, opp):
+    """Luka's history against the next opponent: last season game by game, this season, career."""
+    abbr, nick = opp["abbr"], escape(opp["name"].split()[-1])
+    if not d["season"]:
+        return ""
+    last = [g for g in d["prev_games"] if g["opp_abbr"] == abbr]
+    this = [g for g in d["luka_games"] if g["opp_abbr"] == abbr]
+    head = ('<thead><tr><th>Date</th><th></th><th>Result</th><th>MIN</th><th>PTS</th><th>REB</th><th>AST</th>'
+            '<th>FG</th><th>3PT</th></tr></thead>')
+
+    def summary(games):
+        n = len(games)
+        s = lambda k: sum(g[k] or 0 for g in games)
+        wins = sum(g["result"] == "W" for g in games)
+        fg = f' · {100 * s("fgm") / s("fga"):.0f}% FG' if s("fga") else ""
+        return (f'{n} game{"s" if n != 1 else ""} · <strong>{s("pts") / n:.1f} pts</strong> · {s("reb") / n:.1f} reb · '
+                f'{s("ast") / n:.1f} ast{fg} · Lakers {wins}-{n - wins}' if n else "")
+
+    parts = []
+    if last:
+        parts.append(f'<p class="vs-sum"><span class="lbl-k">Last season ({season_label(d["season"] - 1)})</span> '
+                     f'{summary(last)}</p><div class="tablewrap"><table class="box">{head}<tbody>'
+                     f'{luka_game_rows(reversed(last))}</tbody></table></div>')
+    else:
+        recent = max((r for r in d["vs_opp"] if r["opp_abbr"] == abbr and r["gp"] and r["season"] < d["season"]),
+                     key=lambda r: r["season"], default=None)
+        parts.append(f'<p class="vs-sum"><span class="lbl-k">Last season</span> Didn\'t face the {nick}'
+                     + (f'. Most recent: {season_label(recent["season"])}, {recent["gp"]:.0f} games · '
+                        f'<strong>{recent["pts"]:.1f} pts</strong> · {recent["reb"]:.1f} reb · {recent["ast"]:.1f} ast'
+                        if recent else "") + '</p>')
+    if this:
+        parts.append(f'<p class="vs-sum"><span class="lbl-k">This season</span> {summary(this)}</p>'
+                     f'<div class="tablewrap"><table class="box">{head}<tbody>{luka_game_rows(reversed(this))}'
+                     f'</tbody></table></div>')
+    c = career_vs(d, abbr)
+    if c:
+        fg = f' · {c["fg_pct"]:.0f}% FG' if c["fg_pct"] else ""
+        fg3 = f' · {c["fg3_pct"]:.0f}% 3P' if c["fg3_pct"] else ""
+        ref = (f' <span class="muted small">(overall career: {d["career"]["pts"] / d["career"]["gp"]:.1f} pts)</span>'
+               if d.get("career") else "")
+        parts.append(f'<p class="vs-sum"><span class="lbl-k">Career</span> {c["gp"]:.0f} games · '
+                     f'<strong>{c["pts"]:.1f} pts</strong> · {c["reb"]:.1f} reb · {c["ast"]:.1f} ast{fg}{fg3}{ref}</p>')
+    return f'<h3 class="sub">Luka vs the {nick}</h3>{"".join(parts)}'
+
+
 def next_game_card(d):
     teams = {t["team_id"]: t for t in d["teams"]}
     upcoming = [g for g in d["games"] if g["status"] != "STATUS_FINAL"]
@@ -738,6 +826,7 @@ def next_game_card(d):
     <table class="vs"><thead><tr><th>LAL</th><th>Season averages</th><th>{opp['abbr']}</th></tr></thead>
     <tbody>{''.join(rows)}</tbody></table>
     <p class="muted small">Small number = league rank out of 30. The team with the edge on each stat is highlighted.</p>
+    {luka_vs_block(d, opp)}
     <div class="grid2 inj2">
       <div><h3 class="sub">Injuries · Lakers</h3><ul class="inj">{inj(LAKERS_ID)}</ul></div>
       <div><h3 class="sub">Injuries · {escape(opp['name'])}</h3><ul class="inj">{inj(opp_id)}</ul></div>
@@ -1089,6 +1178,7 @@ ul.bests li.lead{font-weight:600}ul.bests li.lead strong{color:var(--hi)}
 .records{margin-top:14px;padding-top:10px;border-top:1px solid var(--grid)}
 .records ul{margin:4px 0 0;padding-left:18px;font-size:14px}.records a{color:var(--ink)}
 .verdict{margin:0 0 8px;font-size:14px}
+.vs-sum{margin:6px 0 4px;font-size:14px}.vs-sum .lbl-k{display:inline;margin-right:6px}
 table.sched th[scope=row]{text-align:left;display:flex;align-items:center;gap:6px}
 .lvl{font-weight:600}.lvl.hard{color:var(--bad)}.lvl.easy{color:var(--good)}
 .tag.b2b{background:rgba(208,59,59,.12);color:var(--bad)}

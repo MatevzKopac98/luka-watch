@@ -31,6 +31,22 @@ def resolve_player(con, name):
     return espn.find_player(name)
 
 
+LUKA_FIRST_SEASON = 2019   # 2018-19 rookie season (ESPN labels seasons by their ending year)
+
+
+def luka_extras(con, pid, year, today):
+    """Career totals (milestones), last season's game log and per-opponent splits (matchup history)."""
+    upsert(con, "player_career", {"snapshot_date": today, **espn.player_career(pid)})
+    if not con.execute("SELECT 1 FROM luka_prev_games WHERE season = ? LIMIT 1", (year - 1,)).fetchone():
+        for g in espn.player_gamelog(pid, year - 1):
+            upsert(con, "luka_prev_games", {"season": year - 1, **g})
+    stored = {r[0] for r in con.execute("SELECT DISTINCT season FROM luka_vs_opp")}
+    for season in range(LUKA_FIRST_SEASON, year + 1):
+        if season >= year - 1 or season not in stored:     # old seasons never change; refresh the last two
+            for r in espn.player_vs_opponents(pid, season):
+                upsert(con, "luka_vs_opp", r)
+
+
 def main():
     today = datetime.now(TZ).date().isoformat()
     con = connect()
@@ -85,8 +101,8 @@ def main():
                 upsert(con, "player_season", {"snapshot_date": today, **season})
             for g in espn.player_gamelog(pid):
                 upsert(con, "player_games", g)
-            if espn._plain(name) == espn._plain(CORE_PLAYERS[0]):     # career totals for Luka's milestones
-                upsert(con, "player_career", {"snapshot_date": today, **espn.player_career(pid)})
+            if espn._plain(name) == espn._plain(CORE_PLAYERS[0]):
+                luka_extras(con, pid, year, today)
             log(f"Player: {profile['name']} ({profile['team_abbr']})"
                 f" {season['pts'] if season else '-'} ppg")
         except Exception as e:

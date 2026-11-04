@@ -209,9 +209,36 @@ def player_career(espn_id):
     }
 
 
-def player_gamelog(espn_id):
-    """Regular-season game log for the current season."""
-    data = get_json(f"{WEB}/sports/basketball/nba/athletes/{espn_id}/gamelog")
+# The splits feed uses older team codes; map them to the ones the rest of ESPN uses
+SPLIT_ABBR = {"PHO": "PHX", "UTA": "UTAH", "WAS": "WSH", "NOP": "NO", "GSW": "GS", "SAS": "SA",
+              "NYK": "NY", "BRK": "BKN", "NJN": "BKN", "CHO": "CHA"}
+
+
+def player_vs_opponents(espn_id, season):
+    """Per-opponent averages for one season: [{opp_abbr, gp, min, pts, ...}]."""
+    data = get_json(f"{WEB}/sports/basketball/nba/athletes/{espn_id}/splits", {"season": season})
+    names = data.get("names", [])
+    cat = next((c for c in data.get("splitCategories", []) if c.get("name") == "byOpponent"), {})
+    out = []
+    for s in cat.get("splits", []):
+        v = dict(zip(names, s.get("stats", [])))
+        fgm, fga = _made_att(v.get("avgFieldGoalsMade-avgFieldGoalsAttempted"))
+        fg3m, fg3a = _made_att(v.get("avgThreePointFieldGoalsMade-avgThreePointFieldGoalsAttempted"))
+        ftm, fta = _made_att(v.get("Free Throws Made-Attempted Per Game"))
+        abbr = (s.get("abbreviation") or "").replace("vs ", "").strip()
+        out.append({
+            "season": season, "opp_abbr": SPLIT_ABBR.get(abbr, abbr),
+            "gp": _num(v.get("gamesPlayed")), "min": _num(v.get("avgMinutes")), "pts": _num(v.get("avgPoints")),
+            "reb": _num(v.get("avgRebounds")), "ast": _num(v.get("avgAssists")),
+            "fgm": fgm, "fga": fga, "fg3m": fg3m, "fg3a": fg3a, "ftm": ftm, "fta": fta,
+        })
+    return out
+
+
+def player_gamelog(espn_id, season=None):
+    """Regular-season game log (current season unless a season year is given)."""
+    data = get_json(f"{WEB}/sports/basketball/nba/athletes/{espn_id}/gamelog",
+                    {"season": season} if season else None)
     labels, meta = data.get("labels", []), data.get("events", {})
     rows = []
     for stype in data.get("seasonTypes", []):
