@@ -88,6 +88,10 @@ To get the latest data locally: `git -C data pull --rebase` won't work on a forc
 
 - **Daily update** (`daily.yml`): 06:41 (page ready by 07:00), with backup passes at 07:07, 07:37 and
   08:13 Ljubljana time (one hour later in summer time), because GitHub can delay or drop scheduled runs.
+- **External timer** (cron-job.org, job "Luka Watch morning update"): starts the daily update at exactly 06:41
+  Ljubljana time via GitHub's workflow_dispatch API, because GitHub's own schedule runs 40-60 minutes late or skips
+  runs. It uses a fine-grained token limited to Actions on this repo, expiring 3 Nov 2027 (renew it in GitHub,
+  then update the Authorization header in the job). The GitHub schedules above remain as a backup.
 - **Odds capture** (`odds.yml`): 10:23, 14:23, 18:13 and 21:13 New York time, so closing lines are kept.
 - **Weekly backup** (`backup.yml`): Mondays 05:17, saves the encrypted betting database and the site database
   as a `backup-YYYY-MM-DD` GitHub release (last 8 kept), because the data branch keeps no history.
