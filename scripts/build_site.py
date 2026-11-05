@@ -569,7 +569,8 @@ def schedule_card(d):
             nets.append(net)
         level = "hard" if (net or 0) >= 4 else "easy" if (net or 0) <= -4 else "mid"
         rows.append(
-            f'<tr><td>{local(g["date_utc"]):%a %d %b}</td><td class="muted">{"vs" if home else "@"}</td>'
+            f'<tr><td>{day:%a %d %b}<small class="muted tip">{local(g["date_utc"]):%a %H:%M} here</small></td>'
+            f'<td class="muted">{"vs" if home else "@"}</td>'
             f'<th scope="row"><img src="{opp.get("logo", "")}" alt="" class="logo">{opp.get("abbr", "")}</th>'
             f'<td>{opp.get("wins", "")}-{opp.get("losses", "")}</td>'
             f'<td><span class="lvl {level}">{fmt(net)}</span> <small class="muted">'
@@ -589,7 +590,8 @@ def schedule_card(d):
       <p class="muted small">Net rating = points scored minus allowed per 100 possessions (rank of 30).
       Luka '{str(d["season"] - 1)[2:] if d["season"] else ""} = his points per game against that team last season
       (games in brackets); green/red when 3+ above/below his season average.
-      B2B = second night of a back-to-back, when stars most often rest.</p></div>"""
+      B2B = second night of a back-to-back, when stars most often rest. Dates are US game days (as the NBA lists
+      them, and what rest days count); the small time is the tip-off in Ljubljana.</p></div>"""
 
 
 def luka_last_season_cell(d, abbr):
@@ -1223,6 +1225,7 @@ table.vs thead th{font-size:12px}
 .night-nav select{font:inherit;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--ink)}
 .night-nav .chip.off{opacity:.35}
 nav a.active{color:var(--ink);font-weight:600}
+small.tip{display:block;font-size:11px}
 .hero .tiles{grid-template-columns:repeat(7,1fr)}
 @media (max-width:1000px){.hero .tiles{grid-template-columns:repeat(4,1fr)}}
 @media (max-width:560px){.hero .tiles{grid-template-columns:repeat(2,1fr)}}.tile-s .warn{color:var(--bad);font-weight:600}
