@@ -1067,7 +1067,7 @@ def game_card(info, d):
 
     lakers = LAKERS_ID in (info["home_id"], info["away_id"])
     tops = "".join(
-        f'<h4>{escape(teams.get(tid, {}).get("name", ""))}</h4>{player_table(players, tid, 5)}'
+        f'<h4>{escape(teams.get(tid, {}).get("name", ""))}</h4>{player_table(players, tid)}'
         for tid in (info["away_id"], info["home_id"]))
     return f"""
 <article class="card gc{' me' if lakers else ''}">
@@ -1216,6 +1216,12 @@ table.vs thead th{font-size:12px}
 .gc-team.win{color:var(--ink);font-weight:700}.gc-name{flex:1}.gc-pts{font-size:22px;font-variant-numeric:tabular-nums}
 .gc details{margin-top:8px;border-top:1px solid var(--grid);padding-top:8px}
 .gc summary{cursor:pointer;font-weight:600;color:var(--ink2)}.gc h4{margin:14px 0 4px;font-size:13px}
+.games .gc:has(details[open]){grid-column:1/-1}
+.gc details[open] .headline{min-height:0}
+@media (max-width:760px){.gc details[open]{width:100vw;margin-left:calc(50% - 50vw);padding:8px 8px 4px;background:var(--surface);box-sizing:border-box}}
+.night-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
+.night-nav select{font:inherit;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--ink)}
+.night-nav .chip.off{opacity:.35}
 nav a.active{color:var(--ink);font-weight:600}
 .hero .tiles{grid-template-columns:repeat(7,1fr)}
 @media (max-width:1000px){.hero .tiles{grid-template-columns:repeat(4,1fr)}}
@@ -1326,20 +1332,61 @@ if(h>+s.dataset.hours){s.querySelector('b').textContent=h<48?Math.round(h)+' hou
 """
 
 
-def section_last_night(d):
-    night = d["last_night"]
+def night_dates(d):
+    return sorted({g["us_date"] for g in d["game_info"]})
+
+
+def records_after(d, night):
+    """Each team's record after the games of `night`, so older nights show the records of that day."""
+    wl = {}
+    for g in d["game_info"]:
+        if g["us_date"] > night:
+            continue
+        home_won = g["home_score"] > g["away_score"]
+        for tid, won in ((g["home_id"], home_won), (g["away_id"], not home_won)):
+            w, l = wl.get(tid, (0, 0))
+            wl[tid] = (w + won, l + (not won))
+    return [{**t, "wins": wl.get(t["team_id"], (0, 0))[0], "losses": wl.get(t["team_id"], (0, 0))[1]}
+            for t in d["teams"]]
+
+
+def night_nav(night, dates, root):
+    """Previous / next night buttons and a menu of every game night this season."""
+    i = dates.index(night)
+    href = lambda n: f'{root}nights/{n}.html'
+    fmt_day = lambda n: f"{datetime.strptime(n, '%Y%m%d'):%a} {int(n[6:])} {datetime.strptime(n, '%Y%m%d'):%b}"
+    prev_ = (f'<a class="chip" href="{href(dates[i - 1])}">‹ {fmt_day(dates[i - 1])}</a>' if i > 0
+             else '<span class="chip off">‹</span>')
+    next_ = (f'<a class="chip" href="{href(dates[i + 1])}">{fmt_day(dates[i + 1])} ›</a>' if i < len(dates) - 1
+             else '<span class="chip off">›</span>')
+    options = "".join(f'<option value="{href(n)}"{" selected" if n == night else ""}>{fmt_day(n)}</option>'
+                      for n in reversed(dates))
+    return (f'<div class="night-nav">{prev_}<select aria-label="Choose a night" '
+            f'onchange="location.href=this.value">{options}</select>{next_}</div>')
+
+
+def section_night(d, night, root="", latest=False):
+    """Every game of one US date: scores, why they won, key player and full box scores."""
     if not night:
         return '<section class="hero"><h1>Last night</h1><p class="muted">No finished games yet.</p></section>'
     games = [g for g in d["game_info"] if g["us_date"] == night]
     games.sort(key=lambda g: (LAKERS_ID not in (g["home_id"], g["away_id"]), g["start_utc"]))
     us = datetime.strptime(night, "%Y%m%d")
+    day = {**d, "teams": records_after(d, night)}
+    title = "Last night in the NBA" if latest else f"NBA scores · {us:%A} {us.day} {us:%B}"
     return f"""
 <section class="hero">
-  <h1>Last night in the NBA</h1>
-  <p class="muted">{us:%A} {us.day} {us:%B} (US date) · {len(games)} games · "Why they won" is worked out from
-  the box score, and the key player is the winner's top performer by Game Score.</p>
-  <div class="games">{''.join(game_card(g, d) for g in games)}</div>
+  <h1>{title}</h1>
+  {night_nav(night, night_dates(d), root)}
+  <p class="muted">{us:%A} {us.day} {us:%B} (US date) · {len(games)} games · records as of that night. "Why they won"
+  is worked out from the box score, and the key player is the winner's top performer by Game Score. Open a box score
+  for every player's line.</p>
+  <div class="games">{''.join(game_card(g, day) for g in games)}</div>
 </section>"""
+
+
+def section_last_night(d):
+    return section_night(d, d["last_night"], latest=True)
 
 
 SOURCE_NAMES = {"teams": "standings", "schedule": "Lakers schedule", "mvp odds": "MVP odds", "players": "player stats",
@@ -1404,11 +1451,19 @@ def build():
     OUT.write_text(page("Luka Watch", "home", home, d), encoding="utf-8")
     (OUT.parent / "last-night.html").write_text(page("Last night · Luka Watch", "night", section_last_night(d), d),
                                                 encoding="utf-8")
+    nights_dir = OUT.parent / "nights"                       # one page per game night of the season
+    nights_dir.mkdir(exist_ok=True)
+    dates = night_dates(d)
+    for n in dates:
+        us = datetime.strptime(n, "%Y%m%d")
+        (nights_dir / f"{n}.html").write_text(
+            page(f"NBA scores {us.day} {us:%b} · Luka Watch", "night", section_night(d, n, "../"), d, "../"),
+            encoding="utf-8")
     (OUT.parent / "betting.html").write_text(page("Betting · Luka Watch", "betting", section_betting(), d),
                                              encoding="utf-8")
     from scripts.build_teams import build_teams
     n_teams = build_teams(d, page)
-    print(f"Wrote {OUT}, last-night.html, betting.html and {n_teams} team pages")
+    print(f"Wrote {OUT}, last-night.html, {len(dates)} night pages, betting.html and {n_teams} team pages")
 
 
 BETTING_PAYLOAD = ROOT / "data" / "betting_page.json"
