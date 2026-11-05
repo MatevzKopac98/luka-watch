@@ -219,6 +219,16 @@ def main():
     except Exception as e:
         errors.append(f"box scores: {e}")
 
+    # 5a. ESPN's season/league/career/split feeds lag a day: fill in last night's games from the box scores
+    try:
+        from model import fresh
+        luka = resolve_player(con, CORE_PLAYERS[0])
+        changed = fresh.refresh(con, today, year, luka, upsert)
+        con.commit()
+        log("Fresh from box scores: " + (", ".join(f"{k} {v}" for k, v in changed.items()) or "ESPN already current"))
+    except Exception as e:
+        errors.append(f"fresh stats: {e}")
+
     # 5b. Record headlines about Luka (ESPN news keeps only recent items, so we accumulate them)
     try:
         news = [n for n in espn.luka_record_news() if n["url"]]

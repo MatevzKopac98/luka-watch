@@ -286,3 +286,17 @@ def test_depth_rule_blocks_thin_rotation():
     after = before[3:] + [_pl("new", 30, pos="G")]                   # three rotation players out, one in
     m1, _ = tr.allocate(after)
     assert tr._depth_problem(before, after, m0, m1) is not None
+
+
+# ------------------------------------------------------------------ fresh season numbers from box scores
+
+def test_fresh_averages_and_doubles():
+    from model import fresh
+    g = lambda **k: {**{c: "0" for c in fresh.COUNT}, **{c: str(v) for c, v in k.items()}}
+    assert fresh._doubles(g(pts=30, reb=10, ast=9)) == (True, False)
+    assert fresh._doubles(g(pts=30, reb=12, ast=11)) == (True, True)
+    t = {"gp": 2, "dd2": 1, "td3": 0, "games": [], **{k: 0.0 for k in fresh.COUNT}}
+    t.update(min=70, pts=80, fgm=28, fga=50, fg3m=8, fg3a=20, ftm=16, fta=20, reb=18, ast=16)
+    a = fresh.averages(t, "x")
+    assert a["gp"] == 2 and a["pts"] == 40 and a["fg_pct"] == 56.0 and a["fg3_pct"] == 40.0 and a["ft_pct"] == 80.0
+    assert a["ts_pct"] == round(100 * 40 / (2 * (25 + 0.44 * 10)), 1)
