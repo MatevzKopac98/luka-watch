@@ -300,3 +300,22 @@ def test_fresh_averages_and_doubles():
     a = fresh.averages(t, "x")
     assert a["gp"] == 2 and a["pts"] == 40 and a["fg_pct"] == 56.0 and a["fg3_pct"] == 40.0 and a["ft_pct"] == 80.0
     assert a["ts_pct"] == round(100 * 40 / (2 * (25 + 0.44 * 10)), 1)
+
+
+def test_add_columns_fills_and_extends_header(tmp_path):
+    import csv, gzip
+    from scripts.backfill_history import add_columns
+    p = tmp_path / "team_box.csv.gz"
+    with gzip.open(p, "wt", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["event_id", "team_id", "fgm"])
+        w.writeheader()
+        w.writerows([{"event_id": "1", "team_id": "13", "fgm": 40}, {"event_id": "1", "team_id": "2", "fgm": 38}])
+    assert add_columns(p, {("1", "13"): {"fastbreak": 17.0, "paint": 54.0}}, ("fastbreak", "paint")) == 1
+    rows = list(csv.DictReader(gzip.open(p, "rt", encoding="utf-8")))
+    assert rows[0]["paint"] == "54.0" and rows[0]["fgm"] == "40" and rows[1]["paint"] == ""
+    assert add_columns(p, {("1", "13"): {"fastbreak": 17.0, "paint": 54.0}}, ("fastbreak", "paint")) == 0
+
+
+def test_team_box_maps_paint_and_fastbreak():
+    from fetchers import espn
+    assert espn.TEAM_BOX["pointsInPaint"] == "paint" and espn.TEAM_BOX["fastBreakPoints"] == "fastbreak"

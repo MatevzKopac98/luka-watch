@@ -51,6 +51,31 @@ def append_rows(path, rows):
         w.writerows(rows)
 
 
+def add_columns(path, values, cols):
+    """Fill `cols` into a team history file from values {(event_id, team_id): {col: value}}, adding the
+    columns to the header if they're missing. Rewrites the file only when something changes. Returns rows filled."""
+    if not path.exists():
+        return 0
+    with gzip.open(path, "rt", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f)
+        header, rows = list(reader.fieldnames or []), list(reader)
+    grown = [c for c in cols if c not in header]
+    filled = 0
+    for row in rows:
+        v = values.get((row["event_id"], row["team_id"]), {})
+        if any(not row.get(c) and v.get(c) is not None for c in cols):
+            row.update({c: v[c] for c in cols if not row.get(c) and v.get(c) is not None})
+            filled += 1
+    if grown or filled:
+        tmp = path.with_suffix(".tmp")
+        with gzip.open(tmp, "wt", encoding="utf-8", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=header + grown, restval="", extrasaction="ignore")
+            w.writeheader()
+            w.writerows(rows)
+        tmp.replace(path)
+    return filled
+
+
 def repair(out, done):
     """After an interrupted run: keep only complete rows of games marked done (drops partial writes)."""
     for name in ("games", "team_box", "players", "stints"):

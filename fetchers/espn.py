@@ -349,7 +349,8 @@ TEAM_BOX = {   # ESPN stat name -> our column (made-attempted pairs are split be
     "freeThrowsMade-freeThrowsAttempted": ("ftm", "fta"),
     "totalRebounds": "reb", "offensiveRebounds": "oreb", "defensiveRebounds": "dreb",
     "assists": "ast", "steals": "stl", "blocks": "blk", "totalTurnovers": "tov", "fouls": "pf",
-    "turnoverPoints": "pts_off_tov",     # points this team CONCEDED after its own turnovers "fastBreakPoints": "fastbreak", "pointsInPaint": "paint",
+    "turnoverPoints": "pts_off_tov",     # points this team CONCEDED after its own turnovers
+    "fastBreakPoints": "fastbreak", "pointsInPaint": "paint",
     "largestLead": "largest_lead", "leadChanges": "lead_changes", "leadPercentage": "lead_pct",
 }
 PLAYER_BOX = {

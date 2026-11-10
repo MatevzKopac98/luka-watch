@@ -10,7 +10,7 @@ from db import connect, upsert                      # noqa: E402
 from fetchers import espn, odds, odds_capture       # noqa: E402
 from fetchers.pbp import build_stints               # noqa: E402
 from model import defense                           # noqa: E402
-from scripts.backfill_history import HISTORY, append_rows  # noqa: E402
+from scripts.backfill_history import HISTORY, add_columns, append_rows  # noqa: E402
 
 TZ = ZoneInfo("Europe/Ljubljana")
 
@@ -19,6 +19,7 @@ CORE_PLAYERS = ["Luka Doncic", "Nikola Jokic", "Shai Gilgeous-Alexander",
                 "Giannis Antetokounmpo", "Victor Wembanyama"]
 MVP_TOP_N = 5          # also track everyone in the top N of the MVP odds
 GAME_NIGHTS_BACK = 3   # box scores: re-check the last N nights for games not yet stored
+REPAIR_PER_RUN = 200   # most games re-fetched per run to fill in missing paint/fast-break points
 
 
 def log(msg):
@@ -218,6 +219,25 @@ def main():
         log(f"Box scores: {len(targets)} new games")
     except Exception as e:
         errors.append(f"box scores: {e}")
+
+    # 5b. (repair) Paint and fast-break points weren't saved for games stored before 10 Nov 2026: fetch them again
+    try:
+        missing = con.execute("SELECT DISTINCT b.event_id, i.us_date FROM game_team_box b JOIN game_info i "
+                              "ON i.event_id = b.event_id WHERE b.paint IS NULL AND i.status = 'STATUS_FINAL' "
+                              "ORDER BY i.us_date DESC").fetchall()
+        for event_id, us_date in missing[:REPAIR_PER_RUN]:
+            _, team_rows, _ = espn.game_summary(event_id, us_date)
+            for r in team_rows:
+                upsert(con, "game_team_box", r)
+        con.commit()
+        cols = ("fastbreak", "paint")
+        values = {(r[0], r[1]): {"fastbreak": r[2], "paint": r[3]} for r in con.execute(
+            "SELECT event_id, team_id, fastbreak, paint FROM game_team_box WHERE paint IS NOT NULL")}
+        filled = add_columns(HISTORY / str(year) / "team_box.csv.gz", values, cols)
+        if missing or filled:
+            log(f"Paint/fast-break repair: {min(len(missing), REPAIR_PER_RUN)} games re-fetched, {filled} history rows filled")
+    except Exception as e:
+        errors.append(f"paint/fast-break repair: {e}")
 
     # 5a. ESPN's season/league/career/split feeds lag a day: fill in last night's games from the box scores
     try:

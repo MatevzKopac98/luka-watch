@@ -571,7 +571,9 @@ def schedule_card(d):
         rows.append(
             f'<tr><td>{day:%a %d %b}<small class="muted tip">{local(g["date_utc"]):%a %H:%M} here</small></td>'
             f'<td class="muted">{"vs" if home else "@"}</td>'
-            f'<th scope="row"><img src="{opp.get("logo", "")}" alt="" class="logo">{opp.get("abbr", "")}</th>'
+            f'<th scope="row"><a href="teams/{opp.get("abbr", "")}.html" title="Open the '
+            f'{escape(opp.get("name", ""))} page"><img src="{opp.get("logo", "")}" alt="" class="logo">'
+            f'{opp.get("abbr", "")}</a></th>'
             f'<td>{opp.get("wins", "")}-{opp.get("losses", "")}</td>'
             f'<td><span class="lvl {level}">{fmt(net)}</span> <small class="muted">'
             f'{ordinal(net_rank[opp["team_id"]]) if opp.get("team_id") in net_rank else ""}</small></td>'
@@ -1255,8 +1257,8 @@ display:grid;place-items:center;font-weight:700;color:var(--hi);flex:none}
 .imp-main{flex:1;display:flex;flex-direction:column}.imp-pm{font-size:22px;font-weight:700;color:var(--good)}
 .chip-rows{display:flex;flex-wrap:wrap;gap:4px 16px}
 table.roster tr.dim th,table.roster tr.dim td{opacity:.6}
-table.stand th[scope=row] a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:6px}
-table.stand th[scope=row] a:hover{text-decoration:underline}
+table.stand th[scope=row] a,.sched th[scope=row] a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:6px}
+table.stand th[scope=row] a:hover,.sched th[scope=row] a:hover{text-decoration:underline}
 .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:10px 0 24px}
 .team-tile{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:12px;background:var(--surface);
 border:1px solid var(--border);color:var(--ink);text-decoration:none}
