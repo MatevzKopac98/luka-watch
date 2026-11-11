@@ -55,3 +55,17 @@ jobs:
           path: site
       - id: deploy
         uses: actions/deploy-pages@v4
+
+      # Second copy at https://luka-watch.pages.dev (Cloudflare Pages): work web filters that block github.io
+      # as "file sharing" let it through. Needs the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets;
+      # skipped without them, and a Cloudflare hiccup never fails the run.
+      - name: Publish copy to Cloudflare Pages
+        if: always()
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then echo "No Cloudflare secrets: skipped"; exit 0; fi
+          npx --yes wrangler@4.20.0 pages project create luka-watch --production-branch=main >/dev/null 2>&1 || true
+          npx --yes wrangler@4.20.0 pages deploy site --project-name=luka-watch --branch=main --commit-dirty=true

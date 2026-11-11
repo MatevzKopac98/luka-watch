@@ -127,3 +127,15 @@ also appears when no run happened at all), and the footer lists any issues. Odds
   (this/last season, per game/per 36/totals, salary), five-man lineups (most used/best), rotation chart with usage,
   impact, value for money and contracts
 - `betting.html`: the password-protected betting pilot
+
+## Second address (Cloudflare Pages)
+
+Work networks that block github.io as "file sharing" (e.g. WithSecure) can use **https://luka-watch.pages.dev**.
+Every run that publishes to GitHub Pages also uploads the same `site/` folder to Cloudflare Pages
+(last step of `daily.yml` and `odds.yml`). It needs two repository secrets:
+
+- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare dashboard → Workers & Pages → Account ID (right-hand side)
+- `CLOUDFLARE_API_TOKEN`: My Profile → API Tokens → Create token → Custom token, permission
+  *Account → Cloudflare Pages → Edit*
+
+Without them the step is skipped; a Cloudflare error never fails the run. The github.io address keeps working.
