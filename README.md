@@ -139,3 +139,6 @@ Every run that publishes to GitHub Pages also uploads the same `site/` folder to
   *Account → Cloudflare Pages → Edit*
 
 Without them the step is skipped; a Cloudflare error never fails the run. The github.io address keeps working.
+
+The token `luka-watch` (Cloudflare Pages: Edit) **expires 11 Nov 2027**. Before then, create a new one the same
+way and replace the `CLOUDFLARE_API_TOKEN` secret (good moment: together with the cron-job token, which expires 3 Nov 2027).
