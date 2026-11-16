@@ -319,3 +319,31 @@ def test_add_columns_fills_and_extends_header(tmp_path):
 def test_team_box_maps_paint_and_fastbreak():
     from fetchers import espn
     assert espn.TEAM_BOX["pointsInPaint"] == "paint" and espn.TEAM_BOX["fastBreakPoints"] == "fastbreak"
+
+
+def test_leans_pick_biggest_disagreements_per_game_and_skip_strict_picks():
+    from model import betting
+    def c(ev, ath, stat, side, pm, fair):
+        return {"kind": "prop", "event_id": ev, "athlete_id": ath, "stat": stat, "side": side, "p_model": pm, "fair": fair}
+    cands = [c("g1", "a", "pts", "under", 0.72, 0.50), c("g1", "a", "pts", "over", 0.28, 0.50),
+             c("g1", "b", "reb", "over", 0.66, 0.50), c("g1", "c", "ast", "under", 0.64, 0.50),
+             c("g1", "d", "pts", "under", 0.70, 0.50), c("g1", "e", "fg3m", "over", 0.55, 0.50),
+             {"kind": "total", "event_id": "g1", "stat": "total", "side": "over", "p_model": 0.9, "fair": 0.5}]
+    strict = [c("g1", "d", "pts", "under", 0.70, 0.50)]
+    out = betting.choose_leans(cands, strict)
+    assert [(x["athlete_id"], x["side"]) for x in out] == [("a", "under"), ("b", "over"), ("c", "under")]
+
+
+def test_leans_grading_flat_stake(tmp_path, monkeypatch):
+    from model import betting
+    monkeypatch.setattr(betting, "DB_PATH", tmp_path / "b.sqlite")
+    con = betting.connect()
+    for lid, ath, side, line in (("1", "a", "under", 15.5), ("2", "b", "over", 8.5), ("3", "x", "over", 3.5), ("4", "c", "over", 10.0)):
+        con.execute("INSERT INTO leans (lean_id, event_id, athlete_id, stat, side, line, dec, status, tip_utc) "
+                    "VALUES (?,?,?,?,?,?,?,?,?)", (lid, "g1", ath, "pts", side, line, 1.91, "active", "2026-11-15T21:00Z"))
+    players = {("g1", "a"): {"pts": "12", "min": "30"}, ("g1", "b"): {"pts": "6", "min": "25"},
+               ("g1", "c"): {"pts": "10", "min": "28"}}
+    assert betting.grade_leans(con, players, {"g1": {}}) == 4
+    rec = betting.leans_record(con)
+    assert (rec["w"], rec["l"], rec["p"], rec["v"]) == (1, 1, 1, 1)
+    assert abs(rec["units"] - (0.91 - 1)) < 1e-9 and rec["staked"] == 2

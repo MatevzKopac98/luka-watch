@@ -33,6 +33,11 @@ PLAY_MARGIN = 0.03         # "still worth it" while our probability beats the pr
 DEFAULT_MODEL_WEIGHT = 0.5 # before enough results exist: half our model, half the market
 MIN_CALIBRATION_N = 400
 RECENT_ABSENCE_GAMES = 3   # an injured player only shifts minutes/usage if he played in the team's last 3 games
+# "Model leans": an experimental, separately tracked record of what our model alone would bet (flat 1 unit),
+# so the pilot keeps testing the model while the strict picks wait for a real edge over the market.
+LEANS_PER_GAME = 3
+LEAN_MIN_GAP = 0.10        # our model's own probability vs the market's fair probability, at least 10 points apart
+LEAN_UNITS = 1.0
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS predictions (       -- every projected prop, every team (training data)
@@ -48,6 +53,12 @@ CREATE TABLE IF NOT EXISTS picks (
     reasons TEXT, projection TEXT, first_published TEXT, last_seen TEXT, status TEXT,
     close_line REAL, close_odds TEXT, clv REAL, actual REAL, result TEXT, profit REAL,
     miss_category TEXT, miss_text TEXT, graded_at TEXT
+);
+CREATE TABLE IF NOT EXISTS leans (            -- experimental: model-only bets, own record, not in the bankroll
+    lean_id TEXT PRIMARY KEY, us_date TEXT, event_id TEXT, tip_utc TEXT, game TEXT, athlete_id TEXT, player TEXT,
+    stat TEXT, side TEXT, line REAL, odds TEXT, dec REAL, p_model REAL, fair REAL, gap REAL, mean REAL, minutes REAL,
+    first_published TEXT, last_seen TEXT, status TEXT, actual REAL, actual_min REAL, result TEXT, profit REAL,
+    graded_at TEXT
 );
 CREATE TABLE IF NOT EXISTS learning_log (
     logged_at TEXT, kind TEXT, text TEXT, metrics TEXT
@@ -226,8 +237,12 @@ def predict(con, us_date, season, nba_con, injured, schedule, captured_label):
     for r in con.execute("SELECT pick_id, event_id FROM picks WHERE status='active' AND us_date=?", (us_date,)):
         if r["pick_id"] not in published and not schedule.get(r["event_id"], {}).get("started"):
             con.execute("UPDATE picks SET status='withdrawn', last_seen=? WHERE pick_id=?", (now_iso(), r["pick_id"]))
+    lean_ids = {refresh_lean(con, c, us_date, schedule[c["event_id"]]) for c in choose_leans(lakers_candidates, picks)}
+    for r in con.execute("SELECT lean_id, event_id FROM leans WHERE status='active' AND us_date=?", (us_date,)):
+        if r["lean_id"] not in lean_ids and not schedule.get(r["event_id"], {}).get("started"):
+            con.execute("UPDATE leans SET status='withdrawn', last_seen=? WHERE lean_id=?", (now_iso(), r["lean_id"]))
     con.commit()
-    return {"predictions": n_pred, "picks": len(picks), "candidates": len(lakers_candidates)}
+    return {"predictions": n_pred, "picks": len(picks), "leans": len(lean_ids), "candidates": len(lakers_candidates)}
 
 
 def game_candidates(con, event_id, info, gl, proj, pace, league, league_pace):
@@ -279,6 +294,74 @@ def choose(candidates):
         if len(out) >= MAX_PICKS:
             break
     return out
+
+
+def choose_leans(candidates, picks):
+    """Per Lakers game, the props where our model on its own disagrees most with the market.
+
+    Ignores the learned model/market weighting on purpose: this track tests the model's raw opinion.
+    Skips anything already a strict pick, and takes at most one side per player-stat.
+    """
+    taken = {(c["event_id"], c.get("athlete_id"), c["stat"]) for c in picks}
+    props = [c for c in candidates if c["kind"] == "prop" and (c["event_id"], c["athlete_id"], c["stat"]) not in taken
+             and c["p_model"] - c["fair"] >= LEAN_MIN_GAP]
+    props.sort(key=lambda c: -(c["p_model"] - c["fair"]))
+    seen, per_game, out = set(), {}, []
+    for c in props:
+        key = (c["event_id"], c["athlete_id"], c["stat"])
+        if key in seen or per_game.get(c["event_id"], 0) >= LEANS_PER_GAME:
+            continue
+        seen.add(key)
+        per_game[c["event_id"]] = per_game.get(c["event_id"], 0) + 1
+        out.append(c)
+    return out
+
+
+def refresh_lean(con, c, us_date, info):
+    lean_id = f"{c['event_id']}|{c['athlete_id']}|{c['stat']}|{c['side']}"
+    exists = con.execute("SELECT first_published FROM leans WHERE lean_id=?", (lean_id,)).fetchone()
+    con.execute("""INSERT OR REPLACE INTO leans (lean_id, us_date, event_id, tip_utc, game, athlete_id, player, stat, side,
+                   line, odds, dec, p_model, fair, gap, mean, minutes, first_published, last_seen, status)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'active')""",
+                (lean_id, us_date, c["event_id"], info["tip_utc"], info["label"], c["athlete_id"], describe(c, {}),
+                 c["stat"], c["side"], c["line"], str(c["odds"]), c["dec"], c["p_model"], c["fair"],
+                 c["p_model"] - c["fair"], c["s"]["mean"], c["proj"]["minutes"],
+                 exists["first_published"] if exists else now_iso(), now_iso()))
+    return lean_id
+
+
+def grade_leans(con, players, games):
+    """Settle finished leans at a flat stake: did-not-play is void, landing on the line is a push."""
+    n = 0
+    for c in [dict(r) for r in con.execute("SELECT * FROM leans WHERE status='active'")]:
+        if c["event_id"] not in games:
+            continue
+        p = players.get((c["event_id"], c["athlete_id"]))
+        if not p:
+            con.execute("UPDATE leans SET status='graded', result='V', profit=0, graded_at=? WHERE lean_id=?",
+                        (now_iso(), c["lean_id"]))
+            n += 1
+            continue
+        actual = _value(p, c["stat"])
+        diff = actual - c["line"]
+        won = diff > 0 if c["side"] == "over" else diff < 0
+        result = "P" if diff == 0 else ("W" if won else "L")
+        profit = 0 if diff == 0 else (LEAN_UNITS * (c["dec"] - 1) if won else -LEAN_UNITS)
+        con.execute("UPDATE leans SET status='graded', actual=?, actual_min=?, result=?, profit=?, graded_at=? "
+                    "WHERE lean_id=?", (actual, _f(p["min"]), result, profit, now_iso(), c["lean_id"]))
+        n += 1
+    return n
+
+
+def leans_record(con):
+    """Record of graded leans: wins, losses, pushes, voids, units won, and the split by over/under."""
+    rows = [dict(r) for r in con.execute("SELECT * FROM leans WHERE status='graded' ORDER BY tip_utc DESC")]
+    count = lambda res, side=None: sum(r["result"] == res and (side is None or r["side"] == side) for r in rows)
+    staked = LEAN_UNITS * sum(r["result"] in ("W", "L") for r in rows)
+    units = sum(r["profit"] or 0 for r in rows)
+    return {"rows": rows, "w": count("W"), "l": count("L"), "p": count("P"), "v": count("V"), "units": units,
+            "staked": staked, "roi": units / staked if staked else None,
+            "over": (count("W", "over"), count("L", "over")), "under": (count("W", "under"), count("L", "under"))}
 
 
 def units_for(c):
@@ -476,6 +559,7 @@ def grade(con, season):
                     (actual, result, profit, category, text, close[0] if close else None,
                      close[1] if close else None, clv, now_iso(), c["pick_id"]))
         graded += 1
+    graded += grade_leans(con, players, games)
     con.commit()
     return graded
 

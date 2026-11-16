@@ -95,6 +95,66 @@ def result_row(p, money):
 </details>"""
 
 
+def no_picks_text(con):
+    """Why the strict picks are empty, using the weights the model has learned."""
+    cal = betting.get_setting(con, "calibration")
+    timing = ("Tonight's Lakers props may not be posted yet (DraftKings usually posts them on game day; lines are "
+              "checked at 16:23, 20:23, 00:13 and 03:13).")
+    bar = "A pick needs our probability to beat the market's by 5+ points with +3% expected value."
+    if cal and cal["b"] < 0.25:
+        return (f"No picks right now. After grading {cal.get('n', 0):,} projections across the league, the model "
+                f"learned it adds little beyond DraftKings' own lines (weight on our model {cal['b']:.2f}, on the "
+                f"market {cal['c']:.2f}), so its final numbers sit close to the market and nothing clears the bar. "
+                f"{bar} That is the safeguard working, not a fault: see <a href='#leans'>Model leans</a> for what the "
+                f"model would bet on its own. {timing}")
+    return f"No picks right now. {timing} Or nothing clears the bar. {bar}"
+
+
+def lean_row(r, graded=False):
+    head = f'<span class="wl {r["result"]}">{r["result"]}</span> ' if graded else ""
+    when = _local(r["tip_utc"], "%d %b") if graded else "tip " + _local(r["tip_utc"], "%H:%M")
+    result = ""
+    if graded and r["result"] == "V":
+        result = " · did not play (void)"
+    elif graded:
+        result = f' · finished {r["actual"]:g} in {r["actual_min"] or 0:.0f} min · {r["profit"]:+.2f} u'
+    return (f'<li>{head}<strong>{escape(r["player"])}</strong> <span class="muted small">{escape(r["game"])} · '
+            f'{when} · {_odds(r["odds"])} · model {r["p_model"] * 100:.0f}% vs market {r["fair"] * 100:.0f}% · '
+            f'projected {r["mean"]:.1f}{result}</span></li>')
+
+
+def leans_section(con):
+    active = [dict(r) for r in con.execute("SELECT * FROM leans WHERE status='active' ORDER BY tip_utc, gap DESC")]
+    rec = betting.leans_record(con)
+    decided = rec["w"] + rec["l"]
+    hit = f"{100 * rec['w'] / decided:.0f}%" if decided else "–"
+    roi = f"{100 * rec['roi']:+.1f}% on {rec['staked']:g} units staked" if rec["roi"] is not None else "nothing graded yet"
+    split = lambda wl: f"{wl[0]}-{wl[1]}"
+    tiles = [("Record", f"{rec['w']}-{rec['l']}" + (f"-{rec['p']}" if rec["p"] else ""),
+              f"hit rate {hit}" + (f" · {rec['v']} void" if rec["v"] else "")),
+             ("Units", f"{rec['units']:+.2f}", roi),
+             ("Overs / unders", f"{split(rec['over'])} / {split(rec['under'])}", "won-lost by side"),
+             ("Break-even", "52.4%", "hit rate needed at typical -110 odds")]
+    tiles_html = "".join(f'<div class="tile"><div class="tile-k">{k}</div><div class="tile-v">{v}</div>'
+                         f'<div class="tile-s">{escape(s)}</div></div>' for k, v, s in tiles)
+    now = "".join(lean_row(r) for r in active) or "<li class='muted'>None right now (they appear with tonight's Lakers props).</li>"
+    past = "".join(lean_row(r, True) for r in rec["rows"][:40]) or "<li class='muted'>None graded yet.</li>"
+    return f"""
+<section id="leans">
+  <h2>Model leans <span class="tag">experimental</span></h2>
+  <div class="card">
+    <p class="muted small">What our model would bet on its own: for each Lakers game, up to {betting.LEANS_PER_GAME}
+    props where its raw projection disagrees with DraftKings by {betting.LEAN_MIN_GAP * 100:.0f}+ points. Flat
+    {betting.LEAN_UNITS:g} unit each, graded on the last line before tip-off, and kept apart from the picks and the
+    bankroll above. It shows whether the model has an edge the strict picks don't trust yet: above 52.4% over a few
+    hundred leans would mean something; a few weeks of results don't.</p>
+    <h3 class="sub">Tonight</h3><ul class="results">{now}</ul>
+  </div>
+  <div class="tiles">{tiles_html}</div>
+  <details class="list"><summary>Graded leans ({len(rec['rows'])})</summary><ul class="results">{past}</ul></details>
+</section>"""
+
+
 def bankroll_chart(curve):
     """Simulated bankroll after each betting day, with the €100 start as a reference line."""
     if len(curve) < 2:
@@ -144,10 +204,7 @@ def render(con):
     money = bank["picks"]
     profit_eur = bank["value"] - betting.STARTING_BANKROLL
 
-    picks_html = "".join(pick_card(p, bank["value"]) for p in active) or (
-        '<div class="card"><p>No picks right now. Either tonight\'s Lakers props aren\'t posted yet '
-        '(DraftKings usually posts them on game day; lines are checked at 16:23, 20:23, 00:13 and 03:13), '
-        'or nothing clears the bar: our probability must beat the market by 5+ points with +3% expected value.</p></div>')
+    picks_html = "".join(pick_card(p, bank["value"]) for p in active) or f'<div class="card"><p>{no_picks_text(con)}</p></div>'
     misses = " · ".join(f"{CATEGORY.get(k, k)} {v}" for k, v in sorted(rec["misses"].items(), key=lambda x: -x[1])) or "–"
     roi = f"{100 * profit_eur / bank['staked']:+.1f}% on {eur(bank['staked'])} staked" if bank["staked"] else "nothing staked yet"
     tiles = [("Bankroll", eur(bank["value"]), f"started at {eur(betting.STARTING_BANKROLL)} · "
@@ -180,6 +237,7 @@ def render(con):
   <h2>Tonight's picks</h2>
   <div class="bets">{picks_html}</div>
 </section>
+{leans_section(con)}
 <section>
   <h2>Track record</h2>
   <div class="tiles">{tiles_html}</div>
