@@ -1,0 +1,5 @@
+*.log
+*.sqlite-journal
+# the private betting database is only ever stored encrypted (betting.sqlite.enc)
+betting.sqlite
+_*.sqlite
