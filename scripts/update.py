@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from db import connect, upsert                      # noqa: E402
-from fetchers import espn, odds, odds_capture       # noqa: E402
+from fetchers import espn, odds                     # noqa: E402
 from fetchers.pbp import build_stints               # noqa: E402
 from model import defense                           # noqa: E402
 from scripts.backfill_history import HISTORY, add_columns, append_rows  # noqa: E402
@@ -98,7 +98,7 @@ def main():
     today = datetime.now(TZ).date().isoformat()
     con = connect()
     errors = []
-    last_night_finals, odds_counts = None, None
+    last_night_finals = None
     year = espn.season_year()
     log(f"Season {year - 1}-{str(year)[2:]}, snapshot {today}")
 
@@ -258,7 +258,7 @@ def main():
     except Exception as e:
         errors.append(f"news: {e}")
 
-    # 6. Injuries for every team (the roster projection and the betting model need all of them)
+    # 6. Injuries for every team (the roster projection needs all of them)
     try:
         con.execute("DELETE FROM injuries WHERE snapshot_date = ?", (today,))
         injured = espn.injuries(None)
@@ -267,23 +267,6 @@ def main():
         log(f"Injuries: {len(injured)} listed")
     except Exception as e:
         errors.append(f"injuries: {e}")
-
-    # 6b. Odds and props for tonight's games (more captures run through the day: capture_odds.py)
-    try:
-        now = datetime.now(TZ)
-        n, o, p, failed = odds_capture.capture(datetime.now(ZoneInfo("America/New_York")).strftime("%Y%m%d"),
-                                               now.isoformat(timespec="minutes"), now.strftime("%H%M"))
-        odds_counts = (n, o, p)
-        log(f"Odds capture: {n} games, {o} game lines, {p} props" + (f", {len(failed)} failed" if failed else ""))
-    except Exception as e:
-        errors.append(f"odds capture: {e}")
-    try:
-        from scripts.prune import prune
-        removed, freed = prune()
-        if removed:
-            log(f"Pruned {removed} old odds snapshots ({freed / 1e6:.1f} MB)")
-    except Exception as e:
-        errors.append(f"prune: {e}")
 
     # 6b2. Full rosters with profiles and salaries (team pages), contract details refreshed weekly
     rosters = {}
@@ -313,20 +296,11 @@ def main():
     con.commit()
     con.close()
 
-    # 6d. Betting pilot: grade last night's picks, learn, refresh picks (private, encrypted)
-    try:
-        from scripts.run_betting import run as run_betting
-        run_betting(log)
-    except Exception as e:
-        errors.append(f"betting: {e}")
-
     # 6e. Sanity checks, saved for the site's status banner
     try:
-        from model.crypto import password
         from scripts import status
-        from scripts.build_site import BETTING_PAYLOAD
         con = connect()
-        warnings = status.checks(con, today, last_night_finals, odds_counts, bool(password()), BETTING_PAYLOAD)
+        warnings = status.checks(con, today, last_night_finals)
         con.close()
         status.write(errors, warnings)
         for w in warnings:

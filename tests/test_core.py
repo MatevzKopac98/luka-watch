@@ -1,111 +1,16 @@
 """Offline tests for the parts that break silently. Run: python -m pytest -q"""
-import base64
 import gzip
 import json
 import sys
 from datetime import date
 from pathlib import Path
 
-import pytest
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import db                                   # noqa: E402
 from fetchers import pbp                    # noqa: E402
-from model import betting, crypto, props    # noqa: E402
-from model import projections as pj         # noqa: E402
-from scripts import prune, status           # noqa: E402
-
-
-# ------------------------------------------------------------------ encryption
-
-def test_encrypt_round_trip_and_wrong_password():
-    blob = crypto.encrypt(b"secret picks", "pw-1")
-    assert crypto.decrypt(blob, "pw-1") == b"secret picks"
-    with pytest.raises(Exception):
-        crypto.decrypt(blob, "pw-2")
-
-
-def test_page_payload_opens_with_fixed_salt():
-    salt = b"s" * 16
-    p = json.loads(crypto.page_payload("<p>hi</p>", "pw", salt))
-    assert base64.b64decode(p["salt"]) == salt and p["iter"] == crypto.ITERATIONS
-    key = crypto._key("pw", salt)                                  # what the browser derives with WebCrypto
-    html = AESGCM(key).decrypt(base64.b64decode(p["iv"]), base64.b64decode(p["ct"]), None)
-    assert html.decode() == "<p>hi</p>"
-
-
-# ------------------------------------------------------------------ odds parsing
-
-def test_american_to_decimal():
-    assert props.american_to_decimal("+150") == 2.5
-    assert props.american_to_decimal("-200") == 1.5
-    assert props.american_to_decimal("0") is None and props.american_to_decimal(None) is None
-
-
-def _prop(seq, dec, line="24.5"):
-    return {"market": "Total Points", "athlete_id": "1", "event_id": "9", "line": line, "seq": str(seq),
-            "decimal": str(dec), "line_open": "23.5", "odds": "-110", "captured_at": "2026-11-04T18:00"}
-
-
-def test_markets_first_row_is_over_and_margin_removed():
-    m = props.markets([_prop(2, 2.2), _prop(1, 1.8)])[("9", "1", "pts")]
-    assert m["over_dec"] == 1.8 and m["under_dec"] == 2.2          # lower seq = over
-    assert abs(m["fair_over"] - (1 / 1.8) / (1 / 1.8 + 1 / 2.2)) < 1e-9
-    assert m["margin"] > 0 and m["line"] == 24.5
-
-
-def test_markets_skip_unpaired():
-    assert props.markets([_prop(1, 1.9)]) == {}
-
-
-def test_prob_over_behaves():
-    assert pj.prob_over(10.5, 25, 6) > 0.99
-    assert pj.prob_over(40.5, 25, 6) < 0.02
-    assert pj.prob_over(20.5, 25, 6) > pj.prob_over(25.5, 25, 6) > pj.prob_over(30.5, 25, 6)
-
-
-# ------------------------------------------------------------------ stakes and bankroll
-
-def test_units_quarter_kelly_bounds():
-    assert betting.units_for({"p_final": 0.50, "dec": 1.91}) == 0.5   # no edge -> minimum stake
-    assert betting.units_for({"p_final": 0.80, "dec": 2.00}) == 2.0   # huge edge -> capped
-    u = betting.units_for({"p_final": 0.58, "dec": 1.91})
-    assert 0.5 <= u <= 2.0 and (u * 2) == int(u * 2)
-
-
-@pytest.fixture
-def bet_con(tmp_path, monkeypatch):
-    monkeypatch.setattr(betting, "DB_PATH", tmp_path / "betting.sqlite")
-    return betting.connect()
-
-
-def _pick(con, pid, day, units, dec, result, status="graded"):
-    con.execute("INSERT INTO picks (pick_id, us_date, tip_utc, units, dec, result, status) VALUES (?,?,?,?,?,?,?)",
-                (pid, day, day + "T23:00Z", units, dec, result, status))
-
-
-def test_bankroll_stakes_from_start_of_day(bet_con):
-    _pick(bet_con, "a", "20261101", 1, 2.0, "W")      # day 1: 1% of 100 = 1.00, wins 1.00
-    _pick(bet_con, "b", "20261101", 2, 1.9, "L")      # same day, still from 100: 2.00 lost
-    _pick(bet_con, "c", "20261102", 1, 1.9, "P")      # push: stake back
-    _pick(bet_con, "d", "20261103", 1, 3.0, None, "void")
-    b = betting.bankroll(bet_con)
-    assert b["picks"]["a"] == {"stake": 1.0, "profit": 1.0, "after": 101.0}
-    assert b["picks"]["b"] == {"stake": 2.0, "profit": -2.0, "after": 99.0}
-    assert b["picks"]["c"]["profit"] == 0 and b["picks"]["d"]["profit"] == 0
-    assert b["value"] == 99.0 and b["curve"][0] == ("start", 100.0)
-    assert betting.stake_now(bet_con, 2) == 1.98
-
-
-def test_record_counts(bet_con):
-    for i, r in enumerate("WWLP"):
-        _pick(bet_con, str(i), "20261101", 1, 1.9, r)
-    bet_con.execute("UPDATE picks SET profit = CASE result WHEN 'W' THEN 0.9 WHEN 'L' THEN -1 ELSE 0 END")
-    rec = betting.record(bet_con)
-    assert (rec["w"], rec["l"], rec["p"]) == (2, 1, 1)
-    assert rec["units"] == 0.8 and rec["roi"] == round(100 * 0.8 / 3, 1)
+from scripts import status                  # noqa: E402
 
 
 # ------------------------------------------------------------------ lineup stints
@@ -153,37 +58,14 @@ def test_secs_formats():
     assert pbp._secs("7:04") == 424 and pbp._secs("45.3") == 45.3 and pbp._secs("0:07:04") == 424
 
 
-# ------------------------------------------------------------------ snapshot pruning
-
-def test_keep_rules():
-    f = [f"{i}" for i in range(5)]
-    assert prune.keep(f, 1) == f
-    assert prune.keep(f, 10) == ["0", "3", "4"]
-    assert prune.keep(f, 60) == ["4"]
-    assert prune.keep(["only"], 10) == ["only"]
-
-
-def test_prune_files(tmp_path):
-    for kind in ("odds", "props"):
-        (tmp_path / kind).mkdir()
-        for day in ("20261101", "20261020"):
-            for hhmm in ("1623", "2023", "0013", "0313"):
-                with gzip.open(tmp_path / kind / f"{day}_{hhmm}.csv.gz", "wt") as fh:
-                    fh.write("x\n")
-    n, _ = prune.prune(tmp_path, today=date(2026, 11, 3))
-    assert n == 2                                   # 20261020 (14 days old): drops 1 of 4 in each folder
-    left = sorted(p.name for p in (tmp_path / "props").iterdir())
-    assert left.count("20261101_1623.csv.gz") == 1 and len(left) == 7
-
-
 # ------------------------------------------------------------------ morning checks
 
 def test_status_checks_flag_missing_data(tmp_path, monkeypatch):
     monkeypatch.setattr(db, "DB_PATH", tmp_path / "nba.sqlite")
     con = db.connect()
-    w = status.checks(con, "2026-11-04", ["1", "2"], (3, 0, 0))
+    w = status.checks(con, "2026-11-04", ["1", "2"])
     text = " ".join(w)
-    assert "0 of 30 teams" in text and "MVP odds" in text and "2 of last night's 2" in text and "Odds:" in text
+    assert "0 of 30 teams" in text and "MVP odds" in text and "2 of last night's 2" in text
     out = status.write(["teams: boom"], w, tmp_path / "status.json")
     assert status.read(tmp_path / "status.json") == out
 
@@ -321,29 +203,3 @@ def test_team_box_maps_paint_and_fastbreak():
     assert espn.TEAM_BOX["pointsInPaint"] == "paint" and espn.TEAM_BOX["fastBreakPoints"] == "fastbreak"
 
 
-def test_leans_pick_biggest_disagreements_per_game_and_skip_strict_picks():
-    from model import betting
-    def c(ev, ath, stat, side, pm, fair):
-        return {"kind": "prop", "event_id": ev, "athlete_id": ath, "stat": stat, "side": side, "p_model": pm, "fair": fair}
-    cands = [c("g1", "a", "pts", "under", 0.72, 0.50), c("g1", "a", "pts", "over", 0.28, 0.50),
-             c("g1", "b", "reb", "over", 0.66, 0.50), c("g1", "c", "ast", "under", 0.64, 0.50),
-             c("g1", "d", "pts", "under", 0.70, 0.50), c("g1", "e", "fg3m", "over", 0.55, 0.50),
-             {"kind": "total", "event_id": "g1", "stat": "total", "side": "over", "p_model": 0.9, "fair": 0.5}]
-    strict = [c("g1", "d", "pts", "under", 0.70, 0.50)]
-    out = betting.choose_leans(cands, strict)
-    assert [(x["athlete_id"], x["side"]) for x in out] == [("a", "under"), ("b", "over"), ("c", "under")]
-
-
-def test_leans_grading_flat_stake(tmp_path, monkeypatch):
-    from model import betting
-    monkeypatch.setattr(betting, "DB_PATH", tmp_path / "b.sqlite")
-    con = betting.connect()
-    for lid, ath, side, line in (("1", "a", "under", 15.5), ("2", "b", "over", 8.5), ("3", "x", "over", 3.5), ("4", "c", "over", 10.0)):
-        con.execute("INSERT INTO leans (lean_id, event_id, athlete_id, stat, side, line, dec, status, tip_utc) "
-                    "VALUES (?,?,?,?,?,?,?,?,?)", (lid, "g1", ath, "pts", side, line, 1.91, "active", "2026-11-15T21:00Z"))
-    players = {("g1", "a"): {"pts": "12", "min": "30"}, ("g1", "b"): {"pts": "6", "min": "25"},
-               ("g1", "c"): {"pts": "10", "min": "28"}}
-    assert betting.grade_leans(con, players, {"g1": {}}) == 4
-    rec = betting.leans_record(con)
-    assert (rec["w"], rec["l"], rec["p"], rec["v"]) == (1, 1, 1, 1)
-    assert abs(rec["units"] - (0.91 - 1)) < 1e-9 and rec["staked"] == 2

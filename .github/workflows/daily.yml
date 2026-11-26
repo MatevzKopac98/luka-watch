@@ -21,7 +21,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: data-writer        # shared with the odds capture: one writer of the data branch at a time
+  group: data-writer        # one writer of the data branch at a time
   cancel-in-progress: false
 
 jobs:
@@ -31,15 +31,15 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # The data lives on its own branch holding only the latest snapshot, so the repo never bloats
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: data
           path: data
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
@@ -49,8 +49,6 @@ jobs:
       - name: Fetch data and build site
         run: python scripts/update.py
         continue-on-error: true   # a single failing source shouldn't block publishing the rest
-        env:
-          BETTING_PASSWORD: ${{ secrets.BETTING_PASSWORD }}   # unlocks the private betting data (GitHub Secret)
 
       - name: Save data snapshot
         working-directory: data
@@ -63,7 +61,7 @@ jobs:
           git push -q -f origin snapshot:data
 
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: site
       - id: deploy

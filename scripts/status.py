@@ -12,11 +12,10 @@ STATUS = Path(__file__).resolve().parent.parent / "data" / "status.json"
 TZ = ZoneInfo("Europe/Ljubljana")
 
 
-def checks(con, today, last_night_finals=None, odds_counts=None, betting_expected=False, betting_page=None):
+def checks(con, today, last_night_finals=None):
     """Plain-language warnings about suspicious data (empty is good).
 
-    last_night_finals: event ids ESPN lists as final for last night (US date); odds_counts: (games, lines, props)
-    from this morning's capture; betting_page: path of the encrypted page payload when betting is configured.
+    last_night_finals: event ids ESPN lists as final for last night (US date).
     """
     warn = []
 
@@ -43,13 +42,6 @@ def checks(con, today, last_night_finals=None, odds_counts=None, betting_expecte
         missing = len(set(last_night_finals) - have)
         if missing:
             warn.append(f"Box scores: {missing} of last night's {len(last_night_finals)} games missing")
-    if odds_counts and odds_counts[0] and not odds_counts[1]:
-        warn.append(f"Odds: {odds_counts[0]} games tonight but no DraftKings lines captured")
-    if betting_expected and betting_page is not None:
-        fresh = betting_page.exists() and (
-            datetime.now().timestamp() - betting_page.stat().st_mtime < 3 * 3600)
-        if not fresh:
-            warn.append("Betting page was not refreshed")
     return warn
 
 

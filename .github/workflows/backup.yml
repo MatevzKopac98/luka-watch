@@ -1,9 +1,8 @@
 name: Weekly backup
 
-# The data branch keeps only the latest snapshot, so a bad run could lose the betting history.
-# Every Monday this copies the encrypted betting database (and the site database) into a GitHub release,
-# keeping the last KEEP backups. The betting file stays encrypted with BETTING_PASSWORD.
-# Restore: download betting.sqlite.enc from a "backup-..." release into data/ on the data branch.
+# The data branch keeps only the latest snapshot, so a bad run could lose the history.
+# Every Monday this copies the site database into a GitHub release, keeping the last KEEP backups.
+# Restore: download nba.sqlite.gz from a "backup-..." release, unzip it into data/ on the data branch.
 
 on:
   schedule:
@@ -24,19 +23,17 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       KEEP: 8
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: data
       - name: Create release with the databases
         run: |
           tag="backup-$(date -u +%Y-%m-%d)"
-          files=""
-          for f in betting.sqlite.enc betting_page.salt nba.sqlite; do [ -f "$f" ] && files="$files $f"; done
-          [ -n "$files" ] || { echo "Nothing to back up"; exit 1; }
-          gzip -k nba.sqlite && files="${files/nba.sqlite/nba.sqlite.gz}"
+          [ -f nba.sqlite ] || { echo "Nothing to back up"; exit 1; }
+          gzip -k nba.sqlite
           gh release delete "$tag" --yes --cleanup-tag 2>/dev/null || true
-          gh release create "$tag" $files --target data --title "Data backup $(date -u +%F)" \
-            --notes "Automatic weekly backup. betting.sqlite.enc is encrypted with the BETTING_PASSWORD secret." --latest=false
+          gh release create "$tag" nba.sqlite.gz --target data --title "Data backup $(date -u +%F)" \
+            --notes "Automatic weekly backup of the site database." --latest=false
       - name: Keep only the newest backups
         run: |
           gh release list --limit 100 --json tagName --jq '.[].tagName' | grep '^backup-' | sort -r \

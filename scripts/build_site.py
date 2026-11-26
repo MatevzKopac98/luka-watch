@@ -1266,25 +1266,9 @@ border:1px solid var(--border);color:var(--ink);text-decoration:none}
 .logo-m{width:36px;height:36px}.tt-name{font-weight:700}
 .wide-bar{width:90px}.grid2.tight{gap:16px;margin-top:8px}
 .hero a:not(.btn-yt){color:var(--ink2)}
-.unlock{display:flex;flex-direction:column;gap:10px;max-width:320px;margin-top:16px}
-.unlock input[type=password]{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--border);
-background:var(--surface);color:var(--ink)}
-.unlock button{border:none;cursor:pointer;justify-content:center}
-.bets{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
-@media (max-width:760px){.bets{grid-template-columns:1fr}}
-.bet{margin-top:0}.bet-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-.bet-title{font-size:18px;margin:8px 0 10px}
-.bet-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
-.bet-nums>div{display:flex;flex-direction:column;background:var(--page);border-radius:8px;padding:6px 8px}
-.bet-nums strong{font-size:18px}.pos{color:var(--good)}.neg{color:var(--bad)}
-@media (max-width:420px){.bet-nums{grid-template-columns:repeat(2,1fr)}}
-.money{font-size:14px;margin:6px 0}
-ul.where{margin:0 0 6px;padding-left:18px;font-size:14px}ul.where li{margin:2px 0}
-.play{background:var(--hi-wash);border-radius:8px;padding:8px 10px;font-size:14px;margin:8px 0}
+.pos{color:var(--good)}.neg{color:var(--bad)}
 details.list{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-top:10px}
 details.list>summary{cursor:pointer;font-weight:700}
-details.res{border-top:1px solid var(--grid);padding:8px 0}details.res summary{cursor:pointer;display:flex;
-flex-wrap:wrap;gap:6px;align-items:baseline}.res-profit{margin-left:auto;font-weight:700}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:0 0 10px;-webkit-overflow-scrolling:touch}
 .chip{flex:none;font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;cursor:pointer;
 border:1px solid var(--border);background:var(--page);color:var(--ink2)}
@@ -1317,7 +1301,7 @@ const tip=document.getElementById('tip');
 function show(el,x,y){const p=el.dataset.tip.split('|');tip.innerHTML='<b>'+p[0]+'</b>'+(p.length>1?'<br>'+p.slice(1).join('<br>'):'');
 tip.style.opacity=1;const r=tip.getBoundingClientRect();let L=x+14,T=y+14;
 if(L+r.width>innerWidth-8)L=x-r.width-14;if(T+r.height>innerHeight-8)T=y-r.height-14;tip.style.left=Math.max(8,L)+'px';tip.style.top=Math.max(8,T)+'px'}
-// delegated, so content added later (the unlocked betting page) gets tooltips too
+// delegated, so content added later gets tooltips too
 document.addEventListener('pointermove',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');
 if(el)show(el,e.clientX,e.clientY);else tip.style.opacity=0});
 document.addEventListener('focusin',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');
@@ -1396,8 +1380,8 @@ def section_last_night(d):
 
 SOURCE_NAMES = {"teams": "standings", "schedule": "Lakers schedule", "mvp odds": "MVP odds", "players": "player stats",
                 "league players": "league stats", "box scores": "box scores", "news": "Luka headlines",
-                "injuries": "injuries", "odds capture": "odds", "rosters": "rosters", "defense model": "ratings",
-                "betting": "betting picks", "prune": "odds clean-up", "sanity checks": "checks"}
+                "injuries": "injuries", "rosters": "rosters", "defense model": "ratings",
+                "sanity checks": "checks"}
 
 
 def status_banner(st):
@@ -1431,7 +1415,7 @@ def page(title, active, body, d, root=""):
     links = [("index.html#next", "Lakers games", "home"), ("index.html#mvp", "MVP race", "home"),
              ("index.html#compare", "Compare", "home"), ("index.html#lakers", "Lakers", "home"),
              ("index.html#milestones", "Milestones", "home"), ("teams/index.html", "Teams", "teams"),
-             ("last-night.html", "Last night", "night"), ("betting.html", "Betting 🔒", "betting")]
+             ("last-night.html", "Last night", "night")]
     nav = "".join(f'<a href="{root}{h}"{" class=\"active\"" if k == active and k != "home" else ""}>{t}</a>'
                   for h, t, k in links)
     return f"""<!doctype html>
@@ -1464,51 +1448,9 @@ def build():
         (nights_dir / f"{n}.html").write_text(
             page(f"NBA scores {us.day} {us:%b} · Luka Watch", "night", section_night(d, n, "../"), d, "../"),
             encoding="utf-8")
-    (OUT.parent / "betting.html").write_text(page("Betting · Luka Watch", "betting", section_betting(), d),
-                                             encoding="utf-8")
     from scripts.build_teams import build_teams
     n_teams = build_teams(d, page)
-    print(f"Wrote {OUT}, last-night.html, {len(dates)} night pages, betting.html and {n_teams} team pages")
-
-
-BETTING_PAYLOAD = ROOT / "data" / "betting_page.json"
-
-UNLOCK_JS = """
-const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-const P=JSON.parse(document.getElementById('payload').textContent);
-async function keyFrom(pw){const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
-return crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(P.salt),iterations:P.iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},true,['decrypt']);}
-async function openPage(key){const html=new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(P.iv)},key,b64(P.ct)));
-document.getElementById('locked').hidden=true;const box=document.getElementById('unlocked');box.innerHTML=html;box.hidden=false;}
-async function remembered(){try{const k=localStorage.getItem('lw-bet-key');if(!k)return;
-await openPage(await crypto.subtle.importKey('raw',b64(k),'AES-GCM',true,['decrypt']));}catch(e){try{localStorage.removeItem('lw-bet-key')}catch(_){}}}
-document.getElementById('unlock').addEventListener('submit',async e=>{e.preventDefault();const msg=document.getElementById('msg');
-msg.textContent='Unlocking…';try{const key=await keyFrom(document.getElementById('pw').value);await openPage(key);
-if(document.getElementById('remember').checked){const raw=new Uint8Array(await crypto.subtle.exportKey('raw',key));
-try{localStorage.setItem('lw-bet-key',btoa(String.fromCharCode(...raw)))}catch(_){}}}catch(err){msg.textContent='Wrong password.';}});
-remembered();
-"""
-
-
-def section_betting():
-    """Locked betting page: the content is AES-encrypted and only opens in the browser with the password."""
-    if not BETTING_PAYLOAD.exists():
-        return ('<section class="hero"><h1>Betting 🔒</h1><p class="muted">Not configured yet: the betting '
-                'password hasn\'t been set up, so there is nothing to show.</p></section>')
-    return f"""
-<section class="hero lock" id="locked">
-  <h1>Betting 🔒</h1>
-  <p class="muted">This page is password protected.</p>
-  <form id="unlock" class="unlock">
-    <input id="pw" type="password" autocomplete="current-password" placeholder="Password" required>
-    <label class="small"><input id="remember" type="checkbox" checked> Remember me on this device</label>
-    <button type="submit" class="btn-yt">Unlock</button>
-    <p id="msg" class="muted small" role="status"></p>
-  </form>
-</section>
-<div id="unlocked" hidden></div>
-<script type="application/json" id="payload">{BETTING_PAYLOAD.read_text(encoding="utf-8")}</script>
-<script>{UNLOCK_JS}</script>"""
+    print(f"Wrote {OUT}, last-night.html, {len(dates)} night pages and {n_teams} team pages")
 
 
 if __name__ == "__main__":
